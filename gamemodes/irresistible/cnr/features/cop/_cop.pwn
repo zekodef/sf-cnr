@@ -11,3 +11,4 @@
 #include "irresistible\cnr\features\cop\arrest.pwn"
 #include "irresistible\cnr\features\cop\bail.pwn"
 #include "irresistible\cnr\features\cop\ticket.pwn"
+#include "irresistible\cnr\features\cop\emp.pwn"
