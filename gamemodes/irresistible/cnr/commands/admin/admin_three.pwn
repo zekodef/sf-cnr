@@ -6,40 +6,6 @@
  */
 
 /* ** Commands ** */
-CMD:smlog( playerid, params[ ] )
-{
-	new
-		pID
-	;
-
-	if ( p_AdminLevel[ playerid ] < 2 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/smlog [PLAYER_ID]" );
-	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
-	else
-	{
-		format( szBigString, 160, "SELECT u.`NAME`,t.`CASH`,t.`DATE` FROM `TRANSACTIONS` t INNER JOIN `USERS` u ON t.`TO_ID`=u.`ID` WHERE FROM_ID=%d ORDER BY DATE DESC LIMIT 10", p_AccountID[ pID ] );
-		mysql_function_query( dbHandle, szBigString, true, "readmoneylog", "dd", playerid, pID );
-	}
-	return 1;
-}
-
-CMD:iclog( playerid, params[ ] )
-{
-	new
-		pID
-	;
-
-	if ( p_AdminLevel[ playerid ] < 2 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/iclog [PLAYER_ID]" );
-	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
-	else
-	{
-		format( szBigString, 160, "SELECT u.`NAME`,t.`IC`,t.`DATE` FROM `TRANSACTIONS_IC` t INNER JOIN `USERS` u ON t.`TO_ID`=u.`ID` WHERE FROM_ID=%d ORDER BY DATE DESC LIMIT 10", p_AccountID[ pID ] );
-		mysql_function_query( dbHandle, szBigString, true, "readiclog", "dd", playerid, pID );
-	}
-	return 1;
-}
-
 CMD:resetwep( playerid, params[ ] )
 {
 	new
@@ -622,9 +588,9 @@ CMD:forceac( playerid, params[ ] )
         pID;
 
 	if ( p_AdminLevel[ playerid ] < 3 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-    else if ( sscanf( params, "u", pID ) ) SendUsage( playerid, "/forceac [PLAYER_ID]" );
+    else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/forceac [PLAYER_ID]" );
     else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
-    else if ( pID == playerid ) return SendError( playerid, "You cant use this command on yourself." );
+    else if ( pID == playerid ) return SendError( playerid, "You can't use this command on yourself." );
     else if ( p_AdminLevel[ pID ] > p_AdminLevel[ playerid ] ) return SendError( playerid, "You cannot use this command on admins higher than your level." );
     //else if ( GetPlayerScore( pID ) < 100 ) return SendError( playerid, "This player's score is under 100, please spectate instead." );
     else
@@ -643,4 +609,75 @@ CMD:forceac( playerid, params[ ] )
 		}
     }
     return 1;
+}
+
+CMD:chatban( playerid, params[ ] )
+{
+
+	new pID, reason[ 25 ];
+
+	if ( p_AdminLevel[ playerid ] < 3 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "us[50]", pID, reason ) ) return SendUsage( playerid, "/chatban [PLAYER_ID] [REASON]" );
+	else if ( strlen( reason ) < 3 || strlen( reason ) > 25 ) return SendError( playerid, "Please keep your chat ban reason between 3 - 25 characters." );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( pID == playerid ) return SendError( playerid, "You can't use this command on yourself." );
+	else if ( p_AdminLevel[ pID ] > p_AdminLevel[ playerid ] ) return SendError( playerid, "You cannot use this command on admins higher than your level." );
+	else if ( IsPlayerChatBanned( pID ) ) return SendError( playerid, "This player is already chat banned." );
+	else
+	{
+		p_ChatBanned{ pID } = true;
+		p_ChatBannedBy[ pID ] = ReturnPlayerName( playerid );
+		p_ChatBanReason[ pID ] = reason;
+		mysql_single_query( sprintf( "INSERT INTO `CHAT_BANS` (`ID`, `NAME`, `BANNED_BY_ID`, `BANNED_BY`, `REASON`) VALUES (%d, '%s', %d, '%s', '%s')", p_AccountID[ pID ], mysql_escape( ReturnPlayerName( pID ) ), p_AccountID[ playerid ], mysql_escape( ReturnPlayerName( playerid ) ), mysql_escape( reason ) ) );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat banned by %s for '%s'.", ReturnPlayerName( pID ), reason );
+		AddAdminLogLineFormatted( "%s(%d) has chat banned %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+		SaveToAdminLog( playerid, p_AccountID[ pID ], "chat ban" );
+	}
+
+	return 1;
+}
+
+CMD:unchatban( playerid, params[ ] )
+{
+	
+	new pID;
+
+	if ( p_AdminLevel[ playerid ] < 3 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/chatban [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( pID == playerid ) return SendError( playerid, "You can't use this command on yourself." );
+	else if ( !IsPlayerChatBanned( pID ) ) return SendError( playerid, "This player is not chat banned." );
+	else
+	{
+		p_ChatBanned{ pID } = false;
+		mysql_single_query( sprintf( "DELETE FROM `CHAT_BANS` WHERE `ID`=%d", p_AccountID[ pID ] ) );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat unbanned by %s.", ReturnPlayerName( pID ) );
+		AddAdminLogLineFormatted( "%s(%d) has chat unbanned %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+		SaveToAdminLog( playerid, p_AccountID[ pID ], "chat unban" );
+	}
+
+	return 1;
+
+}
+
+thread ChatBanUponLogin( playerid )
+{
+	new
+	    rows, fields
+	;
+    cache_get_data( rows, fields );
+
+    if ( rows )
+    {
+		new banned_by[ MAX_PLAYER_NAME ], reason[ 25 ];
+
+		cache_get_field_content( 0,  "BANNED_BY", banned_by );
+		cache_get_field_content( 0,  "REASON", reason );
+
+		p_ChatBanned{ playerid } = true;
+		p_ChatBannedBy[ playerid ] = banned_by;
+		p_ChatBanReason[ playerid ] = reason;
+		print("done with chatbanuponlogin");
+	}
+	return 1;
 }
