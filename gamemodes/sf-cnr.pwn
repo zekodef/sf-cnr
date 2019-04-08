@@ -521,6 +521,9 @@ public OnPlayerDisconnect( playerid, reason )
 	p_Cuffed		{ playerid } = false;
 	justConnected	{ playerid } = true;
  	p_Muted			{ playerid } = false;
+	p_ChatBanned	{ playerid } = false;
+	p_ChatBannedBy	[ playerid ] [ 0 ] = '\0';
+	p_ChatBanReason [ playerid ] [ 0 ] = '\0';
 	p_MetalMelter	[ playerid ] = 0;
 	p_LeftCuffed 	{ playerid } = false;
 	p_PmResponder	[ playerid ] = INVALID_PLAYER_ID;
@@ -1508,12 +1511,15 @@ public OnPlayerText( playerid, text[ ] )
 	    return SendError( playerid, "An error occured, please try again." ), 0;
 #endif
 
+	if ( IsPlayerChatBanned( playerid ) )
+		return SendError( playerid, "You have been chat banned and are not allowed to chat."), 0;
+
 	if ( textContainsIP( text ) )
 		return SendServerMessage( playerid, "Please do not advertise." ), 0;
 
 	new tick_count = GetTickCount( );
 
-	if ( p_AntiTextSpam[ playerid ] > tick_count )
+	if ( p_AntiTextSpam[ playerid ] > tick_count && p_AdminLevel[ playerid ] != 6 )
 	{
 		p_AntiTextSpam[ playerid ] = tick_count + 750;
 	    p_AntiTextSpamCount{ playerid } ++;
@@ -2105,7 +2111,8 @@ CMD:cw( playerid, params[ ] ) return cmd_carwhisper( playerid, params );
 CMD:carwhisper( playerid, params[ ] )
 {
 	new msg[ 100 ];
-	if ( !IsPlayerInAnyVehicle( playerid ) ) return SendError( playerid, "You must be inside a vehicle to use this command." );
+	if ( p_ChatBanned{ playerid } ) return SendError( playerid, "You have been chat banned and are not allowed to chat." );
+	else if ( !IsPlayerInAnyVehicle( playerid ) ) return SendError( playerid, "You must be inside a vehicle to use this command." );
 	else if ( sscanf( params, "s[100]", msg ) ) return SendUsage( playerid, "/carwhisper [MESSAGE]" );
 	else if ( textContainsIP( msg ) ) return SendError( playerid, "Advertising is forbidden." );
 	else
@@ -2124,7 +2131,8 @@ CMD:w( playerid, params[ ] ) return cmd_whisper( playerid, params );
 CMD:whisper( playerid, params[ ] )
 {
 	new msg[ 100 ];
-	if ( sscanf( params, "s[100]", msg ) ) return SendUsage( playerid, "/whisper [MESSAGE]" );
+	if ( p_ChatBanned{ playerid } ) return SendError( playerid, "You have been chat banned and are not allowed to chat." );
+	else if ( sscanf( params, "s[100]", msg ) ) return SendUsage( playerid, "/whisper [MESSAGE]" );
 	else if ( textContainsIP( msg ) ) return SendError( playerid, "Advertising is forbidden." );
 	else
 	{

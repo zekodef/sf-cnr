@@ -6,6 +6,40 @@
  */
 
 /* ** Commands ** */
+CMD:smlog( playerid, params[ ] )
+{
+	new
+		pID
+	;
+
+	if ( p_AdminLevel[ playerid ] < 2 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/smlog [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else
+	{
+		format( szBigString, 160, "SELECT u.`NAME`,t.`CASH`,t.`DATE` FROM `TRANSACTIONS` t INNER JOIN `USERS` u ON t.`TO_ID`=u.`ID` WHERE FROM_ID=%d ORDER BY DATE DESC LIMIT 10", p_AccountID[ pID ] );
+		mysql_function_query( dbHandle, szBigString, true, "readmoneylog", "dd", playerid, pID );
+	}
+	return 1;
+}
+
+CMD:iclog( playerid, params[ ] )
+{
+	new
+		pID
+	;
+
+	if ( p_AdminLevel[ playerid ] < 2 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/iclog [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else
+	{
+		format( szBigString, 160, "SELECT u.`NAME`,t.`IC`,t.`DATE` FROM `TRANSACTIONS_IC` t INNER JOIN `USERS` u ON t.`TO_ID`=u.`ID` WHERE FROM_ID=%d ORDER BY DATE DESC LIMIT 10", p_AccountID[ pID ] );
+		mysql_function_query( dbHandle, szBigString, true, "readiclog", "dd", playerid, pID );
+	}
+	return 1;
+}
+
 CMD:slay( playerid, params[ ] )
 {
 	new

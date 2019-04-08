@@ -72,11 +72,13 @@ static stock
 		{ 2, "/mute", 				"Muting a player" },
 		{ 2, "/unmute", 			"Unmuting a player" },
 		{ 2, "/kick", 				"Kicking a player from the server" },
+		{ 2, "/smlog", 				"Cash transaction log from a player" },
+		{ 2, "/iclog", 				"IC transaction log from a player" },
 
 		/* ** Level 3 Commands ** */
+		{ 3, "/chatban", 			"Bans a player from using all forms of chat" },
+		{ 3, "/unchatban", 			"Unbans a player from using all forms of chat" },
 		{ 3, "/banlog", 			"Finding ban information about a player" },
-		{ 3, "/smlog", 				"Cash transaction log from a player" },
-		{ 3, "/iclog", 				"IC transaction log from a player" },
 		{ 3, "/resetwep", 			"Resetting weapons from a player" },
 		{ 3, "/getip", 				"Getting IP of a player" },
 		{ 3, "/geolocate", 			"Geographical location of a player" },
@@ -105,6 +107,7 @@ static stock
 		{ 3, "/countdown", 			"Countdown" },
 		{ 3, "/pingimmune", 		"Making a player immune from ping kicker" },
 		{ 3, "/ban", 				"Banning a player" },
+		{ 3, "/forceac"				"Force a player to use CAC while playing the server" },
 		{ 3, "/bring", 				"Bring a player to you" },
 
 		/* ** Level 4 Commands ** */
@@ -259,34 +262,6 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 	return 1;
 }
-
-/*CMD:acmds( playerid, params[ ] )
-{
-	if ( p_AdminLevel[ playerid ] < 1 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-    SendClientMessage( playerid, COLOR_GREY, "|______________________________________| Admin Commands |_____________________________________|" );
-    SendClientMessage( playerid, COLOR_WHITE, " " );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 1: /goto, /spec(off), /(un)jail, /asay, /slap, /a, /getstats, /stpfr, /setskin, /frules, /fpc, /ticketlog" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 1: /pinfo, /warn, /aspawn, /ans, /stpfa, /alog, /(un)freeze, /aod, /respawnalluv, /reports, /questions" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 1: /respond, /mutelist, /aka, /arepair, /viewdeathmsg" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 2: /kick, /vdestroy, /(un)mute, /explode, /vrespawn, /arenas, /suspend, /viewnotes, /slay" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 3: /ban, /bring, /clearchat, /(ann)ounce, /giveweapon, /vadminpark, /vcreate, /healall, /getip, /smlog, /iclog" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 3: /vadminstats, /pingimmune, /vbring, /countdown, /forcecoptutorial, /vgoto, /copwarn, /armywarn, /resetwep" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 3: /venter, /geolocate" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 4: /circleall, /giveweaponall, /resetwepall, /motd, /uncopban, /unarmyban, /setworld, /destroyallav, /gotopos" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 4: /addnote, /removenote" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 5: /createhouse, /destroyhouse, /respawnallv, /achangename, /toggleviewpm, /unban(ip)" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 5: /createcar, /destroycar, /stripcarmods, /createbribe, /destroybribe, /doublexp, /(h/v)adminsell" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 5: /autovehrespawn, /megaban, /acunban, /creategate, /editgate, /connectsong, /discordurl" );
-    SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 5: /creategarage, /destroygarage, /check, /reconnectchuff" );
-
-    if ( p_AdminLevel[ playerid ] > 5 ) {
-		SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 6: /setirc, /seteventhost, /setlevel, /setleveloffline, /svrstats, /playaction, /playanimation" );
-		SendClientMessage( playerid, COLOR_WHITE, "    LEVEL 6: /updaterules, /truncate, /broadcast, /setgangleader, /viewgangtalk, /createentrance, /destroyentrance" );
-    }
-
-    SendClientMessage( playerid, COLOR_GREY, "|_____________________________________________________________________________________________|" );
-	return 1;
-}*/
 
 /* ** Modules ** */
 #include "irresistible\cnr\commands\admin\admin_one.pwn"
