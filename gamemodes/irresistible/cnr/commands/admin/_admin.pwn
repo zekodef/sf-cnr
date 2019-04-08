@@ -107,7 +107,7 @@ static stock
 		{ 3, "/countdown", 			"Countdown" },
 		{ 3, "/pingimmune", 		"Making a player immune from ping kicker" },
 		{ 3, "/ban", 				"Banning a player" },
-		{ 3, "/forceac"				"Force a player to use CAC while playing the server" },
+		{ 3, "/forceac",			"Force a player to use CAC while playing the server" },
 		{ 3, "/bring", 				"Bring a player to you" },
 
 		/* ** Level 4 Commands ** */
