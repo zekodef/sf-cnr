@@ -146,7 +146,7 @@ thread deleteplayernote( playerid, noteid )
 	if ( rows ) {
 		SaveToAdminLog( playerid, noteid, "removed note" );
  	    mysql_single_query( sprintf( "UPDATE `NOTES` SET `DELETED`=%d WHERE `ID`=%d", p_AccountID[ playerid ], noteid ) );
- 		SendServerMessage( playerid, "You have removed note id %d. If there are any problems, contact Lorenc/Council.", noteid );
+ 		SendServerMessage( playerid, "You have removed note id %d. If there are any problems, contact Damen/Council.", noteid );
 		AddAdminLogLineFormatted( "%s(%d) has deleted note id %d", ReturnPlayerName( playerid ), playerid, noteid );
  		return 1;
 	}

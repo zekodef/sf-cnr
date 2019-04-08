@@ -706,7 +706,7 @@ stock SendClientMessageToBlackjack( tableid, colour, format[ ], va_args<> )
 
 stock InitializeBlackjackTextdraws( id )
 {
-    g_blackjackTurnTD[ id ] = TextDrawCreate(330.000000, 204.000000, "Lorenc has 5 seconds");
+    g_blackjackTurnTD[ id ] = TextDrawCreate(330.000000, 204.000000, "Damen has 5 seconds");
     TextDrawAlignment(g_blackjackTurnTD[ id ], 2);
     TextDrawBackgroundColor(g_blackjackTurnTD[ id ], 255);
     TextDrawFont(g_blackjackTurnTD[ id ], 1);

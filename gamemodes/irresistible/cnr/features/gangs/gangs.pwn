@@ -639,7 +639,7 @@ thread OnPlayerGangLoaded( playerid )
 		else
 		{
 			p_GangID[ playerid ] = -1;
-			SendServerMessage( playerid, "Had an issue loading your gang. Contact Lorenc (0x92F)." );
+			SendServerMessage( playerid, "Had an issue loading your gang. Contact Damen (0x92F)." );
 			printf("[GANG] [ERROR] Had an issue loading a gang row id %d", gang_sql_id );
 		}
 	}
