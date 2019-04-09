@@ -5594,7 +5594,7 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 		new bool: has = false;
 
 		// erase large string for ease
-		erase( szHugeString );
+		erase( szMassiveString );
 		erase( szLargeString );
 
 		// show items
@@ -5611,13 +5611,13 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 			case 1:
 			{
 				foreach ( new i : houses ) if ( strmatch( g_houseData[ i ] [ E_OWNER ], ReturnPlayerName( playerid ) ) ) {
-					format( szHugeString, sizeof( szHugeString ), "%s%s\n", szHugeString, g_houseData[ i ] [ E_HOUSE_NAME ] ), has = true;
+					format( szMassiveString, sizeof( szMassiveString ), "%s%s\n", szMassiveString, g_houseData[ i ] [ E_HOUSE_NAME ] ), has = true;
 				}
 
 				if ( ! has )
 					return SendError( playerid, "You do not own any home." ), ShowPlayerSpawnMenu( playerid );
 
-				return ShowPlayerDialog( playerid, DIALOG_HOUSES, DIALOG_STYLE_LIST, "{FFFFFF}Set Spawn Location", szHugeString, "Select", "Back" );
+				return ShowPlayerDialog( playerid, DIALOG_HOUSES, DIALOG_STYLE_LIST, "{FFFFFF}Set Spawn Location", szMassiveString, "Select", "Back" );
 			}
 
 			// businesses

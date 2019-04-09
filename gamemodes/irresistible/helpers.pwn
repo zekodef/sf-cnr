@@ -41,6 +41,7 @@ stock szNormalString[ 144 ];
 stock szBigString[ 256 ];
 stock szLargeString[ 1024 ];
 stock szHugeString[ 2048 ];
+stock szMassiveString[ 4096 ];
 stock g_szSprintfBuffer[ 1024 ];
 stock tmpVariable;
 
