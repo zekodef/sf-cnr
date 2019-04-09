@@ -2150,8 +2150,8 @@ CMD:whisper( playerid, params[ ] )
 
 CMD:admins( playerid, params[ ] )
 {
-	if ( GetPlayerScore( playerid ) < 500 && !IsPlayerUnderCover( playerid ) && p_AdminLevel[ playerid ] < 1 )
-	    return SendError( playerid, "You need at least 500 score to view the online adminstrators." );
+	if ( GetPlayerScore( playerid ) < 50 && !IsPlayerUnderCover( playerid ) && p_AdminLevel[ playerid ] < 1 )
+	    return SendError( playerid, "You need at least 50 score to view the online adminstrators." );
 
 	new g_adminList[ MAX_PLAYERS ] [ 2 ], bool: is_empty = true;
 
