@@ -686,7 +686,11 @@ public OnRouletteWheelStop( rouletteid, winner )
 
 		// inform users
 		if ( profit >= 10000 ) {
-			SendGlobalMessage( -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has won "COL_GOLD"%s"COL_WHITE" from roulette!", ReturnPlayerName( playerid ), playerid, cash_format( profit ) );
+			foreach(new i : Player)
+			{
+				if ( !IsPlayerSettingToggled( i, 12 ) )
+					SendClientMessageFormatted( i, -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has won "COL_GOLD"%s"COL_WHITE" from roulette!", ReturnPlayerName( playerid ), playerid, cash_format( profit ) );
+			}
 		}
 
 		// give user points

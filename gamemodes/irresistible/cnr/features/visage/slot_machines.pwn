@@ -288,7 +288,12 @@ public OnPlayerUseSlotMachine( playerid, slotid, first_combo, second_combo, thir
 		// alert user
 		if ( iNetWin > g_slotmachineData[ slotid ] [ E_ENTRY_FEE ] ) {
    			SendGlobalMessage( -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has won "COL_GOLD"%s"COL_WHITE" from the %s casino slots!", ReturnPlayerName( playerid ), playerid, cash_format( iNetWin ), g_slotmachineData[ slotid ] [ E_ENTRY_FEE ] == 10000 ? ( "Four Dragons" ) : ( g_slotmachineData[ slotid ] [ E_ENTRY_FEE ] >= 25000 ? ( "Visage" ) : ( "Caligulas" ) ) );
-   		} else {
+			foreach(new i : Player)
+			{
+				if ( !IsPlayerSettingToggled( i, 12 ) )
+					SendClientMessageFormatted( i, -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has won "COL_GOLD"%s"COL_WHITE" from the %s casino slots!", ReturnPlayerName( playerid ), playerid, cash_format( iNetWin ), g_slotmachineData[ slotid ] [ E_ENTRY_FEE ] == 10000 ? ( "Four Dragons" ) : ( g_slotmachineData[ slotid ] [ E_ENTRY_FEE ] >= 25000 ? ( "Visage" ) : ( "Caligulas" ) ) );
+			}
+		   } else {
    			SendServerMessage( playerid, "Congratulations, you've won "COL_GOLD"%s"COL_WHITE"!", cash_format( iNetWin ) );
    		}
 
