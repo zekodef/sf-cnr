@@ -7064,3 +7064,16 @@ stock IsPlayerDead( playerid )
 
 	return GetPlayerState( playerid ) == PLAYER_STATE_WASTED;
 }
+
+stock IsPlayerInArmyVehicle( playerid )
+{
+	new
+		vehicleid = GetPlayerVehicleID( playerid ),
+		vehiclemodelid = GetVehicleModel( vehicleid )
+	;
+
+	if ( vehiclemodelid == 425 || vehiclemodelid == 432 || vehiclemodelid == 520 ) //Rhino, Tank, Hydra
+		return true;
+	else
+		return false;
+}
