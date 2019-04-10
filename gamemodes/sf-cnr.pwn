@@ -197,6 +197,8 @@ public OnServerUpdateTimer( )
 
 	// better to store in a variable as we are getting the timestamp from hardware
 	g_iTime = gettime( );
+	
+	UpdatePlayerCounters();
 
 	// for hooks
 	CallLocalFunction( "OnServerUpdate", "" );
@@ -7082,4 +7084,19 @@ stock IsPlayerInArmyVehicle( playerid )
 		return true;
 	else
 		return false;
+}
+
+new playersPeakCount = 0;
+
+stock UpdatePlayerCounters()
+{
+	new total_online = Iter_Count( Player );
+
+	if ( total_online > playersPeakCount ) playersPeakCount = total_online;
+}
+
+CMD:peak( playerid, params[] )
+{
+	if ( p_AdminLevel[ playerid ] != 6 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	return SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" The current peak player count since startup is: %i", playersPeakCount );
 }
