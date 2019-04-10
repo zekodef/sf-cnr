@@ -629,7 +629,8 @@ CMD:chatban( playerid, params[ ] )
 		p_ChatBannedBy[ pID ] = ReturnPlayerName( playerid );
 		p_ChatBanReason[ pID ] = reason;
 		mysql_single_query( sprintf( "INSERT INTO `CHAT_BANS` (`ID`, `NAME`, `BANNED_BY_ID`, `BANNED_BY`, `REASON`) VALUES (%d, '%s', %d, '%s', '%s')", p_AccountID[ pID ], mysql_escape( ReturnPlayerName( pID ) ), p_AccountID[ playerid ], mysql_escape( ReturnPlayerName( playerid ) ), mysql_escape( reason ) ) );
-		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat banned by %s for '%s'.", ReturnPlayerName( pID ), reason );
+		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat banned by %s for '%s'.", ReturnPlayerName( playerid ), reason );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have chat banned %s for '%s'.", ReturnPlayerName( pID ), reason );
 		AddAdminLogLineFormatted( "%s(%d) has chat banned %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
 		SaveToAdminLog( playerid, p_AccountID[ pID ], "chat ban" );
 	}
@@ -651,7 +652,8 @@ CMD:unchatban( playerid, params[ ] )
 	{
 		p_ChatBanned{ pID } = false;
 		mysql_single_query( sprintf( "DELETE FROM `CHAT_BANS` WHERE `ID`=%d", p_AccountID[ pID ] ) );
-		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat unbanned by %s.", ReturnPlayerName( pID ) );
+		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat unbanned by %s.", ReturnPlayerName( pID ) );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have chat unbanned %s.", ReturnPlayerName( pID ) );
 		AddAdminLogLineFormatted( "%s(%d) has chat unbanned %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
 		SaveToAdminLog( playerid, p_AccountID[ pID ], "chat unban" );
 	}

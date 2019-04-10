@@ -16,7 +16,7 @@
 #pragma option -d3
 #pragma dynamic 7200000
 
-// #define DEBUG_MODE
+#define DEBUG_MODE
 
 #if defined DEBUG_MODE
 	#pragma option -d3
@@ -2517,6 +2517,11 @@ CMD:myaccid( playerid, params[ ] )
 {
     SendServerMessage( playerid, "Your account ID is "COL_GOLD"%d"COL_WHITE".", p_AccountID[ playerid ] );
 	return 1;
+}
+
+CMD:discord( playerid, params[ ] )
+{
+	return SendServerMessage( playerid, "Visit 'sfcnr.com/discord' to join our Discord server!" );
 }
 
 CMD:job( playerid, params[ ] )

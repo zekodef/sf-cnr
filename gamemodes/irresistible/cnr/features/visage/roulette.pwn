@@ -694,7 +694,7 @@ public OnRouletteWheelStop( rouletteid, winner )
 		}
 
 		// give user points
-   		GivePlayerCasinoRewardsPoints( playerid, waged, .house_edge = 2.7 );
+   		if ( profit != 0 ) GivePlayerCasinoRewardsPoints( playerid, waged, .house_edge = 2.7 );
 
 		// gametext
 		if ( profit > 0 )  {

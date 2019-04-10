@@ -556,7 +556,7 @@ hook OnPlayerUpdateEx( playerid )
 			Float: radius = 25.0,
 			closestCivilian = GetClosestPlayerEx( playerid, CLASS_CIVILIAN, radius );
 
-		if ( GetPlayerWantedLevel( closestCivilian ) != 0 )
+		if ( closestCivilian != INVALID_PLAYER_ID && GetPlayerWantedLevel( closestCivilian ) != 0 )
 		{
 			return ShowPlayerHelpDialog( playerid, 4000, "Use ~y~/taze [ID]~w~, ~b~/cuff [ID]~w~, and ~r~/ar [ID] ~w~commands to arrest." );
 		}
