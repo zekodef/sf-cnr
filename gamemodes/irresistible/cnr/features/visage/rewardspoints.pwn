@@ -213,6 +213,7 @@ CMD:casino( playerid, params[ ] )
 
 /* ** Functions ** */
 stock GivePlayerCasinoRewardsPoints( playerid, bet_amount, Float: house_edge ) {
+	if ( bet_amount == 0 ) return 1;
 	if ( bet_amount < 0 ) bet_amount *= -1; // profit or loss, does not matter
 	// printf("(%f * ((%f * 100.0) * (%f / 100.0))) / %f\n",bet_amount, house_edge,  CASINO_REWARDS_PAYOUT_PERCENT, CASINO_REWARDS_DIVISOR);
 	new Float: final_points = ( bet_amount * ( ( house_edge / 100.0 ) * ( CASINO_REWARDS_PAYOUT_PERCENT / 100.0 ) ) ) / CASINO_REWARDS_DIVISOR;
