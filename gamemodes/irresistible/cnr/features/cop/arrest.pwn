@@ -51,7 +51,7 @@ hook OnPlayerDeath( playerid, killerid, reason )
 
 hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 {
-	if ( PRESSED( KEY_LOOK_BEHIND ) ) // MMB to taze/cuff/ar
+	/*if ( PRESSED( KEY_LOOK_BEHIND ) ) // MMB to taze/cuff/ar
 	{
 		if ( p_Class[ playerid ] == CLASS_POLICE && ! IsPlayerSpawnProtected( playerid ) )
 		{
@@ -68,7 +68,7 @@ hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 				}
 			}
 		}
-	}
+	}*/
 	return 1;
 }
 

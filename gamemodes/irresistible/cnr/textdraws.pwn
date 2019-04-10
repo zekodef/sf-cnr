@@ -42,6 +42,8 @@ new
 /* ** Hooks ** */
 hook OnScriptInit( )
 {
+	TextDrawSetString( g_MotdTD, "~w~Want more ~g~money, houses, and xp~w~? Consider donating! ~y~/vip" );
+
 	g_currentXPTD = TextDrawCreate(529.000000, 405.000000, "Current XP");
 	TextDrawBackgroundColor(g_currentXPTD, 255);
 	TextDrawFont(g_currentXPTD, 3);
