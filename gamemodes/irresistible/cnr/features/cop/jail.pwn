@@ -67,7 +67,7 @@ hook OnPlayerUpdateEx( playerid )
 
         if ( IsPlayerInDynamicArea( playerid, g_AlcatrazArea ) )
         {
-            if ( !IsPlayerJailed( playerid ) && p_Class[ playerid ] != CLASS_POLICE ) // && !IsPlayerDetained( playerid )
+            if ( !IsPlayerJailed( playerid ) && p_Class[ playerid ] != CLASS_POLICE && !IsPlayerDetained( playerid ) )
             {
                 if ( GetPVarInt( playerid, "AlcatrazWantedCD" ) < g_iTime )
                 {

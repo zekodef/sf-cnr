@@ -53,7 +53,7 @@ hook OnPlayerPickUpDynPickup( playerid, pickupid )
 	{
 		foreach ( new bribeid : BribeCount ) if ( g_bribeData[ bribeid ] [ E_PICKUP ] [ 0 ] == pickupid || g_bribeData[ bribeid ] [ E_PICKUP ] [ 1 ] == pickupid )
 		{
-		    if ( !( g_bribeData[ bribeid ] [ E_DISABLED ] == true || p_WantedLevel[ playerid ] <= 0 || IsPlayerCuffed( playerid ) || GetPlayerState( playerid ) == PLAYER_STATE_SPECTATING ) ) //  || IsPlayerDetained( playerid )
+		    if ( !( g_bribeData[ bribeid ] [ E_DISABLED ] == true || p_WantedLevel[ playerid ] <= 0 || IsPlayerCuffed( playerid ) || GetPlayerState( playerid ) == PLAYER_STATE_SPECTATING || IsPlayerDetained( playerid ) ) )
 		    {
 		    	new
 		    		iWanted = 2;
