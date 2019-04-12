@@ -14,6 +14,7 @@
 #define IsPlayerGettingBlowed(%0) 	(p_GettingBlowjob{%0})
 #define IsPlayerLoadingObjects(%0)	(p_pausedToLoad{%0})
 #define IsPlayerAdminJailed(%0) 	(p_AdminJailed{%0} && p_JailTime[%0])
+#define IsPlayerDetained(%0)		(p_Detained{%0})
 
 /* ** Variables ** */
 new

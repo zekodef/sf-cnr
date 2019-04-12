@@ -7091,11 +7091,6 @@ stock IsPlayerInArmyVehicle( playerid )
 		return false;
 }
 
-stock IsPlayerDetained( playerid )
-{
-	return p_Detained{ playerid };
-}
-
 new playersPeakCount = 0;
 
 stock UpdatePlayerCounters()
