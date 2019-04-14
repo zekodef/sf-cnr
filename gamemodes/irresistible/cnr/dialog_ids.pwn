@@ -39,7 +39,7 @@
 #define DIALOG_GANG_COLOR           		1027
 #define DIALOG_GANG_COLOR_INPUT     		1028
 #define DIALOG_RADIO                		1029
-//#define DIALOG_XPMARKET             		1030
+#define DIALOG_XPMARKET             		1030
 #define DIALOG_PAINTBALL            		1031
 #define DIALOG_GPS                  		1032
 #define DIALOG_VIP_LOCKER           		1033
@@ -211,6 +211,7 @@
 #define DIALOG_HOUSE_SELL 					1201
 #define DIALOG_BUSINESS_SELL_CONFIRM 		1202
 #define DIALOG_NEXT_PAGE_VIP				1204
+#define DIALOG_XPMARKET_SELL                1205
 
 /* ** Hooks ** */
 hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )

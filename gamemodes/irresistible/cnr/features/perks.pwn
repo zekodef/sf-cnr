@@ -67,28 +67,24 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	{
 		switch( listitem )
 		{
-			case 0: ShowPlayerDialog( playerid, DIALOG_PERKS_P, DIALOG_STYLE_TABLIST_HEADERS, "{FFFFFF}Game Perks", ""COL_WHITE"Item Name\t"COL_WHITE"Total Level Req.\t"COL_WHITE"Cost ($)\nHide From Radar\t"COL_GOLD"75\t"COL_GREEN"$25,000\nUnlimited Ammunition\t"COL_GOLD"50\t"COL_GREEN"$9,900", "Select", "Back" );
-			case 1: ShowPlayerDialog( playerid, DIALOG_PERKS_V, DIALOG_STYLE_TABLIST_HEADERS, "{FFFFFF}Game Perks", ""COL_WHITE"Item Name\t"COL_WHITE"Total Level Req.\t"COL_WHITE"Cost ($)\nFix & Flip vehicle\t"COL_GOLD"75\t"COL_GREEN"$9,900\nRepair Vehicle\t"COL_GOLD"75\t"COL_GREEN"$7,500\nAdd NOS\t"COL_GOLD"50\t"COL_GREEN"$3,000\nFlip vehicle\t"COL_GOLD"40\t"COL_GREEN"$2,500", "Select", "Back" );
+			case 0: ShowPlayerDialog( playerid, DIALOG_PERKS_P, DIALOG_STYLE_TABLIST_HEADERS, "{FFFFFF}Deathmatch Perks", ""COL_WHITE"Item Name\t"COL_WHITE"Cost (XP)\nHide From Radar\t"COL_GREEN"250 XP\nUnlimited Ammunition\t"COL_GREEN"100 XP", "Select", "Back" );
+			case 1: ShowPlayerDialog( playerid, DIALOG_PERKS_V, DIALOG_STYLE_TABLIST_HEADERS, "{FFFFFF}Robbery Perks", ""COL_WHITE"Item Name\t"COL_WHITE"Cost (XP)\nFix & Flip vehicle\t"COL_GREEN"180 XP\nRepair Vehicle\t"COL_GREEN"120 XP\nAdd NOS\t"COL_GREEN"80 XP\nFlip vehicle\t"COL_GREEN"50 XP", "Select", "Back" );
 		}
 	}
 	else if ( dialogid == DIALOG_PERKS_P )
 	{
 	    if ( !response )
-	        return ShowPlayerDialog( playerid, DIALOG_PERKS, DIALOG_STYLE_LIST, "{FFFFFF}Game Perks", "Player Perks\nVehicle Perks", "Select", "Cancel" );
+	        return ShowPlayerDialog( playerid, DIALOG_PERKS, DIALOG_STYLE_LIST, "{FFFFFF}Game Perks", "Deathmatch Perks\nRobbery Perks", "Select", "Cancel" );
 
 	    new
-	    	total_level = GetPlayerTotalLevel( playerid );
+			Float: total_dm_xp = GetPlayerExperience( playerid, E_DEATHMATCH );
 
 	    switch( listitem )
 	    {
 	        case 0:
 	        {
-	        	if ( total_level < 75 ) {
-	        		return SendError( playerid, "Your total level must be at least 75 to use this (/level)." );
-	        	}
-
-	        	if ( GetPlayerCash( playerid ) < 25000 ) {
-	        		return SendError( playerid, "You do not have enough money for this item ($25,000)." );
+	        	if ( total_dm_xp < 250 ) {
+	        		return SendError( playerid, "You need at least 250 Deathmatch XP for this item." );
 	        	}
 
 	        	if ( GetPlayerClass( playerid ) != CLASS_CIVILIAN ) {
@@ -98,9 +94,9 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	        	p_OffRadar{ playerid } = true;
 				p_OffRadarTimestamp[ playerid ] = GetServerTime( ) + 180;
 
-	        	GivePlayerCash( playerid, -25000 );
+	        	GivePlayerExperience( playerid, E_DEATHMATCH, -250, .with_dilation = false );
 
-	        	SendServerMessage( playerid, "You have hidden yourself from the radar (3 minutes) for $25,000." );
+	        	SendServerMessage( playerid, "You have hidden yourself from the radar (3 minutes) for 250 Deathmatch XP." );
 	        	ShowPlayerHelpDialog( playerid, 3000, "~g~~h~Hide from radar ~w~will be deactivate in 3 minutes." );
 
 	        	SetPlayerColor( playerid, setAlpha( GetPlayerColor( playerid ), 0x00 ) );
@@ -109,12 +105,8 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 	        case 1:
 	        {
-	        	if ( total_level < 50 ) {
-	        		return SendError( playerid, "Your total level must be at least 50 to use this (/level)." );
-	        	}
-
-	        	if ( GetPlayerCash( playerid ) < 9900 ) {
-	        		return SendError( playerid, "You do not have enough money for this item ($9,900)." );
+	        	if ( total_dm_xp < 100 ) {
+	        		return SendError( playerid, "You need at least 100 Deathmatch XP for this item." );
 	        	}
 
                 for ( new i = 0; i < MAX_WEAPONS; i++ )
@@ -125,8 +117,9 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				    }
 				}
 
-				GivePlayerCash( playerid, -9900 );
-				SendServerMessage( playerid, "You have bought unlimited ammunition for $9,900." );
+	        	GivePlayerExperience( playerid, E_DEATHMATCH, -100, .with_dilation = false );
+
+				SendServerMessage( playerid, "You have bought unlimited ammunition for 100 Deathmatch XP." );
 				SetPlayerArmedWeapon( playerid, 0 );
 				Beep( playerid );
 	        }
@@ -135,78 +128,62 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	else if ( dialogid == DIALOG_PERKS_V )
 	{
 	    if ( !response )
-	        return ShowPlayerDialog( playerid, DIALOG_PERKS, DIALOG_STYLE_LIST, "{FFFFFF}Game Perks", "Player Perks\nVehicle Perks", "Select", "Cancel" );
+	        return ShowPlayerDialog( playerid, DIALOG_PERKS, DIALOG_STYLE_LIST, "{FFFFFF}Game Perks", "Deathmatch Perks\nRobbery Perks", "Select", "Cancel" );
 
 		if ( !IsPlayerInAnyVehicle( playerid ) || GetPlayerState( playerid ) != PLAYER_STATE_DRIVER )
 		    return SendError( playerid, "You are not in any vehicle as a driver." );
 
-	    new
-	    	total_level = GetPlayerTotalLevel( playerid );
+		new
+			Float: total_robbery_xp = GetPlayerExperience( playerid, E_ROBBERY );
 
 	    switch( listitem )
 	    {
 	    	case 0:
 	        {
-	        	if ( total_level < 75 ) {
-	        		return SendError( playerid, "Your total level must be at least 75 to use this (/level)." );
-	        	}
-
-	        	if ( GetPlayerCash( playerid ) < 9900 ) {
-	        		return SendError( playerid, "You do not have enough money for this item ($9,900)." );
+	        	if ( total_robbery_xp < 180 ) {
+	        		return SendError( playerid, "You need at least 180 Robbery XP for this item." );
 	        	}
 
 	            new Float: vZ, vehicleid = GetPlayerVehicleID( playerid );
 				GetVehicleZAngle( vehicleid, vZ ), SetVehicleZAngle( vehicleid, vZ );
                 RepairVehicle( vehicleid );
-                GivePlayerCash( playerid, -9900 );
-				SendServerMessage( playerid, "You have fixed and flipped your vehicle for $9,900." );
+				GivePlayerExperience( playerid, E_ROBBERY, -180, .with_dilation = false );
+				SendServerMessage( playerid, "You have fixed and flipped your vehicle for 180 Robbery XP." );
 				PlayerPlaySound( playerid, 1133, 0.0, 0.0, 5.0 );
 	        }
 	        case 1:
 	        {
-	        	if ( total_level < 75 ) {
-	        		return SendError( playerid, "Your total level must be at least 75 to use this (/level)." );
-	        	}
-
-	        	if ( GetPlayerCash( playerid ) < 7500 ) {
-	        		return SendError( playerid, "You do not have enough money for this item ($7,500)." );
+	        	if ( total_robbery_xp < 120 ) {
+	        		return SendError( playerid, "You need at least 120 Robbery XP for this item." );
 	        	}
 
             	new vehicleid = GetPlayerVehicleID( playerid );
 				PlayerPlaySound( playerid, 1133, 0.0, 0.0, 5.0 );
                 RepairVehicle( vehicleid );
-                GivePlayerCash( playerid, -7500 );
-				SendServerMessage( playerid, "You have repaired your car for $7,500." );
+				GivePlayerExperience( playerid, E_ROBBERY, -120, .with_dilation = false );
+				SendServerMessage( playerid, "You have repaired your car for 120 Robbery XP." );
 	        }
 	        case 2:
 	        {
-	        	if ( total_level < 50 ) {
-	        		return SendError( playerid, "Your total level must be at least 50 to use this (/level)." );
-	        	}
-
-	        	if ( GetPlayerCash( playerid ) < 3000 ) {
-	        		return SendError( playerid, "You do not have enough money for this item ($3,000)." );
+	        	if ( total_robbery_xp < 80 ) {
+	        		return SendError( playerid, "You need at least 80 Robbery XP for this item." );
 	        	}
 
                 AddVehicleComponent( GetPlayerVehicleID( playerid ), 1010 );
-                GivePlayerCash( playerid, -3000 );
-				SendServerMessage( playerid, "You have installed nitro on your car for $3,000." );
+				GivePlayerExperience( playerid, E_ROBBERY, -80, .with_dilation = false );
+				SendServerMessage( playerid, "You have repaired your car for 80 Robbery XP." );
 				PlayerPlaySound( playerid, 1133, 0.0, 0.0, 5.0 );
 	        }
 	        case 3:
 	        {
-	        	if ( total_level < 40 ) {
-	        		return SendError( playerid, "Your total level must be at least 40 to use this (/level)." );
-	        	}
-
-	        	if ( GetPlayerCash( playerid ) < 2500 ) {
-	        		return SendError( playerid, "You do not have enough money for this item ($2,500)." );
+	        	if ( total_robbery_xp < 50 ) {
+	        		return SendError( playerid, "You need at least 50 Robbery XP for this item." );
 	        	}
 
 	            new Float: vZ, vehicleid = GetPlayerVehicleID( playerid );
 				GetVehicleZAngle( vehicleid, vZ ), SetVehicleZAngle( vehicleid, vZ );
-                GivePlayerCash( playerid, -2500 );
-				SendServerMessage( playerid, "You have flipped your vehicle for $2,500." );
+				GivePlayerExperience( playerid, E_ROBBERY, -50, .with_dilation = false );
+				SendServerMessage( playerid, "You have repaired your car for 50 Robbery XP." );
 				PlayerPlaySound( playerid, 1133, 0.0, 0.0, 5.0 );
 	        }
 	    }
@@ -219,11 +196,11 @@ CMD:perks( playerid, params[ ] )
 {
 	if ( IsPlayerInEvent( playerid ) || IsPlayerInBattleRoyale( playerid ) )
 		return SendError( playerid, "You cannot use this command since you're in an event." );
-	
+
 	if ( IsPlayerInArmyVehicle( playerid ) )
 		return SendError( playerid, "You cannot use this command while in an army vehicle." );
 
-	return ShowPlayerDialog( playerid, DIALOG_PERKS, DIALOG_STYLE_LIST, "{FFFFFF}Game Perks", "Player Perks\nVehicle Perks", "Select", "Cancel" );
+	return ShowPlayerDialog( playerid, DIALOG_PERKS, DIALOG_STYLE_LIST, "{FFFFFF}Game Perks", "Deathmatch Perks\nRobbery Perks", "Select", "Cancel" );
 }
 
 /* ** Functions ** */
