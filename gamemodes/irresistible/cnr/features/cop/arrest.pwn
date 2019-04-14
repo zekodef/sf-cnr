@@ -271,12 +271,12 @@ CMD:uncuff( playerid, params[ ] )
 
 CMD:detain( playerid, params[ ] )
 {
-	new victimid;
+	new victimid = GetClosestPlayer( playerid );
   	if ( p_Class[ playerid ] != CLASS_POLICE ) return SendError( playerid, "This is restricted to police only." );
 	else if ( IsPlayerJailed( playerid ) ) return SendError( playerid, "You cannot use this command since you're jailed." );
    	else if ( p_Spectating{ playerid } ) return SendError( playerid, "You cannot use such commands while you're spectating." );
-	else if ( sscanf( params, "u", victimid ) ) return SendUsage( playerid, "/detain [PLAYER_ID]" );
-	else if ( victimid == playerid ) return SendError( playerid, "You cannot detain yourself." );
+	//else if ( sscanf( params, "u", victimid ) ) return SendUsage( playerid, "/detain [PLAYER_ID]" );
+	//else if ( victimid == playerid ) return SendError( playerid, "You cannot detain yourself." );
  	else if ( GetDistanceBetweenPlayers( playerid, victimid ) < 4.0 && IsPlayerConnected( victimid ) )
  	{
 	    if ( p_Class[ victimid ] == p_Class[ playerid ] ) return SendError( playerid, "This player you're close to is in your team." );
