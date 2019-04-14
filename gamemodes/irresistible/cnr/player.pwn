@@ -14,6 +14,7 @@
 #define IsPlayerGettingBlowed(%0) 	(p_GettingBlowjob{%0})
 #define IsPlayerLoadingObjects(%0)	(p_pausedToLoad{%0})
 #define IsPlayerAdminJailed(%0) 	(p_AdminJailed{%0} && p_JailTime[%0])
+#define IsPlayerDetained(%0)		(p_Detained{%0})
 
 /* ** Variables ** */
 new
@@ -146,9 +147,9 @@ new
 	p_HouseCrackingPW				[ MAX_PLAYERS ],
 	p_Burglaries                    [ MAX_PLAYERS ],
     p_ArmyBanned                    [ MAX_PLAYERS char ],
-	//Text3D: p_DetainedLabel       [ MAX_PLAYERS ] = { Text3D: INVALID_3DTEXT_ID, ... },
-    //bool: p_Detained          	[ MAX_PLAYERS char ],
-	//p_DetainedBy                  [ MAX_PLAYERS ],
+	Text3D: p_DetainedLabel       [ MAX_PLAYERS ] = { Text3D: INVALID_3DTEXT_ID, ... },
+    bool: p_Detained          	[ MAX_PLAYERS char ],
+	p_DetainedBy                  [ MAX_PLAYERS ],
 	p_BailTimestamp					[ MAX_PLAYERS ],
 	p_AFKTime						[ MAX_PLAYERS ],
 	bool: p_ClassSelection			[ MAX_PLAYERS char ],

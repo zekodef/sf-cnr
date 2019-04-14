@@ -3,7 +3,7 @@
  *      	San Fierro: Cops and Robbers
  *
  * 		Original Creator: Lorenc_
- *		Contributors: Stev
+ *		Contributors: Damen, Stev
  *
  *      Thanks to: y_less/zeex/Frosha/Incognito/SA-MP team
  *
@@ -16,7 +16,7 @@
 #pragma option -d3
 #pragma dynamic 7200000
 
-//#define DEBUG_MODE
+#define DEBUG_MODE
 
 #if defined DEBUG_MODE
 	#pragma option -d3
@@ -478,7 +478,7 @@ public OnPlayerDisconnect( playerid, reason )
 	CutSpectation( playerid );
 	LeavePlayerPaintball( playerid );
     RemovePlayerFromRace( playerid );
-	//p_Detained		{ playerid } = false;
+	p_Detained		{ playerid } = false;
 	p_Tied			{ playerid } = false;
 	p_Kidnapped		{ playerid } = false;
 	p_Wood          [ playerid ] = 0;
@@ -531,7 +531,7 @@ public OnPlayerDisconnect( playerid, reason )
 	p_PmResponder	[ playerid ] = INVALID_PLAYER_ID;
 	p_ViewingStats  [ playerid ] = INVALID_PLAYER_ID;
 	p_Spectating    { playerid } = false;
-	//p_DetainedBy	[ playerid ] = INVALID_PLAYER_ID;
+	p_DetainedBy	[ playerid ] = INVALID_PLAYER_ID;
     p_GangID		[ playerid ] = INVALID_GANG_ID;
 	p_InfectedHIV	{ playerid } = false;
 	p_OwnedHouses	[ playerid ] = 0;
@@ -585,8 +585,8 @@ public OnPlayerDisconnect( playerid, reason )
 	p_AntiTextSpamCount{ playerid } = 0;
     Delete3DTextLabel( p_AdminLabel[ playerid ] );
     p_AdminLabel[ playerid ] = Text3D: INVALID_3DTEXT_ID;
-	//Delete3DTextLabel( p_DetainedLabel[ playerid ] );
-	//p_DetainedLabel[ playerid ] = Text3D: INVALID_3DTEXT_ID;
+	Delete3DTextLabel( p_DetainedLabel[ playerid ] );
+	p_DetainedLabel[ playerid ] = Text3D: INVALID_3DTEXT_ID;
 	Delete3DTextLabel( p_TiedLabel[ playerid ] );
 	p_TiedLabel[ playerid ] = Text3D: INVALID_3DTEXT_ID;
 	DestroyDynamic3DTextLabel( p_WeedLabel[ playerid ] );
