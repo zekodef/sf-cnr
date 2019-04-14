@@ -1,0 +1,4 @@
+(+) /detain and it's dropoff points are now active.
+(/) City Harpoints have been adjusted to only fit the inner-city limits.
+(/) XP Market and /perks are now based off Deathmatch and Robbery XP.
+(*) Fixes the ID requirement for /taze, /cuff, and /arrest
