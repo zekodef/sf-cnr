@@ -453,3 +453,9 @@ DQCMD:rcon( DCC_Channel: channel, DCC_User: user, params[ ] )
 	}
 	return 1;
 }
+
+/* ** In-Game Discord Commands * **/
+CMD:discord( playerid, params[ ] )
+{
+	return SendServerMessage( playerid, "You can access our Discord server at {7289da}sfcnr.com/discord" );
+}

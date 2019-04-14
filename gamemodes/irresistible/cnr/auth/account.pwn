@@ -315,6 +315,10 @@ thread OnAttemptPlayerLogin( playerid, password[ ] )
 
 			// Log in player
 		  	SendServerMessage( playerid, "You have " COL_GREEN "successfully" COL_WHITE " logged in!" );
+
+			// Chat Ban Player
+			format( szBigString, sizeof( szBigString ), "SELECT * FROM `CHAT_BANS` WHERE `ID` = '%d' LIMIT 0,1", p_AccountID[ playerid ] );
+			mysql_function_query( dbHandle, szBigString, true, "ChatBanUponLogin", "d", playerid );
 		}
 	    else
 	    {

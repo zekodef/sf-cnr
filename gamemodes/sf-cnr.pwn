@@ -16,7 +16,7 @@
 #pragma option -d3
 #pragma dynamic 7200000
 
-// #define DEBUG_MODE
+//#define DEBUG_MODE
 
 #if defined DEBUG_MODE
 	#pragma option -d3
@@ -197,6 +197,8 @@ public OnServerUpdateTimer( )
 
 	// better to store in a variable as we are getting the timestamp from hardware
 	g_iTime = gettime( );
+	
+	UpdatePlayerCounters();
 
 	// for hooks
 	CallLocalFunction( "OnServerUpdate", "" );
@@ -521,6 +523,9 @@ public OnPlayerDisconnect( playerid, reason )
 	p_Cuffed		{ playerid } = false;
 	justConnected	{ playerid } = true;
  	p_Muted			{ playerid } = false;
+	p_ChatBanned	{ playerid } = false;
+	p_ChatBannedBy	[ playerid ] [ 0 ] = '\0';
+	p_ChatBanReason [ playerid ] [ 0 ] = '\0';
 	p_MetalMelter	[ playerid ] = 0;
 	p_LeftCuffed 	{ playerid } = false;
 	p_PmResponder	[ playerid ] = INVALID_PLAYER_ID;
@@ -1508,12 +1513,15 @@ public OnPlayerText( playerid, text[ ] )
 	    return SendError( playerid, "An error occured, please try again." ), 0;
 #endif
 
+	if ( IsPlayerChatBanned( playerid ) )
+		return SendError( playerid, "You have been chat banned and are not allowed to chat."), 0;
+
 	if ( textContainsIP( text ) )
 		return SendServerMessage( playerid, "Please do not advertise." ), 0;
 
 	new tick_count = GetTickCount( );
 
-	if ( p_AntiTextSpam[ playerid ] > tick_count )
+	if ( p_AntiTextSpam[ playerid ] > tick_count && p_AdminLevel[ playerid ] != 6 )
 	{
 		p_AntiTextSpam[ playerid ] = tick_count + 750;
 	    p_AntiTextSpamCount{ playerid } ++;
@@ -1669,15 +1677,6 @@ stock UntiePlayer( playerid )
 	p_BulletInvulnerbility[ playerid ] = g_iTime + 5;
 	SendGlobalMessage( -1, ""COL_GREY"[SERVER]{FFFFFF} %s(%d) has been untied by the anti-abuse system.", ReturnPlayerName( playerid ), playerid );
 }
-
-function emp_deactivate( vehicleid )
-{
-	if ( !IsValidVehicle( vehicleid ) ) return 0;
-	GetVehicleParamsEx( vehicleid, engine, lights, alarm, doors, bonnet, boot, objective );
-	SetVehicleParamsEx( vehicleid, VEHICLE_PARAMS_ON, lights, alarm, doors, bonnet, boot, objective );
-	return 1;
-}
-
 
 public OnPlayerProgressUpdate( playerid, progressid, bool: canceled, params )
 {
@@ -2114,7 +2113,8 @@ CMD:cw( playerid, params[ ] ) return cmd_carwhisper( playerid, params );
 CMD:carwhisper( playerid, params[ ] )
 {
 	new msg[ 100 ];
-	if ( !IsPlayerInAnyVehicle( playerid ) ) return SendError( playerid, "You must be inside a vehicle to use this command." );
+	if ( p_ChatBanned{ playerid } ) return SendError( playerid, "You have been chat banned and are not allowed to chat." );
+	else if ( !IsPlayerInAnyVehicle( playerid ) ) return SendError( playerid, "You must be inside a vehicle to use this command." );
 	else if ( sscanf( params, "s[100]", msg ) ) return SendUsage( playerid, "/carwhisper [MESSAGE]" );
 	else if ( textContainsIP( msg ) ) return SendError( playerid, "Advertising is forbidden." );
 	else
@@ -2133,7 +2133,8 @@ CMD:w( playerid, params[ ] ) return cmd_whisper( playerid, params );
 CMD:whisper( playerid, params[ ] )
 {
 	new msg[ 100 ];
-	if ( sscanf( params, "s[100]", msg ) ) return SendUsage( playerid, "/whisper [MESSAGE]" );
+	if ( p_ChatBanned{ playerid } ) return SendError( playerid, "You have been chat banned and are not allowed to chat." );
+	else if ( sscanf( params, "s[100]", msg ) ) return SendUsage( playerid, "/whisper [MESSAGE]" );
 	else if ( textContainsIP( msg ) ) return SendError( playerid, "Advertising is forbidden." );
 	else
 	{
@@ -2151,8 +2152,8 @@ CMD:whisper( playerid, params[ ] )
 
 CMD:admins( playerid, params[ ] )
 {
-	if ( GetPlayerScore( playerid ) < 500 && !IsPlayerUnderCover( playerid ) && p_AdminLevel[ playerid ] < 1 )
-	    return SendError( playerid, "You need at least 500 score to view the online adminstrators." );
+	if ( GetPlayerScore( playerid ) < 50 && !IsPlayerUnderCover( playerid ) && p_AdminLevel[ playerid ] < 1 )
+	    return SendError( playerid, "You need at least 50 score to view the online adminstrators." );
 
 	new g_adminList[ MAX_PLAYERS ] [ 2 ], bool: is_empty = true;
 
@@ -2518,6 +2519,11 @@ CMD:myaccid( playerid, params[ ] )
 	return 1;
 }
 
+CMD:discord( playerid, params[ ] )
+{
+	return SendServerMessage( playerid, "Visit 'sfcnr.com/discord' to join our Discord server!" );
+}
+
 CMD:job( playerid, params[ ] )
 {
     if ( p_VIPLevel[ playerid ] >= VIP_PLATINUM && p_VIPJob{ playerid } != p_Job{ playerid } )
@@ -2638,69 +2644,6 @@ thread OnPlayerWeeklyTime( playerid, irc, player[ ] )
 		if ( !irc )
 			SendError( playerid, "Player not found." );
 	}
-	return 1;
-}
-
-CMD:emp( playerid, params[ ] )
-{
-	new
-		pID
-	;
-	if ( p_Class[ playerid ] != CLASS_POLICE ) return SendError( playerid, "This is restricted to Police only." );
-	else if ( p_inCIA{ playerid } == false || p_inArmy{ playerid } == true ) return SendError( playerid, "This is restricted to CIA only." );
-	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/emp [PLAYER_ID]" );
-	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
-	else if ( pID == playerid ) return SendError( playerid, "You cannot do this to yourself." );
-	else if ( IsPlayerKidnapped( playerid ) ) return SendError( playerid, "You are kidnapped, you cannot do this." );
-	else if ( IsPlayerTied( playerid ) ) return SendError( playerid, "You are tied, you cannot do this." );
-	else if ( IsPlayerAdminOnDuty( pID ) ) return SendError( playerid, "This person is an admin on duty!" );
-	else if ( p_Class[ pID ] == CLASS_POLICE ) return SendError( playerid, "This person is a apart of the Police Force." );
-	else if ( !p_WantedLevel[ pID ] ) return SendError( playerid, "This person is innocent!" );
-	else if ( !IsPlayerInAnyVehicle( pID ) ) return SendError( playerid, "This player isn't inside any vehicle." );
-	else if ( GetPlayerState( pID ) != PLAYER_STATE_DRIVER ) return SendError( playerid, "This player is not a driver of any vehicle." );
-	//else if ( g_buyableVehicle{ GetPlayerVehicleID( pID ) } == true ) return SendError( playerid, "Failed to place a Electromagnetic Pulse on this player's vehicle." );
-    else if ( GetDistanceBetweenPlayers( playerid, pID ) < 30.0 )
-	{
-	    /* ** ANTI EMP SPAM ** */
-	    if ( p_AntiEmpSpam[ pID ] > g_iTime )
-	    	return SendError( playerid, "You cannot EMP this person for %s.", secondstotime( p_AntiEmpSpam[ pID ] - g_iTime ) );
-	    /* ** END OF ANTI SPAM ** */
-
-	    new
-	    	iVehicle = GetPlayerVehicleID( pID );
-
-		if ( g_buyableVehicle{ iVehicle } )
-			return SendError( playerid, "Failed to place a Electromagnetic Pulse on this player's vehicle." );
-
-		p_AntiEmpSpam[ pID ] = g_iTime + 60;
-
-	    if ( p_AntiEMP[ pID ] > 0 )
-	    {
-		    p_AntiEMP[ pID ] --;
-
-		    new
-		    	iRandom = random( 101 );
-
-		    //if ( g_buyableVehicle{ iVehicle } )
-		    	//iRandom -= 50;
-
-	    	if ( iRandom < 90 )
-	    	{
-		        SendClientMessage( playerid, -1, ""COL_RED"[EMP]{FFFFFF} An Electromagnetic Pulse attempt has been repelled by an aluminum foil!" );
-				SendClientMessage( pID, -1, ""COL_GREEN"[EMP]{FFFFFF} Electromagnetic Pulse had been repelled by aluminum foil set on vehicle." );
-				p_QuitToAvoidTimestamp[ pID ] = g_iTime + 15;
-	    		return 1;
-	    	}
-	    }
-
- 		SendClientMessageFormatted( pID, -1, ""COL_RED"[EMP]{FFFFFF} %s(%d) has sent an electromagnetic pulse on your vehicle causing it to crash for 30 seconds.", ReturnPlayerName( playerid ), playerid );
-		SendClientMessageFormatted( playerid, -1, ""COL_GREEN"[EMP]{FFFFFF} You have activated a electromagnetic pulse on %s(%d)'s vehicle!", ReturnPlayerName( pID ), pID );
-		p_QuitToAvoidTimestamp[ pID ] = g_iTime + 15;
-		SetTimerEx( "emp_deactivate", 30000, false, "d", GetPlayerVehicleID( pID ) );
-		GetVehicleParamsEx( iVehicle, engine, lights, alarm, doors, bonnet, boot, objective );
-		SetVehicleParamsEx( iVehicle, VEHICLE_PARAMS_OFF, lights, alarm, doors, bonnet, boot, objective );
-	}
-	else SendError( playerid, "This player is not nearby." );
 	return 1;
 }
 
@@ -5226,6 +5169,7 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 								""COL_GREY"/dss{FFFFFF} - Destroys a specified spike set id.\n"\
 								""COL_GREY"/dssall{FFFFFF} - Removes all spike sets.\n"\
 								""COL_GREY"/emp{FFFFFF} - Shuts down the engine of a driver's vehicle.\n"\
+								""COL_GREY"/disableemp - /demp -{FFFFFF} - Reinitializes the engine of a driver's vehicle.\n"\
 								""COL_GREY"/bruteforce{FFFFFF} - Brute forces a houses' password." );
 				ShowPlayerDialog( playerid, DIALOG_CMDS_REDIRECT, DIALOG_STYLE_MSGBOX, "{FFFFFF}Police Commands", szCMDS, "Okay", "Back" );
 	        }
@@ -5272,7 +5216,13 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	        case 8:
 	        {
 				if ( p_VIPLevel[ playerid ] < VIP_REGULAR ) return SendError( playerid, "You are not a V.I.P, to become one visit "COL_GREY"donate.sfcnr.com" );
-				cmd_vipcmds( playerid, "" );
+				szCMDS[ 0 ] = '\0';
+	            strcat( szCMDS, ""COL_GREY"/viplist{FFFFFF} - A list of all online V.I.P. players.\n"\
+								""COL_GREY"/vipspawnwep{FFFFFF} - Configure your V.I.P. weapons that you are given on spawning.\n"\
+								""COL_GREY"/vipgun{FFFFFF} - Use the V.I.P. Lounge Weapon vending machine.\n"\
+								""COL_GREY"/vipskin{FFFFFF} - Configure your V.I.P. skin.\n"\
+								""COL_GREY"/vipjob{FFFFFF} - Choose your V.I.P. job that allows you to have two jobs at once.\n" );
+				ShowPlayerDialog( playerid, DIALOG_CMDS_REDIRECT, DIALOG_STYLE_MSGBOX, ""COL_GOLD"V.I.P. Commands", szCMDS, "Okay", "Back" );
 	        }
 	    }
 	    return 1;
@@ -5657,7 +5607,7 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 		new bool: has = false;
 
 		// erase large string for ease
-		erase( szHugeString );
+		erase( szMassiveString );
 		erase( szLargeString );
 
 		// show items
@@ -5674,13 +5624,13 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 			case 1:
 			{
 				foreach ( new i : houses ) if ( strmatch( g_houseData[ i ] [ E_OWNER ], ReturnPlayerName( playerid ) ) ) {
-					format( szHugeString, sizeof( szHugeString ), "%s%s\n", szHugeString, g_houseData[ i ] [ E_HOUSE_NAME ] ), has = true;
+					format( szMassiveString, sizeof( szMassiveString ), "%s%s\n", szMassiveString, g_houseData[ i ] [ E_HOUSE_NAME ] ), has = true;
 				}
 
 				if ( ! has )
 					return SendError( playerid, "You do not own any home." ), ShowPlayerSpawnMenu( playerid );
 
-				return ShowPlayerDialog( playerid, DIALOG_HOUSES, DIALOG_STYLE_LIST, "{FFFFFF}Set Spawn Location", szHugeString, "Select", "Back" );
+				return ShowPlayerDialog( playerid, DIALOG_HOUSES, DIALOG_STYLE_LIST, "{FFFFFF}Set Spawn Location", szMassiveString, "Select", "Back" );
 			}
 
 			// businesses
@@ -7126,4 +7076,32 @@ stock IsPlayerDead( playerid )
 		return health <= 0.0;
 
 	return GetPlayerState( playerid ) == PLAYER_STATE_WASTED;
+}
+
+stock IsPlayerInArmyVehicle( playerid )
+{
+	new
+		vehicleid = GetPlayerVehicleID( playerid ),
+		vehiclemodelid = GetVehicleModel( vehicleid )
+	;
+
+	if ( vehiclemodelid == 425 || vehiclemodelid == 432 || vehiclemodelid == 520 ) //Rhino, Tank, Hydra
+		return true;
+	else
+		return false;
+}
+
+new playersPeakCount = 0;
+
+stock UpdatePlayerCounters()
+{
+	new total_online = Iter_Count( Player );
+
+	if ( total_online > playersPeakCount ) playersPeakCount = total_online;
+}
+
+CMD:peak( playerid, params[] )
+{
+	if ( p_AdminLevel[ playerid ] != 6 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	return SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" The current peak player count since startup is: %i", playersPeakCount );
 }

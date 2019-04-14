@@ -44,7 +44,7 @@ hook OnScriptInit( )
 	SetDynamicObjectMaterialText( ( g_TopDonorWall = CreateDynamicObject( 3074, -1574.3559, 885.1296, 14.0153, 0.0000, 0.0000, -0.0156 ) ), 0, "Nobody donated :(", 130, "Arial", 48, 0, -65536, 0, 1 );
 
     // Latest Donor TD
-	g_TopDonorTD = TextDrawCreate(320.000000, 2.000000, "Top Donor Lorenc - $0.00, ~w~~h~~h~Latest Donor Lorenc - $0.00");
+	g_TopDonorTD = TextDrawCreate(320.000000, 2.000000, "Top Donor Damen - $0.00, ~w~~h~~h~Latest Donor Damen - $0.00");
 	TextDrawAlignment(g_TopDonorTD, 2);
 	TextDrawBackgroundColor(g_TopDonorTD, 0);
 	TextDrawFont(g_TopDonorTD, 1);
@@ -87,7 +87,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 		strcat( szLargeString,	""COL_WHITE"Thank you a lot for donating! :D In return for your dignity, you have received Irresistible Coins.\n\n"\
 								""COL_GREY" * What do I do with Irresistible Coins?"COL_WHITE" You can claim the V.I.P of your choice via "COL_GREY"/irresistiblecoins market"COL_WHITE".\n" );
 		strcat( szLargeString,	""COL_GREY" * How many do I have?"COL_WHITE" You can see how many Irresistible Coins you have via "COL_GREY"/irresistiblecoins"COL_WHITE".\n" \
-								""COL_GREY" * I'm unsure, help?"COL_WHITE" If you have any questions, please /ask otherwise enquire Lorenc via the forums!\n\nThank you once again for your contribution to our community! :P"  );
+								""COL_GREY" * I'm unsure, help?"COL_WHITE" If you have any questions, please /ask otherwise enquire Damen via the forums!\n\nThank you once again for your contribution to our community! :P"  );
 		return ShowPlayerDialog( playerid, DIALOG_FINISHED_DONATING, DIALOG_STYLE_MSGBOX, ""COL_GOLD"SF-CNR Donation", szLargeString, "Got it!", "" );
 	}
 	else if ( dialogid == DIALOG_FINISHED_DONATING )
@@ -97,7 +97,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	else if ( dialogid == DIALOG_LATEST_DONOR )
     {
 		if ( GetPVarType( playerid, "just_donated" ) != PLAYER_VARTYPE_FLOAT )
-			return SendError( playerid, "Seems to be an issue where we couldn't find how much you donated. Report to Lorenc." );
+			return SendError( playerid, "Seems to be an issue where we couldn't find how much you donated. Report to Damen." );
 
 		new
 			Float: fAmount = GetPVarFloat( playerid, "just_donated" );

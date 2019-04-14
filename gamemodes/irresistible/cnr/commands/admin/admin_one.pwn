@@ -714,3 +714,31 @@ CMD:mutelist( playerid, params[ ] )
 	else
 		return ShowPlayerDialog( playerid, DIALOG_NULL, DIALOG_STYLE_TABLIST, ""COL_WHITE"Muted List", szNormalString, "Close", "" ), 1;
 }
+
+CMD:chatbanlist( playerid, params[ ] )
+{
+	new
+		count = 0;
+
+	if ( p_AdminLevel[ playerid ] < 1 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+
+	szNormalString[ 0 ] = '\0';
+	foreach( new i : Player )
+	{
+		if ( p_ChatBanned{ i } )
+		{
+			format( szNormalString, sizeof( szNormalString ), "%s"COL_WHITE"%s(%d)\t"COL_GREY"By %s for '%s'\n",
+				szNormalString,
+				ReturnPlayerName( i ), i,
+				p_ChatBannedBy[ playerid ],
+				p_ChatBanReason[ playerid ]
+			);
+
+			count ++;
+		}
+	}
+	if ( count == 0 )
+		return SendError( playerid, "There are no chat banned players online." );
+	else
+		return ShowPlayerDialog( playerid, DIALOG_NULL, DIALOG_STYLE_TABLIST, ""COL_WHITE"Chat Ban List", szNormalString, "Close", "" ), 1;
+}

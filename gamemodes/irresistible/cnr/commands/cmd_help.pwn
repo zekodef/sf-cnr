@@ -58,7 +58,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 			return cmd_help( playerid, "" );
 
 		if ( listitem >= 64 )
-			return SendError( playerid, "Unable to process request, contact Lorenc in regards to this." );
+			return SendError( playerid, "Unable to process request, contact Damen in regards to this." );
 
 		new
 			digits[ 64 ];

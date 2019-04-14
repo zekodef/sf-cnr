@@ -52,6 +52,9 @@ new
 	// p_XP                        	[ MAX_PLAYERS ],
 	bool: p_Spectating            	[ MAX_PLAYERS char ],
 	bool: p_Muted                   [ MAX_PLAYERS char ],
+	bool: p_ChatBanned				[ MAX_PLAYERS char ],
+	p_ChatBannedBy					[ MAX_PLAYERS ] [ MAX_PLAYER_NAME ],
+	p_ChatBanReason					[ MAX_PLAYERS ] [ 25 ],
 	bool: p_InfectedHIV             [ MAX_PLAYERS char ],
 	p_AntiTextSpam                  [ MAX_PLAYERS ],
 	bool: p_BlockedPM            	[ MAX_PLAYERS ] [ MAX_PLAYERS ],
@@ -218,3 +221,5 @@ stock IsPlayerSpawned( playerid ) return p_Spawned{ playerid };
 stock IsPlayerJailed( playerid ) return p_Jailed{ playerid };
 
 stock IsPlayerAdminOnDuty( playerid ) return p_AdminOnDuty{ playerid };
+
+stock IsPlayerChatBanned( playerid ) return p_ChatBanned{ playerid };

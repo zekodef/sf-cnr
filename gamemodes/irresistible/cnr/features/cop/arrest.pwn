@@ -51,7 +51,7 @@ hook OnPlayerDeath( playerid, killerid, reason )
 
 hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 {
-	if ( PRESSED( KEY_LOOK_BEHIND ) ) // MMB to taze/cuff/ar
+	/*if ( PRESSED( KEY_LOOK_BEHIND ) ) // MMB to taze/cuff/ar
 	{
 		if ( p_Class[ playerid ] == CLASS_POLICE && ! IsPlayerSpawnProtected( playerid ) )
 		{
@@ -68,7 +68,7 @@ hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 				}
 			}
 		}
-	}
+	}*/
 	return 1;
 }
 
@@ -543,6 +543,22 @@ hook OnPlayerAccessEntrance( playerid, entranceid, worldid, interiorid )
 				p_QuitToAvoidTimestamp[ playerid ] = g_iTime + 30;
 				break;
 			}
+		}
+	}
+	return 1;
+}
+
+hook OnPlayerUpdateEx( playerid )
+{
+	if ( p_Class[ playerid ] == CLASS_POLICE && GetPlayerScore( playerid ) < 50 )
+	{
+		new
+			Float: radius = 25.0,
+			closestCivilian = GetClosestPlayerEx( playerid, CLASS_CIVILIAN, radius );
+
+		if ( closestCivilian != INVALID_PLAYER_ID && GetPlayerWantedLevel( closestCivilian ) != 0 )
+		{
+			return ShowPlayerHelpDialog( playerid, 4000, "Use ~y~/taze [ID]~w~, ~b~/cuff [ID]~w~, and ~r~/ar [ID] ~w~commands to arrest." );
 		}
 	}
 	return 1;

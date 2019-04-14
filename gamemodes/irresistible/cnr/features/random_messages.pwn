@@ -66,7 +66,7 @@ static stock
 		{ "{8ADE47}Stephanie:"COL_WHITE" Play Poker with your friends at any casino! Beat your way to riches!" },
 		{ "{8ADE47}Stephanie:"COL_WHITE" Get casino rewards points by gambling at any casino! Use "COL_GREY"/casino rewards"COL_WHITE" to spend them!" },
 		{ "{8ADE47}Stephanie:"COL_WHITE" Race your friends in a street race or outrun race by using "COL_GREY"/race"COL_WHITE"!" },
-		{ "{8ADE47}Stephanie:"COL_WHITE" Want 3 days of free V.I.P? Add an "COL_GREY"/email"COL_WHITE" to your account!" },
+		//{ "{8ADE47}Stephanie:"COL_WHITE" Want 3 days of free V.I.P? Add an "COL_GREY"/email"COL_WHITE" to your account!" },
 		{ "{8ADE47}Stephanie:"COL_WHITE" Contribute to our feature "COL_GREY"/crowdfunds"COL_WHITE"! Early supporters get benefits!" },
 		{ "{8ADE47}Stephanie:"COL_WHITE" You can buy premium player homes using "COL_GREY"/estate"COL_WHITE"!" },
 		{ "{8ADE47}Stephanie:"COL_WHITE" You can buy Irresistible Coins from players using "COL_GREY"/ic buy"COL_WHITE"!" },
@@ -101,7 +101,7 @@ hook OnServerUpdate( )
 		}
 
 		// throttle
-		g_randomMessageTick = GetServerTime( ) + 30;
+		g_randomMessageTick = GetServerTime( ) + 60;
 	}
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }

@@ -9,7 +9,7 @@
 #include 							< YSI\y_hooks >
 
 /* ** Definitions ** */
-#define MAX_SETTINGS 				( 12 )
+#define MAX_SETTINGS 				( 13 )
 
 #define SETTING_BAILOFFERS 			( 0 )
 #define SETTING_EVENT_TP			( 1 )
@@ -23,13 +23,14 @@
 #define SETTING_COINS_BAR	 		( 9 )
 #define SETTING_TOP_DONOR 			( 10 )
 #define SETTING_WEAPON_PICKUP 		( 11 )
+#define SETTING_HIDE_GAMB_MSG		( 12 )
 
 /* ** Variables ** */
 static stock
 	g_PlayerSettings 				[ MAX_SETTINGS ] [ 24 ] = {
 		{ "Prevent Bail Offers" }, { "Prevent Event Teleports" }, { "Prevent Gang Invites" }, { "Prevent Chat Prefixes" }, { "Prevent Ransom Offers" },
 		{ "Display User ID In Chat" }, { "Display Connection Log" }, { "Display Hitmarker" }, { "Set V.I.P Skin" }, { "Hide Total Coin Bar" }, { "Hide Last Donor Text" },
-		{ "Manual Pickup Weapon" }
+		{ "Manual Pickup Weapon" }, { "Hide Gambling Win Msgs" }
 	},
 	bool: p_PlayerSettings 			[ MAX_PLAYERS ] [ MAX_SETTINGS char ]
 ;
