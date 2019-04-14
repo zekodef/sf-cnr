@@ -51,7 +51,7 @@ hook OnScriptInit( )
 }
 
 hook OnPlayerEnterDynamicCP( playerid, checkpointid ) {
-	if ( IsPlayerJailed( playerid ) ) {
+	if ( IsPlayerJailed( playerid ) && !IsPlayerDetained( playerid ) ) {
 	    return SendError( playerid, "You're jailed, and you accessed a checkpoint. I smell a cheater." ), KickPlayerTimed( playerid ), Y_HOOKS_BREAK_RETURN_1;
 	}
 	return 1;
@@ -250,19 +250,19 @@ stock JailPlayer( playerid, seconds, admin = 0 )
    	PlayerTextDrawSetString	( playerid, p_JailTimeTD[ playerid ], "_" );
 	PlayerTextDrawShow		( playerid, p_JailTimeTD[ playerid ] );
 
-	// External Variables to Jail (resetting)
-	p_Cuffed			{ playerid } = false;
-	p_InfectedHIV 		{ playerid } = false;
-	//p_Detained 		{ playerid } = false;
-	//Delete3DTextLabel	( p_DetainedLabel[ playerid ] );
-	//p_DetainedLabel	[ playerid ] = Text3D: INVALID_3DTEXT_ID;
-	//p_DetainedBy		[ playerid ] = INVALID_PLAYER_ID;
-
 	// Primary Jail Variables
 	p_Jailed			{ playerid } = true;
 	p_JailTime			[ playerid ] = seconds;
 	p_AdminJailed		{ playerid } = admin;
 	p_JailTimer			[ playerid ] = SetTimerEx( "Unjail", 950, true, "d", playerid );
+
+	// External Variables to Jail (resetting)
+	p_Cuffed			{ playerid } = false;
+	p_InfectedHIV 		{ playerid } = false;
+	p_Detained 		{ playerid } = false;
+	Delete3DTextLabel	( p_DetainedLabel[ playerid ] );
+	p_DetainedLabel	[ playerid ] = Text3D: INVALID_3DTEXT_ID;
+	p_DetainedBy		[ playerid ] = INVALID_PLAYER_ID;
 
 	CancelEdit 					( playerid );
 	RemovePlayerStolensFromHands( playerid );

@@ -556,6 +556,9 @@ CMD:sync( playerid, params[ ] )
 	if ( IsPlayerJailed( playerid ) )
 		return SendError( playerid, "You cannot use this feature while you are jailed." );
 
+	if ( IsPlayerDetained( playerid ) )
+		return SendError( playerid, "You cannot use this feature while you are detained." );
+
 	if ( IsPlayerInAnyVehicle( playerid ) )
 		return SendError( playerid, "You cannot synchronize yourself in a vehicle." );
 
