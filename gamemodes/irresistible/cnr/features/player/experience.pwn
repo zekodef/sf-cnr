@@ -362,8 +362,8 @@ stock GivePlayerExperience( playerid, E_LEVELS: level, Float: default_xp = 1.0, 
 		SetPlayerProgressBarValue( playerid, p_playerExpProgress[ playerid ], progress );
 	}
 
-	// seasonal
-	if ( default_xp ) GivePlayerSeasonalXP( playerid, xp_earned );
+	// seasonal (only adds, not including removes)
+	if ( xp_earned > 0.0 ) GivePlayerSeasonalXP( playerid, xp_earned );
 
 	// alert user
 	KillTimer( p_playerExpHideTimer[ playerid ] );
