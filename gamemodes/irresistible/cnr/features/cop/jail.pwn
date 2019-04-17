@@ -50,17 +50,12 @@ hook OnScriptInit( )
 	return 1;
 }
 
-hook OnPlayerEnterDynamicCP( playerid, checkpointid ) {
-	if ( IsPlayerJailed( playerid ) && checkpointid != ( g_Checkpoints[ CP_DROP_OFF_COP ] ||
-		g_Checkpoints[ CP_DROP_OFF_FC ] || g_Checkpoints[ CP_DROP_OFF_DILLIMORE ] ||
-		g_Checkpoints[ CP_DROP_OFF_DIABLO ] || g_Checkpoints[ CP_DROP_OFF_QUBRADOS ] ||
-		g_Checkpoints[ CP_DROP_OFF_COP_LS ] || g_Checkpoints[ CP_DROP_OFF_FBI_LS ] ||
-		g_Checkpoints[ CP_DROP_OFF_FBI_LV ] || g_Checkpoints[ CP_DROP_OFF_COP_LV ] ||
-		g_Checkpoints[ CP_DROP_OFF_FBI ] || g_Checkpoints[ CP_DROP_OFF_HELI ] ) ) {
-	    return SendError( playerid, "You're jailed, and you accessed a checkpoint. I smell a cheater." ), KickPlayerTimed( playerid ), Y_HOOKS_BREAK_RETURN_1;
+/*hook OnPlayerEnterDynamicCP( playerid, checkpointid ) {
+	if ( IsPlayerJailed( playerid ) )  {
+		return SendError( playerid, "You're jailed, and you accessed a checkpoint. I smell a cheater." ), KickPlayerTimed( playerid ), Y_HOOKS_BREAK_RETURN_1;
 	}
 	return 1;
-}
+}*/
 
 hook OnPlayerUpdateEx( playerid )
 {
