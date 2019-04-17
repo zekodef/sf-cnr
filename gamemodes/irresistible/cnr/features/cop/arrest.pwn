@@ -306,6 +306,12 @@ CMD:detain( playerid, params[ ] )
 	return 1;
 }
 
+CMD:bc( playerid, params[ ] ) return cmd_breakcuffs(playerid, params);
+CMD:breakcuffs( playerid, params[ ] )
+{
+	return BreakPlayerCuffs( playerid );
+}
+
 /* ** Functions ** */
 stock AwardArrest( victimid, playerid )
 {
@@ -369,6 +375,8 @@ stock BreakPlayerCuffs( playerid )
 {
 	if ( !IsPlayerConnected( playerid ) || IsPlayerDead( playerid ) ) return false;
 
+	if ( !IsPlayerCuffed( playerid ) ) return SendError( playerid, "You are not cuffed." );
+
 	if ( p_BobbyPins[ playerid ] < 1 )
 	{
 		ShowPlayerHelpDialog( playerid, 4000, "You can buy bobby pins at Supa Save or a 24/7 store to break cuffs." );
@@ -406,12 +414,10 @@ stock BreakPlayerCuffs( playerid )
 	}
 	else
 	{
-		SendServerMessage( playerid, "You have snapped your bobby pin and failed to break out of your cuffs. Re-attempting in 3 seconds." );
+		SendServerMessage( playerid, "You have snapped your bobby pin and failed to break out of your cuffs." );
 		return false;
 	}
 }
-
-function BreakPlayerCuffsAttempt( playerid ) return BreakPlayerCuffs( playerid ), 1;
 
 stock AwardNearestLEO( playerid, reason )
 {
