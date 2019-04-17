@@ -483,6 +483,7 @@ public OnPlayerDisconnect( playerid, reason )
 	p_Kidnapped		{ playerid } = false;
 	p_Wood          [ playerid ] = 0;
 	p_inAlcatraz 	{ playerid } = false;
+	p_AlcatrazSpec	[ playerid ] = 0;
 	p_Ropes			[ playerid ] = 0;
 	p_Scissors      [ playerid ] = 0;
 	p_Fires         [ playerid ] = 0;
@@ -4355,6 +4356,7 @@ public OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 				if ( IsPlayerConnected( i ) && IsPlayerSpawned( i ) && !p_Spectating{ i } && i != playerid )
 				{
 					ForceSpectateOnPlayer( playerid, i );
+					p_AlcatrazSpec[ playerid ] = g_iTime + 10;
 					break;
 				}
 			}
@@ -4366,6 +4368,7 @@ public OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 				if ( IsPlayerConnected( i ) && IsPlayerSpawned( i ) && !p_Spectating{ i } && i != playerid )
 				{
 					ForceSpectateOnPlayer( playerid, i );
+					p_AlcatrazSpec[ playerid ] = g_iTime + 10;
 					break;
 				}
 			}

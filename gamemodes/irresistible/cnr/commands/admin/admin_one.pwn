@@ -655,6 +655,7 @@ CMD:specoff( playerid, params[ ] )
        		p_beingSpectated[ p_whomSpectating[ playerid ] ] = false;
            	p_whomSpectating[ playerid ] = INVALID_PLAYER_ID;
 		}
+		p_AlcatrazSpec[ playerid ] = g_iTime + 10;
 		p_Spectating{ playerid } = false;
 		SendServerMessage( playerid, "Spectation has been closed." );
 	}

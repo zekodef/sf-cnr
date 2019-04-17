@@ -65,7 +65,7 @@ hook OnPlayerUpdateEx( playerid )
         if ( IsPlayerAFK( playerid ) )
             p_AlcatrazEscapeTS[ playerid ] = g_iTime + ALCATRAZ_TIME_PAUSE; // Money farmers?
 
-        if ( IsPlayerInDynamicArea( playerid, g_AlcatrazArea ) )
+        if ( IsPlayerInDynamicArea( playerid, g_AlcatrazArea ) && g_iTime > p_AlcatrazSpec[ playerid ] )
         {
             if ( !IsPlayerJailed( playerid ) && p_Class[ playerid ] != CLASS_POLICE && !IsPlayerDetained( playerid ) )
             {

@@ -172,6 +172,7 @@ new
 	p_AntiExportCarSpam 			[ MAX_PLAYERS ],
 	p_AntiMechFlipSpam 				[ MAX_PLAYERS ],
 	bool: p_inAlcatraz 				[ MAX_PLAYERS char ],
+	p_AlcatrazSpec					[ MAX_PLAYERS ],
 	Text3D: p_TiedLabel       		[ MAX_PLAYERS ] = { Text3D: INVALID_3DTEXT_ID, ... },
 	p_TiedBy 						[ MAX_PLAYERS ],
 	p_BlowjobPrice 					[ MAX_PLAYERS ],
