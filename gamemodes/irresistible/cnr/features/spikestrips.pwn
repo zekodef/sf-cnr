@@ -26,7 +26,7 @@ static stock
 ;
 
 /* ** Hooks ** */
-hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys ) {
+/*hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys ) {
 	new
 		player_vehicle = GetPlayerVehicleID( playerid );
 
@@ -40,7 +40,7 @@ hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys ) {
 		}
 	}
 	return 1;
-}
+}*/
 
 hook OnPlayerDisconnect( playerid, reason ) {
 	ClearPlayerSpikeStrips( playerid, .distance_check = false );
