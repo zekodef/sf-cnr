@@ -384,7 +384,7 @@ stock BreakPlayerCuffs( playerid )
 	}
 	else p_BobbyPins[ playerid ] --;
 
-	new probability = 75; // success rate probability
+	new probability = 50; // success rate probability
 
 	if ( random( 101 ) <= probability )
 	{
