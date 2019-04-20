@@ -309,7 +309,7 @@ CMD:detain( playerid, params[ ] )
 CMD:bc( playerid, params[ ] ) return cmd_breakcuffs(playerid, params);
 CMD:breakcuffs( playerid, params[ ] )
 {
-	return BreakPlayerCuffs( playerid );
+	return BreakPlayerCuffs( playerid ), 1;
 }
 
 /* ** Functions ** */
@@ -408,6 +408,10 @@ stock BreakPlayerCuffs( playerid )
 
 			p_Cuffed{ playerid } = false;
 			p_BulletInvulnerbility[ playerid ] = g_iTime + 5;
+			p_Detained{ playerid } = false;
+			Delete3DTextLabel( p_DetainedLabel[ playerid ] );
+			p_DetainedLabel[ playerid ] = Text3D: INVALID_3DTEXT_ID;
+			p_DetainedBy[ playerid ] = INVALID_PLAYER_ID;
 		}
 		SendServerMessage( playerid, "You have successfully broken out of your cuffs!" );
 		return true;

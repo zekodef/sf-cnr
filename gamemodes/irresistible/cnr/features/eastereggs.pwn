@@ -19,7 +19,7 @@
 #define EASTEREGG_LABEL 			"[EASTER EGG]"
 #define EASTEREGG_NAME 				"Easter Egg"
 #define EASTEREGG_MODEL 			randarg( 19341, 19342, 19343, 19344, 19345 )
-#define MAX_EGGS 					( 4 )
+#define MAX_EGGS 					( 6 )
 
 /* ** Variables ** */
 enum E_EASTEREGG_DATA
@@ -70,7 +70,8 @@ hook OnPlayerUpdateEx( playerid )
 					    }
 					    case 3:
 					    {
-					    	p_IrresistibleCoins[ playerid ] += ( iCoins = fRandomEx( 75.0, 250.0 ) );
+					    	( iCoins = fRandomEx( 75.0, 250.0 ) );
+							GivePlayerIrresistibleCoins( playerid, iCoins );
 					    	format( szPrize, sizeof( szPrize ), "%0.2f coins", iCoins );
 					    }
 					}
