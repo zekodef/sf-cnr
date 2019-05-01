@@ -695,7 +695,8 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 		}
 
 		new
-			iCashMoney = floatround( g_businessData[ iBusiness ] [ E_COST ] / 2 );
+			iCashMoney = floatround( g_businessData[ iBusiness ] [ E_COST ] / 2 ),
+			iBankMoney = g_businessData[ iBusiness ][ E_BANK ];
 
 		p_OwnedBusinesses[ playerid ] --;
 		g_businessData[ iBusiness ] [ E_OWNER_ID ] = 0;
@@ -704,10 +705,10 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 		StopBusinessExportMission( iBusiness );
 		UpdateBusinessData( iBusiness );
 		UpdateBusinessTitle( iBusiness ); // No point querying (add on resale)
-		GivePlayerCash( playerid, iCashMoney );
-
+		
+		GivePlayerCash( playerid, iCashMoney + iBankMoney );
 		SetPlayerPosEx( playerid, g_businessData[ iBusiness ] [ E_X ], g_businessData[ iBusiness ] [ E_Y ], g_businessData[ iBusiness ] [ E_Z ], 0 ), SetPlayerVirtualWorld( playerid, 0 );
-		SendServerMessage( playerid, "You have successfully sold your business for "COL_GOLD"%s"COL_WHITE".", cash_format( iCashMoney ) );
+		SendServerMessage( playerid, "You have successfully sold your business for "COL_GOLD"%s"COL_WHITE" and withdrawn "COL_GOLD"%i"COL_WHITE" from the business bank.", cash_format( iCashMoney ), cash_format( iBankMoney ) );
 
 		DeletePVar( playerid, "biz_sell_id" );
 		return 1;
@@ -1543,6 +1544,7 @@ stock ResetBusiness( iBusiness, bool: hard_reset = false )
 	// data
 	g_businessData[ iBusiness ] [ E_PRODUCT ] = 0;
 	g_businessData[ iBusiness ] [ E_SUPPLIES ] = 0;
+	g_businessData[ iBusiness ] [ E_BANK ] = 0;
 
 	// upgrades
 	g_businessData[ iBusiness ] [ E_CAR_MODEL_ID ] = 554;

@@ -42,8 +42,6 @@ new
 /* ** Hooks ** */
 hook OnScriptInit( )
 {
-	TextDrawSetString( g_MotdTD, "~w~Want more ~g~money, houses, and xp~w~? Consider donating! ~y~/vip" );
-
 	g_currentXPTD = TextDrawCreate(529.000000, 405.000000, "Current XP");
 	TextDrawBackgroundColor(g_currentXPTD, 255);
 	TextDrawFont(g_currentXPTD, 3);
@@ -137,6 +135,7 @@ hook OnScriptInit( )
 	TextDrawColor(g_MotdTD, -1);
 	TextDrawSetOutline(g_MotdTD, 1);
 	TextDrawSetProportional(g_MotdTD, 1);
+	TextDrawSetString( g_MotdTD, "~w~Want more ~g~money~w~, ~r~houses~w~, and ~b~vehicles~w~? Consider donating! ~y~/vip" );
 
 	g_ObjectLoadTD = TextDrawCreate(320.000000, 148.000000, "Loading Objects...~n~Please Wait...");
 	TextDrawAlignment(g_ObjectLoadTD, 2);

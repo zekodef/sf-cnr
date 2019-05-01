@@ -225,11 +225,14 @@ CMD:healall( playerid, params[ ] )
 	if ( p_AdminLevel[ playerid ] < 3 )
 		return SendError( playerid, ADMIN_COMMAND_REJECT );
 
+	new admin_world = GetPlayerVirtualWorld( playerid );
+
 	AddAdminLogLineFormatted( "%s(%d) has healed everybody", ReturnPlayerName( playerid ), playerid );
 	foreach(new i : Player) {
-	    if ( !p_Jailed{ i } ) SetPlayerHealth( i, p_AdminOnDuty{ i } == true ? float( INVALID_PLAYER_ID ) : 100.0 );
+		new loop_world = GetPlayerVirtualWorld( i );
+	    if ( !p_Jailed{ i } && loop_world == admin_world ) SetPlayerHealth( i, p_AdminOnDuty{ i } == true ? float( INVALID_PLAYER_ID ) : 100.0 );
 	}
-	SendGlobalMessage( -1, ""COL_PINK"[ADMIN]"COL_WHITE" Everyone has been healed by %s(%d)!", ReturnPlayerName( playerid ), playerid );
+	SendGlobalMessage( -1, ""COL_PINK"[ADMIN]"COL_WHITE" All players have been healed in %s's(%d) world!", ReturnPlayerName( playerid ), playerid );
 	return 1;
 }
 

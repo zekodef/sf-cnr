@@ -18,7 +18,7 @@
 #define SERVER_TWITTER 				"IrresistibleDev"
 
 /* ** Comment line to disable feature ** */
-#define SERVER_RULES_URL            "files.sfcnr.com/en_rules.txt"							// used for /rules (cnr\features\server_rules.pwn)
+//#define SERVER_RULES_URL            "files.sfcnr.com/en_rules.txt"							// used for /rules (cnr\features\server_rules.pwn)
 #define SERVER_TWITTER_FEED_URL 	"files.sfcnr.com/cnr_twitter.php"						// used for /twitter (cnr\commands\cmd_twitter.pwn)
 #define SERVER_HELP_API_URL			"sfcnr.com/api/player/help"								// used for /help (cnr\commands\cmd_help.pwn)
 #define SERVER_CHANGES_DIRECTORY 	"changelogs/cnr"										// used for /changes (cnr\changelog.pwn)

@@ -34,7 +34,7 @@ enum E_LEVELS {
 enum E_LEVEL_DATA {
 	E_NAME[ 16 ],					E_COLOUR,
 
-	Float: E_MAX_UNITS,				Float: E_XP_DILATION
+	Float: E_MAX_UNITS,				Float: E_XP_DILATION, 		Float: E_SELL_VALUE
 };
 
 enum E_RANK_DATA
@@ -49,10 +49,10 @@ static const
 static const
 	g_levelData 					[ ] [ E_LEVEL_DATA ] =
 	{
-		// Level Name 			Bar Color 		Level 100 Req.		XP Dilation (just to confuse user)
-		{ "Police",				0x3E7EFFFF,		7500.0, 			20.0 }, 	// 7.5k arrests
-		{ "Robbery", 			0xF83245FF, 	30000.0,			15.0 }, 	// 30K robberies
-		{ "Deathmatch", 		0xFF9233FF,		75000.0,			10.0 } 		// 75K kills
+		// Level Name 			Bar Color 		Level 100 Req.		XP Dilation 	Sell Value
+		{ "Police",				0x3E7EFFFF,		7500.0, 			20.0,			10.0 }, 	// 7.5k arrests
+		{ "Robbery", 			0xF83245FF, 	30000.0,			15.0,			10.0 }, 	// 30K robberies
+		{ "Deathmatch", 		0xFF9233FF,		75000.0,			10.0,			5.0 } 		// 75K kills
 /*
 		{ "Fireman",			10000.0,			9.0 },		// 10k fires
 		{ "Hitman",				1500.0,				4.5 },		// 1.5k contracts
@@ -105,6 +105,41 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 {
 	if ( dialogid == DIALOG_VIEW_LEVEL && response ) {
 		return cmd_level( playerid, sprintf( "%d", GetPVarInt( playerid, "experience_watchingid" ) ) ), 1;
+	}
+	else if ( dialogid == DIALOG_XPMARKET && response )
+	{
+		return ShowPlayerSellXPDialog( playerid, listitem );
+	}
+	else if ( dialogid == DIALOG_XPMARKET_SELL )
+	{
+		if ( ! response ) {
+			return cmd_xpmarket( playerid, "" );
+		}
+
+		new level = GetPVarInt( playerid, "selling_xp_level" );
+		new total_xp = floatround( g_playerExperience[ playerid ] [ E_LEVELS: level ], floatround_floor );
+		new xp_amount = strval( inputtext );
+
+		if ( ! ( 0 < xp_amount < 10000000 ) )
+		{
+			SendError( playerid, "You have specified an invalid amount of %s XP.", g_levelData[ level ] [ E_NAME ] );
+			return ShowPlayerSellXPDialog( playerid, level );
+		}
+		else if ( xp_amount > total_xp )
+		{
+			SendError( playerid, "You do not have this much %s XP.", g_levelData[ level ] [ E_NAME ] );
+			return ShowPlayerSellXPDialog( playerid, level );
+		}
+		else
+		{
+			new
+				credit = floatround( float( xp_amount ) * g_levelData[ level ] [ E_SELL_VALUE ], floatround_floor );
+
+			GivePlayerCash( playerid, credit );
+	    	GivePlayerExperience( playerid, E_LEVELS: level, -xp_amount, .with_dilation = false );
+			SendServerMessage( playerid, "You have sold %s %s XP for "COL_GOLD"%s"COL_WHITE".", g_levelData[ level ] [ E_NAME ], number_format( xp_amount ), cash_format( credit ) );
+		}
+		return 1;
 	}
 	return 1;
 }
@@ -205,7 +240,7 @@ CMD:level( playerid, params[ ] )
 	new
 		player_total_lvl = 0;
 
-	szLargeString = ""COL_GREY"Skill\t"COL_GREY"Current Level\t"COL_GREY"XP Till Next Level\n";
+	szLargeString = ""COL_GREY"Skill\t"COL_GREY"Current Level\t"COL_GREY"XP Till Next Level\t"COL_GREY"Total XP\n";
 
 	for ( new level_id; level_id < sizeof( g_levelData ); level_id ++ )
 	{
@@ -214,7 +249,7 @@ CMD:level( playerid, params[ ] )
 		new Float: next_lvl_xp = ( g_levelData[ level_id ] [ E_MAX_UNITS ] * g_levelData[ level_id ] [ E_XP_DILATION ] ) / ( EXP_MAX_PLAYER_LEVEL * EXP_MAX_PLAYER_LEVEL ) * ( next_lvl * next_lvl );
 
 		player_total_lvl += floatround( current_rank, floatround_floor );
-		format( szLargeString, sizeof( szLargeString ), "%s%s Level\t%s%0.0f / %0.0f\t"COL_PURPLE"%0.0f XP\n", szLargeString, g_levelData[ level_id ] [ E_NAME ], current_rank >= 100.0 ? ( COL_GREEN ) : ( COL_GREY ), current_rank, EXP_MAX_PLAYER_LEVEL, next_lvl_xp - g_playerExperience[ watchingid ] [ E_LEVELS: level_id ] );
+		format( szLargeString, sizeof( szLargeString ), "%s%s Level\t%s%0.0f / %0.0f\t"COL_PURPLE"%0.0f XP\t"COL_GREY"%s\n", szLargeString, g_levelData[ level_id ] [ E_NAME ], current_rank >= 100.0 ? ( COL_GREEN ) : ( COL_GREY ), current_rank, EXP_MAX_PLAYER_LEVEL, next_lvl_xp - g_playerExperience[ watchingid ] [ E_LEVELS: level_id ], number_format( g_playerExperience[ playerid ] [ E_LEVELS: level_id ], .decimals = 0 ) );
 	}
 
 	SetPVarInt( playerid, "experience_watchingid", watchingid );
@@ -235,6 +270,19 @@ CMD:rank( playerid, params[ ] )
 	format( szBigString, 196, "SELECT uo.NAME, (SELECT COUNT(DISTINCT ui.`SCORE`) FROM `USERS` ui WHERE ui.`SCORE` >= uo.`SCORE`) AS `GLOBAL_RANK` FROM `USERS` uo WHERE `ID`=%d", p_AccountID[ watchingid ] );
 	mysql_function_query( dbHandle, szBigString, true, "currentUserRank", "ii", playerid, watchingid );
 	return 1;
+}
+
+CMD:xpmarket( playerid, params[ ] )
+{
+	// header
+	szBigString = ""COL_GREY"Skill\t"COL_GREY"Total XP\t"COL_GREY"Value ($)\n";
+
+	// level with user xp
+	for ( new level_id; level_id < sizeof( g_levelData ); level_id ++ ) {
+		new value = floatround( g_playerExperience[ playerid ] [ E_LEVELS: level_id ] * g_levelData[ level_id ] [ E_SELL_VALUE ] );
+		format( szBigString, sizeof( szBigString ), "%s%s Level\t"COL_PURPLE"%s XP\t"COL_GREEN"%s\n", szBigString, g_levelData[ level_id ] [ E_NAME ], number_format( g_playerExperience[ playerid ] [ E_LEVELS: level_id ], .decimals = 0 ), cash_format( value ) );
+	}
+	return ShowPlayerDialog( playerid, DIALOG_XPMARKET, DIALOG_STYLE_TABLIST_HEADERS, "{FFFFFF}XP Market", szBigString, "Select", "Close" ), 1;
 }
 
 /* ** SQL Threads ** */
@@ -279,13 +327,18 @@ thread currentUserRank( playerid, watchingid )
 }
 
 /* ** Functions ** */
+stock Float: GetPlayerExperience( playerid, E_LEVELS: level )
+{
+	return g_playerExperience[ playerid ] [ level ];
+}
+
 stock GivePlayerExperience( playerid, E_LEVELS: level, Float: default_xp = 1.0, bool: with_dilation = true )
 {
 	if ( ! IsPlayerLoggedIn( playerid ) || ! ( 0 <= _: level < sizeof( g_levelData ) ) )
 		return 0;
 
 	// dilation is there so people see +3 when they arrest ... could trigger dopamine levels instead of constantly +1 lol
-	new Float: xp_earned = default_xp * ( IsDoubleXP( ) ? 2.0 : 1.0 ) * ( with_dilation ? ( g_levelData[ _: level ] [ E_XP_DILATION ] ) : 1.0 );
+	new Float: xp_earned = default_xp * ( IsDoubleXP( ) && default_xp > 0.0 ? 2.0 : 1.0 ) * ( with_dilation ? ( g_levelData[ _: level ] [ E_XP_DILATION ] ) : 1.0 );
 
 	// when a player ranks up
 	new next_lvl = floatround( GetPlayerLevel( playerid, level ), floatround_floor ) + 1;
@@ -309,8 +362,8 @@ stock GivePlayerExperience( playerid, E_LEVELS: level, Float: default_xp = 1.0, 
 		SetPlayerProgressBarValue( playerid, p_playerExpProgress[ playerid ], progress );
 	}
 
-	// seasonal
-	GivePlayerSeasonalXP( playerid, xp_earned );
+	// seasonal (only adds, not including removes)
+	if ( xp_earned > 0.0 ) GivePlayerSeasonalXP( playerid, xp_earned );
 
 	// alert user
 	KillTimer( p_playerExpHideTimer[ playerid ] );
@@ -318,7 +371,7 @@ stock GivePlayerExperience( playerid, E_LEVELS: level, Float: default_xp = 1.0, 
 	PlayerTextDrawShow( playerid, p_playerExpTitle[ playerid ] );
 	SetPlayerProgressBarColour( playerid, p_playerExpProgress[ playerid ], g_levelData[ _: level ] [ E_COLOUR ] );
     ShowPlayerProgressBar( playerid, p_playerExpProgress[ playerid ] );
-    PlayerTextDrawSetString( playerid, p_playerExpAwardTD[ playerid ], sprintf( "+%0.0f XP", xp_earned ) );
+    PlayerTextDrawSetString( playerid, p_playerExpAwardTD[ playerid ], sprintf( "%s%0.0f XP", xp_earned < 0.0 ? ( "~r~" ) : ( "+" ), xp_earned ) );
     PlayerTextDrawShow( playerid, p_playerExpAwardTD[ playerid ] );
 	p_playerExpHideTimer[ playerid ] = SetTimerEx( "Experience_HideIncrementTD", 3500, false, "d", playerid );
 
@@ -441,6 +494,25 @@ stock GivePlayerSeasonalXP( playerid, Float: default_xp )
 
 	// save to database
 	mysql_single_query( sprintf( "UPDATE `USERS` SET `RANK` = %f WHERE `ID` = %d", current_season_xp, GetPlayerAccountID( playerid ) ) );
+}
+
+stock ShowPlayerSellXPDialog( playerid, level )
+{
+	new value = floatround( g_playerExperience[ playerid ] [ E_LEVELS: level ] * g_levelData[ level ] [ E_SELL_VALUE ] );
+
+	format( szBigString, sizeof( szBigString ),
+		""COL_WHITE"Please input how much %s XP you want to sell.\n\n"\
+		"Exchange Rate is "COL_GOLD"1 XP"COL_WHITE" for %s\n\n"\
+		"You have %s XP that can be sold for %s\n\n"\
+		""COL_RED"Warning: this action will result in a reduced level.",
+		g_levelData[ level ] [ E_NAME ],
+		cash_format( g_levelData[ level ] [ E_SELL_VALUE ], .decimals = 0 ),
+		number_format( g_playerExperience[ playerid ] [ E_LEVELS: level ], .decimals = 0 ),
+		cash_format( value, .decimals = 0 )
+	);
+
+	SetPVarInt( playerid, "selling_xp_level", level );
+	return ShowPlayerDialog( playerid, DIALOG_XPMARKET_SELL, DIALOG_STYLE_INPUT, "{FFFFFF}XP Market", szBigString, "Sell", "Cancel");
 }
 
 /* ** Macros ** */
