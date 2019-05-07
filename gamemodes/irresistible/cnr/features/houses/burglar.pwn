@@ -325,7 +325,7 @@ hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys )
 		new
 			houseid = GetPlayerEnteredHouse( playerid );
 
-		if ( IsValidHouse( houseid ) && ! IsPlayerHomeOwner( playerid, houseid ) )
+		if ( IsValidHouse( houseid ) && ! IsPlayerHomeOwner( playerid, houseid ) && GetPlayerVirtualWorld( playerid ) != 0 )
 		{
 		    new Float: distance = 99999.99, furniture_slot = ITER_NONE;
 			new objectid = GetClosestFurniture( houseid, playerid, distance, furniture_slot );

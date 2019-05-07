@@ -205,9 +205,9 @@ CMD:giveweaponall( playerid, params[ ] )
 
 CMD:circleall( playerid, params[ ] )
 {
-	new seconds = 3, allowcop, noarmour;
+	new seconds, allowcop, noarmour;
 	if ( p_AdminLevel[ playerid ] < 4 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-    else if ( sscanf( params, "D(3)D(0)D(1)", seconds, allowcop, noarmour ) ) return SendUsage(playerid, "/circleall [SECONDS] [ALLOW_COPS 0|1] [REMOVE ARMOUR 0|1]" );
+    else if ( sscanf( params, "ddd", seconds, allowcop, noarmour ) ) return SendUsage(playerid, "/circleall [SECONDS] [ALLOW_COPS 0|1] [REMOVE ARMOUR 0|1]" );
     else if ( g_circleall_CD ) return SendError( playerid, "There is already a countdown on-going." );
     else if ( seconds > 60 ) return SendError( playerid, "You must specifiy the amount of seconds from 0 to 60." );
     else if ( allowcop < 0 || allowcop > 1 ) return SendError( playerid, "0 or 1 can only be the cop allowance parameter value!" );
