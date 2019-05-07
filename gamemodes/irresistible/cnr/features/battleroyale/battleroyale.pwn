@@ -1242,10 +1242,10 @@ static stock BattleRoyale_RedrawBorder( lobbyid, Float: sides_rate = 1.0, Float:
     new temporary_gangzone[ 4 ];
 
     // redraw gangzones
-    temporary_gangzone[ 0 ] = GangZoneCreate( br_lobbyData[ lobbyid ] [ E_B_MAX_X ],-3000, 3000, 3000, .bordersize = 0.0, .numbersize = 0.0 );
-    temporary_gangzone[ 1 ] = GangZoneCreate( -3000, -3000, br_lobbyData[ lobbyid ] [ E_B_MIN_X ], 3000, .bordersize = 0.0, .numbersize = 0.0 );
-    temporary_gangzone[ 2 ] = GangZoneCreate( br_lobbyData[ lobbyid ] [ E_B_MIN_X ], -3000, br_lobbyData[ lobbyid ] [ E_B_MAX_X ], br_lobbyData[ lobbyid ] [ E_B_MIN_Y ], .bordersize = 0.0, .numbersize = 0.0 );
-    temporary_gangzone[ 3 ] = GangZoneCreate( br_lobbyData[ lobbyid ] [ E_B_MIN_X ], br_lobbyData[ lobbyid ] [ E_B_MAX_Y ], br_lobbyData[ lobbyid ] [ E_B_MAX_X ], 3000, .bordersize = 0.0, .numbersize = 0.0 );
+    temporary_gangzone[ 0 ] = GangZoneCreate( br_lobbyData[ lobbyid ] [ E_B_MAX_X ],-3000, 3000, 3000 );
+    temporary_gangzone[ 1 ] = GangZoneCreate( -3000, -3000, br_lobbyData[ lobbyid ] [ E_B_MIN_X ], 3000 );
+    temporary_gangzone[ 2 ] = GangZoneCreate( br_lobbyData[ lobbyid ] [ E_B_MIN_X ], -3000, br_lobbyData[ lobbyid ] [ E_B_MAX_X ], br_lobbyData[ lobbyid ] [ E_B_MIN_Y ] );
+    temporary_gangzone[ 3 ] = GangZoneCreate( br_lobbyData[ lobbyid ] [ E_B_MIN_X ], br_lobbyData[ lobbyid ] [ E_B_MAX_Y ], br_lobbyData[ lobbyid ] [ E_B_MAX_X ], 3000 );
 
     // show the new gangzone
     foreach ( new playerid : battleroyaleplayers< lobbyid > ) {
@@ -1292,10 +1292,10 @@ static stock BattleRoyale_CreateBorder( lobbyid )
     new areaid = br_lobbyData[ lobbyid ] [ E_AREA_ID ];
 
     // gang zone
-    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 0 ] = GangZoneCreate( br_areaData[ areaid ] [ E_MAX_X ],-3000, 3000, 3000, .bordersize = 0.0, .numbersize = 0.0 );
-    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 1 ] = GangZoneCreate( -3000, -3000, br_areaData[ areaid ] [ E_MIN_X ], 3000, .bordersize = 0.0, .numbersize = 0.0 );
-    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 2 ] = GangZoneCreate( br_areaData[ areaid ] [ E_MIN_X ], -3000, br_areaData[ areaid ] [ E_MAX_X ], br_areaData[ areaid ] [ E_MIN_Y ], .bordersize = 0.0, .numbersize = 0.0 );
-    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 3 ] = GangZoneCreate( br_areaData[ areaid ] [ E_MIN_X ], br_areaData[ areaid ] [ E_MAX_Y ], br_areaData[ areaid ] [ E_MAX_X ], 3000, .bordersize = 0.0, .numbersize = 0.0 );
+    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 0 ] = GangZoneCreate( br_areaData[ areaid ] [ E_MAX_X ],-3000, 3000, 3000 );
+    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 1 ] = GangZoneCreate( -3000, -3000, br_areaData[ areaid ] [ E_MIN_X ], 3000 );
+    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 2 ] = GangZoneCreate( br_areaData[ areaid ] [ E_MIN_X ], -3000, br_areaData[ areaid ] [ E_MAX_X ], br_areaData[ areaid ] [ E_MIN_Y ] );
+    br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ 3 ] = GangZoneCreate( br_areaData[ areaid ] [ E_MIN_X ], br_areaData[ areaid ] [ E_MAX_Y ], br_areaData[ areaid ] [ E_MAX_X ], 3000 );
 
     // walls
     /*for ( new i = 0; i < sizeof( br_wallBorderObjectUp[ ] ); i ++ )
@@ -1454,7 +1454,7 @@ stock BattleRoyale_PlayerTags( playerid, lobbyid, bool: toggle ) {
 }
 
 static stock BattleRoyale_ShowGangZone( playerid, lobbyid ) {
-    Turf_HideAllGangZones( playerid );
+    //Turf_HideAllGangZones( playerid );
     for ( new g = 0; g < 4; g ++ ) {
         GangZoneShowForPlayer( playerid, br_lobbyData[ lobbyid ] [ E_BORDER_ZONE ] [ g ], 0x000000FF );
     }

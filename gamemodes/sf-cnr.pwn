@@ -12,7 +12,7 @@
  *      plugins mysql crashdetect sscanf streamer socket Whirlpool regex gvar FileManager profiler FCNPC
 */
 
-#pragma compat 1
+#pragma compat 1 
 #pragma option -d3
 #pragma dynamic 7200000
 
@@ -408,7 +408,7 @@ public OnPlayerRequestClass( playerid, classid )
 	TextDrawHideForPlayer( playerid, g_DoubleXPTD );
 	p_MoneyBag{ playerid } = false;
 	CallLocalFunction( "OnPlayerUnloadTextdraws", "d", playerid );
-	return 1;
+	return 1; 
 }
 
 public OnNpcConnect( npcid )

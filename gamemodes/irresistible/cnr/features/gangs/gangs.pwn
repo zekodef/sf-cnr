@@ -319,10 +319,6 @@ CMD:gang( playerid, params[ ] )
 		mysql_tquery( dbHandle, szNormalString, "OnGangKickOffline", "dd", playerid, g_gangData[ iGang ][ E_SQL_ID ] );
 		return 1;
 	}
-	else if ( !strcmp( params, "turfs", false, 5 ) )
-	{
-		return Turf_ShowGangOwners( playerid );
-	}
 	else if ( !strcmp( params, "leader", false, 6 ) )
 	{
 		new
@@ -882,7 +878,7 @@ stock DestroyGang( gangid, bool: soft_delete, bool: iter_remove = true )
  	}
 
  	// Empty out the turfs
- 	Turf_ResetGangTurfs( gangid );
+ 	// Turf_ResetGangTurfs( gangid );
 }
 
 stock SaveGangData( gangid )
@@ -1103,7 +1099,7 @@ stock SetGangColorsToGang( gangid )
 	foreach ( new i : Player )
 	{
 		// refresh player turfs
-		Turf_RedrawPlayerGangZones( i );
+		CallLocalFunction( "OnPlayerGangChangeColor", "dd", i, gangid );
 
 		// set new colour of player
 	    if ( p_GangID[ i ] == gangid && p_WantedLevel[ i ] <= 0 && p_Class[ i ] == CLASS_CIVILIAN ) {
