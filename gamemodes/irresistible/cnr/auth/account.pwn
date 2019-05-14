@@ -104,6 +104,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				p_OwnedBusinesses[ playerid ] = 0;
 				p_OwnedVehicles[ playerid ] = 0;
 				p_Burglaries[ playerid ] = 0;
+				p_BobbyPins[ playerid ] = 10;
 				ShowPlayerDialog( playerid, DIALOG_ACC_EMAIL, DIALOG_STYLE_INPUT, "{FFFFFF}Account Email", ""COL_WHITE"Would you like to assign an email to your account for security?\n\nWe'll keep you also informed on in-game and community associated events!", "Confirm", "Cancel" );
                 SendServerMessage( playerid, "You have "COL_GREEN"successfully{FFFFFF} registered! You have been automatically logged in!" );
             }

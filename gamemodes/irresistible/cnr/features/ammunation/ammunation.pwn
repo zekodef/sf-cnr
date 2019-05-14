@@ -53,23 +53,23 @@ new
 		{ MENU_SHOTGUNS,	"Sawn-off Shotgun",	26,		100,	1200 },
 		{ MENU_SHOTGUNS,	"Combat Shotgun", 	27,		100,	1800 },
 
-		{ MENU_SUB_SMGS,	"MP5", 				29,		100,	500  },
-		{ MENU_SUB_SMGS,	"Tec 9", 			32,		100,	600  },
-		{ MENU_SUB_SMGS,	"Mac 10", 			28,		100,	700 },
+		{ MENU_SUB_SMGS,	"MP5", 				29,		250,	500  },
+		{ MENU_SUB_SMGS,	"Tec 9", 			32,		250,	600  },
+		{ MENU_SUB_SMGS,	"Mac 10", 			28,		250,	700 },
 
-		{ MENU_ASSAULT,		"AK47", 			30,		100,	800  },
-		{ MENU_ASSAULT,		"M4", 				31,		100,	1000 },
+		{ MENU_ASSAULT,		"AK47", 			30,		250,	800  },
+		{ MENU_ASSAULT,		"M4", 				31,		250,	1000 },
 
 		{ MENU_RIFLES,		"Rifle", 			33,		100, 	300  },
 		{ MENU_RIFLES,		"Sniper", 			34,		75, 	1000 },
 
 		{ MENU_THROWN, 		"Teargas",			17,		5,		500 },
-		{ MENU_THROWN, 		"Grenade",			16,		1,		1200 },
-		{ MENU_THROWN, 		"Molotov Cocktail",	18,		4,		1400 },
+		{ MENU_THROWN, 		"Grenade",			16,		5,		1200 },
+		{ MENU_THROWN, 		"Molotov Cocktail",	18,		5,		1400 },
 
-		{ MENU_SPECIAL,	 	"Explosive Round",	102,	1,		20000 },
+		{ MENU_SPECIAL,	 	"Explosive Round",	102,	2,		20000 },
 		{ MENU_SPECIAL,		"Armor", 			101, 	100, 	12500 },
-		{ MENU_SPECIAL,		"RPG",				35,		1,		10000 }
+		{ MENU_SPECIAL,		"RPG",				35,		2,		10000 }
 	},
  	p_AmmunationMenu               [ MAX_PLAYERS char ]
 ;
