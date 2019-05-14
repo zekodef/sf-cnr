@@ -782,11 +782,7 @@ thread OnGangKickOffline( playerid, gangid )
 /* ** Functions ** */
 stock CreateGang( const gang_name[ 30 ], leader, gang_color, kills = 1, deaths = 1, bank = 0, score = 0, respect = 0, bool: invite_only = false, const join_message[ 96 ] = "NULL", bool: has_facility = false, sql_id = 0 )
 {
-	new
-		handle = sql_id != ITER_NONE ? sql_id : Iter_Free( gangs );
-
-	if ( Iter_Contains( gangs, sql_id ) )
-		handle = ITER_NONE; // In the unlikelihood...
+	new handle = Iter_Free( gangs );
 
 	if ( handle != ITER_NONE )
 	{
