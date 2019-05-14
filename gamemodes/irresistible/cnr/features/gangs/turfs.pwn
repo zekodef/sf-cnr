@@ -225,6 +225,7 @@ hook OnServerGameDayEnd( )
 {
 	foreach(new g : gangs)
 	{
+		
 		new
 			afk_members, online_members = GetOnlineGangMembers( g, .afk_members = afk_members );
 
@@ -248,6 +249,15 @@ hook OnServerGameDayEnd( )
 				GiveGangCash( g, profit );
 				SaveGangData( g );
 				SendClientMessageToGang( g, g_gangData[ g ] [ E_COLOR ], "[GANG] "COL_GOLD"%s"COL_WHITE" has been earned from territories and deposited in the gang bank account.", cash_format( profit ) );
+			}
+
+			foreach( new p : Player )
+			{
+				if ( IsPlayerAdmin( p ) )
+				{
+					format( szNormalString, sizeof( szNormalString ), "Gang ID: %i - Online Active Members: %i - Profit: %i", g, online_members, profit );
+					SendClientMessage( p, -1, szNormalString );
+				}
 			}
 		}
 	}
@@ -584,36 +594,4 @@ CMD:takeover( playerid, params[ ] )
 	    }
 	}
 	return SendError( playerid, "You are not in any gangzone." );
-}
-
-CMD:testgang( playerid, params[] )
-{
-	foreach(new g : gangs)
-	{
-		new
-			afk_members, online_members = GetOnlineGangMembers( g, .afk_members = afk_members );
-
-		if ( online_members >= TAKEOVER_NEEDED_PEOPLE )
-		{
-			new
-				profit = 0;
-
-			foreach( new zoneid : turfs ) if ( g_gangTurfData[ zoneid ] [ E_OWNER ] != INVALID_GANG_ID && g_gangTurfData[ zoneid ] [ E_OWNER ] == g )
-			{
-				// facilities will not pay out respect
-				if ( g_gangTurfData[ zoneid ] [ E_FACILITY_GANG ] == INVALID_GANG_ID ) {
-					g_gangData[ g ] [ E_RESPECT ] ++;
-				}
-
-				// accumulate profit
-				profit += Turf_GetProfitability( zoneid, online_members - afk_members );
-			}
-
-			if ( profit > 0 ) {
-				GiveGangCash( g, profit );
-				SaveGangData( g );
-				SendClientMessageToGang( g, g_gangData[ g ] [ E_COLOR ], "[GANG] "COL_GOLD"%s"COL_WHITE" has been earned from territories and deposited in the gang bank account.", cash_format( profit ) );
-			}
-		}
-	}
 }
