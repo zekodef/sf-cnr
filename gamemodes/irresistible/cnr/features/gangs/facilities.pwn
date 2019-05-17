@@ -414,7 +414,7 @@ thread OnGangFaciltiesLoad( )
 
 					g_gangFacilities[ id ] [ E_CHECKPOINT ] [ 0 ] = CreateDynamicCP( g_gangFacilities[ id ] [ E_X ], g_gangFacilities[ id ] [ E_Y ], g_gangFacilities[ id ] [ E_Z ], 1.0, -1, -1, -1, 100.0 );
 
-			        format( szNormalString, sizeof( szNormalString ), "Gang Facility\n"COL_WHITE" %s", gang_name );
+			        format( szNormalString, sizeof( szNormalString ), "Gang Facility (%i)\n"COL_WHITE" %s", id, gang_name );
 			        g_gangFacilities[ id ] [ E_LABEL ] [ 0 ] = CreateDynamic3DTextLabel( szNormalString, g_gangData[ gangid ] [ E_COLOR ], g_gangFacilities[ id ] [ E_X ], g_gangFacilities[ id ] [ E_Y ], g_gangFacilities[ id ] [ E_Z ], 20.0 );
 
 					// create interior
