@@ -1176,3 +1176,10 @@ stock GetOnlineGangMembers( gangid, &afk_members = 0 )
 	}
 	return iPlayers;
 }
+
+CMD:gangiter( playerid, params[] )
+{
+	if ( !IsPlayerAdmin( playerid ) ) return false;
+	SendClientMessageFormatted( playerid, -1, "Gang Iter Count: %i", Iter_Count( gangs ) );
+	return true;
+}
