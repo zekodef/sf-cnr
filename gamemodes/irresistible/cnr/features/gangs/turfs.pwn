@@ -225,7 +225,7 @@ hook OnServerGameDayEnd( )
 {
 	foreach(new g : gangs)
 	{
-		
+
 		new online_members = GetOnlineGangMembers( g );
 
 		if ( online_members >= TAKEOVER_NEEDED_PEOPLE )
@@ -326,7 +326,7 @@ hook OnServerTickSecond( )
                  	// Money Grub
                  	if ( Iter_Contains( gangs, attacker_gang ) )
 					{
-						new afk_opmembers, online_opmembers = GetOnlineGangMembers( attacker_gang );
+						new online_opmembers = GetOnlineGangMembers( attacker_gang );
 						new zone_money = Turf_GetProfitability( z, online_opmembers );
 
 						earned_money = floatround( float( zone_money ) * 0.5 );
