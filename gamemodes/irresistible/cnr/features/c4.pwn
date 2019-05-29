@@ -154,7 +154,11 @@ hook OnPlayerKeyStateChange( playerid, newkeys, oldkeys ) {
 /* ** Commands ** */
 CMD:c4( playerid, params[ ] )
 {
-	if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
+	#if defined __cloudy_event_system
+	if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_C4 ) ) {
+		return SendError( playerid, "You cannot use this command since you're in an event." );
+	}
+	#endif
 
 	if ( !strcmp( params, "plant", true, 5 ) )
 	{
