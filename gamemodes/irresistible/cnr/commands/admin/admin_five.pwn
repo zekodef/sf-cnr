@@ -422,7 +422,7 @@ thread OnPlayerUnbanIP( playerid, irc, address[ ] )
 		}
 		else
 		{
-    		DCC_SendChannelMessageFormatted( discordLogChan, "**Command Success:** IP %s has been un-banned from the server.", address );
+    		DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** IP %s has been un-banned from the server.", address );
 		}
 		format( szNormalString, sizeof( szNormalString ), "DELETE FROM `BANS` WHERE `IP` = '%s'", mysql_escape( address ) );
 		mysql_single_query( szNormalString );
