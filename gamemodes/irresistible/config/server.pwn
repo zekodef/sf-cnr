@@ -17,6 +17,10 @@
 #define SERVER_IP					"54.36.127.43:7777"
 #define SERVER_TWITTER 				"IrresistibleDev"
 
+/* ** Server Operator ** */
+#define SERVER_OPERATOR 			"Lorenc"
+#define SERVER_OPERATOR_ACC_ID 		1
+
 /* ** Comment line to disable feature ** */
 //#define SERVER_RULES_URL            "files.sfcnr.com/en_rules.txt"							// used for /rules (cnr\features\server_rules.pwn)
 #define SERVER_TWITTER_FEED_URL 	"files.sfcnr.com/cnr_twitter.php"						// used for /twitter (cnr\commands\cmd_twitter.pwn)
@@ -55,7 +59,7 @@ hook OnScriptInit( )
 /* ** Functions ** */
 stock IsPlayerLeadMaintainer( playerid ) // Limits money, coin, xp spawning to this user id
 {
-	return GetPlayerAccountID( playerid ) == 1 || GetPlayerAccountID( playerid ) == 674688;
+	return GetPlayerAccountID( playerid ) == SERVER_OPERATOR_ACC_ID;
 }
 
 stock IsPlayerServerMaintainer( playerid ) // Same as lead maintainer, just cant spawn money/xp/coins

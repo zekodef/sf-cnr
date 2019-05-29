@@ -22,6 +22,9 @@
 #include "irresistible\cnr\features\visage\_visage.pwn"
 #include "irresistible\cnr\features\battleroyale\_battleroyale.pwn"
 
+// developer exclusive modules
+#include "irresistible\cnr\features\cloudy\_cloudy.pwn"
+
 // special (xmas/easter/nye)
 // #include "irresistible\cnr\features\christmas.pwn"
 #include "irresistible\cnr\features\eastereggs.pwn"

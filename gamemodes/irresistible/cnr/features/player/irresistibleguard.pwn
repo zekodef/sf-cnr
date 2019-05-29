@@ -353,7 +353,7 @@ thread OnAccountGuardDelete( playerid )
 		;
 
 		if ( id != p_accountSecurityData[ playerid ] [ E_ID ] )
-			return SendError( playerid, "Something is wrong with your email. Talk to Damen." ), 1;
+			return SendError( playerid, "Something is wrong with your email. Talk to " SERVER_OPERATOR "." ), 1;
 
 		if ( g_iTime - last_changed < 300 ) {
 			return SendError( playerid, "You can use this feature in %s.", secondstotime( 300 - ( g_iTime - last_changed ) ) );

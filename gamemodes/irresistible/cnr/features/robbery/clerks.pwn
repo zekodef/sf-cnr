@@ -557,7 +557,7 @@ function OnPlayerHoldupStore( playerid, clerkid, step )
 		}
 
 		if ( !( 0 <= amount < 10000 ) )
-			return SendError( playerid, "A money exploit occurred. Contact Damen ASAP." );
+			return SendError( playerid, "A money exploit occurred. Contact " SERVER_OPERATOR " ASAP." );
 
 		GivePlayerCash( playerid, amount );
 		GivePlayerExperience( playerid, E_ROBBERY, 0.2 ); // give 10% of what it normally does, since it does this for like 4-5 times

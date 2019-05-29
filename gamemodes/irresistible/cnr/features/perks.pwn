@@ -63,6 +63,12 @@ hook OnPlayerWeaponShot( playerid, weaponid, hittype, hitid, Float: fX, Float: f
 
 hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 {
+	#if defined __cloudy_event_system
+	if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_PERKS ) ) {
+		return 1;
+	}
+	#endif
+
 	if ( dialogid == DIALOG_PERKS && response )
 	{
 		switch( listitem )
@@ -194,8 +200,15 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 /* ** Commands ** */
 CMD:perks( playerid, params[ ] )
 {
-	if ( IsPlayerInEvent( playerid ) || IsPlayerInBattleRoyale( playerid ) )
+	#if defined __cloudy_event_system
+	if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_PERKS ) ) {
 		return SendError( playerid, "You cannot use this command since you're in an event." );
+	}
+	#else
+	if ( IsPlayerInEvent( playerid ) || IsPlayerInBattleRoyale( playerid ) ) {
+		return SendError( playerid, "You cannot use this command since you're in an event." );
+	}
+	#endif
 
 	if ( IsPlayerInArmyVehicle( playerid ) )
 		return SendError( playerid, "You cannot use this command while in an army vehicle." );

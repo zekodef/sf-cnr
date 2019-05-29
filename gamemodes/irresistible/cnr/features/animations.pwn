@@ -354,7 +354,6 @@ stock CreateLoopingAnimation( playerid, animlib[ ], animname[ ], Float:Speed, lo
 	else if ( IsPlayerInWater( playerid ) ) return SendError( playerid, "You cannot use this command since you're in water." );
 	else if ( IsPlayerMining( playerid ) ) return SendError( playerid, "You cannot use this command since you're mining." );
 	else if ( IsPlayerBoxing( playerid ) ) return SendError( playerid, "You cannot use this command since you're boxing." );
-	else if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
     else if ( GetPlayerAnimationIndex( playerid ) == 1660 ) return SendError( playerid, "You cannot use this command since you're using a vending machine." );
 	else if ( IsPlayerAttachedObjectSlotUsed( playerid, 0 ) ) return SendError( playerid, "You cannot use this command since you're robbing." );
 	else if ( IsPlayingAnimation( playerid, "ROB_BANK", "CAT_Safe_Rob" ) ) return SendError( playerid, "You cannot use this command since you're robbing." );
@@ -365,6 +364,16 @@ stock CreateLoopingAnimation( playerid, animlib[ ], animname[ ], Float:Speed, lo
 	else if ( GetPlayerWeapon( playerid ) == 46 ) return SendError( playerid, "You cannot use this command while wearing a parachute." );
 	else
 	{
+		// event check
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_KIDNAP ) )
+		#else
+		if ( IsPlayerInEvent( playerid ) )
+		#endif
+		{
+			return SendError( playerid, "You cannot use this command since you're in an event." );
+		}
+
 		SetPlayerSpecialAction( playerid, 0 );
 	    if ( specialaction == 0 ) {
 			ApplyAnimation( playerid, animlib, "null", 0.0, 0, 0, 0, 0, 0 );

@@ -29,7 +29,7 @@ hook OnPlayerEnterDynamicCP( playerid, checkpointid )
 		checkpointid == g_Checkpoints[ CP_DROP_OFF_DIABLO ] || checkpointid == g_Checkpoints[ CP_DROP_OFF_QUBRADOS ] ||
 		checkpointid == g_Checkpoints[ CP_DROP_OFF_COP_LS ] || checkpointid == g_Checkpoints[ CP_DROP_OFF_FBI_LS ] ||
 		checkpointid == g_Checkpoints[ CP_DROP_OFF_FBI_LV ] || checkpointid == g_Checkpoints[ CP_DROP_OFF_COP_LV ] ||
-		checkpointid == g_Checkpoints[ CP_DROP_OFF_FBI ] || checkpointid == g_Checkpoints[ CP_DROP_OFF_HELI ] ) 
+		checkpointid == g_Checkpoints[ CP_DROP_OFF_FBI ] || checkpointid == g_Checkpoints[ CP_DROP_OFF_HELI ] )
 	{
 	    if ( p_Class[ playerid ] != CLASS_POLICE )
 	    	return 1;
@@ -115,9 +115,19 @@ CMD:taze( playerid, params[ ] )
 		if ( IsPlayerJailed( playerid ) ) return SendError( playerid, "You cannot use this command while in jail." );
 		if ( IsPlayerTied( victimid ) ) return SendError( playerid, "Tazing a tied player is pretty useless, though you can use /untie for a harder job!" );
 		if ( IsPlayerLoadingObjects( victimid ) ) return SendError( playerid, "This player is in a object-loading state." );
-		if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
 		if ( GetPlayerState( playerid ) == PLAYER_STATE_WASTED ) return SendError( playerid, "You cannot use this command since you are dead." );
 		if ( p_TazingImmunity[ victimid ] > g_iTime ) return SendError( playerid, "You must wait %d seconds before tazing this player.", p_TazingImmunity[ victimid ] - g_iTime );
+
+		// event check
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_KIDNAP ) )
+		#else
+		if ( IsPlayerInEvent( playerid ) )
+		#endif
+		{
+			return SendError( playerid, "You cannot use this command since you're in an event." );
+		}
+
 		if ( random( 101 ) < 90 )
 		{
 			GameTextForPlayer( victimid, "~n~~r~TAZED!", 2000, 4 );

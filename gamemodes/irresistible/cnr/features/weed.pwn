@@ -120,6 +120,12 @@ CMD:weed( playerid, params[ ] )
 	if ( IsPlayerTied( playerid ) || IsPlayerTazed( playerid ) || IsPlayerCuffed( playerid ) || IsPlayerJailed( playerid ) || IsPlayerInMinigame( playerid ) )
 		return SendError( playerid, "You cannot use this command at the moment." );
 
+	#if defined __cloudy_event_system
+	if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_WEED ) ) {
+		return SendError( playerid, "You cannot use this command since you're in an event." );
+	}
+	#endif
+
 	if ( strmatch( params, "plant" ) )
 	{
 		if ( ! IsPlayerJob( playerid, JOB_DRUG_DEALER ) ) return SendError( playerid, "You are not a drug dealer." );
@@ -230,7 +236,6 @@ CMD:weed( playerid, params[ ] )
 		if ( IsPlayerLoadingObjects( playerid ) ) return SendError( playerid, "You're in a object-loading state, please wait." );
 		if ( IsPlayerAttachedObjectSlotUsed( playerid, 0 ) ) return SendError( playerid, "You cannot use this command since you're robbing." );
 		// if ( IsPlayerJob( playerid, JOB_DRUG_DEALER ) ) return SendError( playerid, "You cannot use your own products, they are for resale only!" );
-		if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
 		//if ( IsPlayerInAnyVehicle( playerid ) ) return SendError( playerid, "You cannot use this command in a vehicle." );
 	    //if ( GetPlayerState( playerid ) == PLAYER_STATE_ENTER_VEHICLE_DRIVER || GetPlayerState( playerid ) == PLAYER_STATE_ENTER_VEHICLE_PASSENGER ) return SendError( playerid, "You cannot use this command if you're entering a vehicle." );
 	    //if ( GetPlayerState( playerid ) == PLAYER_STATE_EXIT_VEHICLE ) return SendError( playerid, "You cannot use this command if you're exiting a vehicle." );

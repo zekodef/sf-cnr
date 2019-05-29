@@ -12,11 +12,11 @@
  *      plugins mysql crashdetect sscanf streamer socket Whirlpool regex gvar FileManager profiler FCNPC
 */
 
-#pragma compat 1 
+#pragma compat 1
 #pragma option -d3
 #pragma dynamic 7200000
 
-//#define DEBUG_MODE
+#define DEBUG_MODE
 
 #if defined DEBUG_MODE
 	#pragma option -d3
@@ -197,7 +197,7 @@ public OnServerUpdateTimer( )
 
 	// better to store in a variable as we are getting the timestamp from hardware
 	g_iTime = gettime( );
-	
+
 	UpdatePlayerCounters();
 
 	// for hooks
@@ -408,7 +408,7 @@ public OnPlayerRequestClass( playerid, classid )
 	TextDrawHideForPlayer( playerid, g_DoubleXPTD );
 	p_MoneyBag{ playerid } = false;
 	CallLocalFunction( "OnPlayerUnloadTextdraws", "d", playerid );
-	return 1; 
+	return 1;
 }
 
 public OnNpcConnect( npcid )
@@ -1091,8 +1091,14 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 	}
 
 	// Headshots
+	#if defined __cloudy_event_system
+	if ( ( weaponid == WEAPON_SNIPER || weaponid == WEAPON_RIFLE ) && bodypart == 9 && ( ! IsPlayerInEvent( playerid ) || ( IsPlayerInEvent( playerid ) && EventSettingAllow( EVENT_SETTING_HEADSHOT ) ) ) )
+	#else
 	if ( ( weaponid == WEAPON_SNIPER || weaponid == WEAPON_RIFLE ) && bodypart == 9 )
+	#endif
+	{
 		amount *= 1.5;
+	}
 
 	// Paintball Headshot
 	if ( issuerid != INVALID_PLAYER_ID && p_inPaintBall{ playerid } == true )
@@ -3425,12 +3431,14 @@ CMD:stoprob( playerid, params[ ] )
 	return 1;
 }
 
+#if !defined __cloudy_event_system
 CMD:exit( playerid, params[ ] ) return cmd_enter( playerid, params );
 CMD:enter( playerid, params[ ] )
 {
 	GameTextForPlayer(playerid, "~n~~n~~r~~k~~VEHICLE_ENTER_EXIT~~n~~w~press this key in a enterable checkpoint.", 5000, 3);
 	return 1;
 }
+#endif
 
 CMD:kill( playerid, params[ ] )
 {
@@ -3519,6 +3527,17 @@ CMD:kidnap( playerid, params[ ] )
 		else if ( IsPlayerJailed( victimid ) ) return SendError( playerid, "This player is jailed. He may be paused." );
 		else if ( p_KidnapImmunity[ victimid ] > g_iTime ) return SendError( playerid, "This player cannot be kidnapped for another %s.", secondstotime( p_KidnapImmunity[ victimid ] - g_iTime ) );
 		else if ( PutPlayerInEmptyVehicleSeat( p_LastVehicle[ playerid ], victimid ) == -1 ) return SendError( playerid, "Failed to place the player inside a full of player vehicle." );
+
+		// event check
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_KIDNAP ) )
+		#else
+		if ( IsPlayerInEvent( playerid ) )
+		#endif
+		{
+			return SendError( playerid, "You cannot use this command since you're in an event." );
+		}
+
 		SendClientMessageFormatted( victimid, -1, ""COL_RED"[KIDNAPPED]{FFFFFF} You have been kidnapped by %s(%d)!", ReturnPlayerName( playerid ), playerid );
 	    SendClientMessageFormatted( playerid, -1, ""COL_GREEN"[KIDNAPPED]{FFFFFF} You have kidnapped %s(%d), he has been thrown in your previous entered vehicle!", ReturnPlayerName( victimid ), victimid );
 		TogglePlayerControllable( victimid, 0 );
@@ -3585,10 +3604,19 @@ CMD:tie( playerid, params[ ] )
 		else if ( IsPlayerJailed( victimid ) ) return SendError( playerid, "This player is jailed. He may be paused." );
 		else if ( IsPlayerLoadingObjects( victimid ) ) return SendError( playerid, "This player is in a object-loading state." );
 		else if ( GetPlayerState( victimid ) == PLAYER_STATE_WASTED ) return SendError( playerid, "You cannot tie wasted players." );
-		else if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
 		else if ( IsPlayerInPlayerGang( playerid, victimid ) ) return SendError( playerid, "You cannot use this command on your homies!" );
 		else if ( IsPlayerSpawnProtected( victimid ) ) return SendError( playerid, "You cannot use this command on spawn protected players." );
 		else if ( IsPlayerInCasino( victimid ) && ! p_WantedLevel[ victimid ] ) return SendError( playerid, "The innocent person you're trying to tie is in a casino." );
+
+		// event check
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_TIE ) )
+		#else
+		if ( IsPlayerInEvent( playerid ) )
+		#endif
+		{
+			return SendError( playerid, "You cannot use this command since you're in an event." );
+		}
 
 		// remove rope after attempt
 		if ( p_Ropes[ playerid ] -- > 0 ) {
@@ -3769,8 +3797,17 @@ CMD:rob( playerid, params[ ] )
 		else if ( IsPlayerJailed( victimid ) ) return SendError( playerid, "This player is jailed. He may be paused." );
 		else if ( IsPlayerInCasino( victimid ) && ! p_WantedLevel[ victimid ] ) return SendError( playerid, "The innocent person you're trying to rob is in a casino." );
 		else if ( p_ClassSelection{ victimid } ) return SendError( playerid, "This player is currently in class selection." );
-		else if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
 		else if ( IsPlayerInPlayerGang( playerid, victimid ) ) return SendError( playerid, "You cannot use this command on your homies!" );
+
+		// event check
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_ROB ) )
+		#else
+		if ( IsPlayerInEvent( playerid ) )
+		#endif
+		{
+			return SendError( playerid, "You cannot use this command since you're in an event." );
+		}
 
 		new
 			iRandom = random( 101 );
@@ -3854,9 +3891,18 @@ CMD:rape( playerid, params[ ] )
 		else if ( IsPlayerLoadingObjects( victimid ) ) return SendError( playerid, "This player is in a object-loading state." );
 		else if ( IsPlayerSpawnProtected( victimid ) ) return SendError( playerid, "This player is in a anti-spawn-kill state." );
 		else if ( p_ClassSelection{ victimid } ) return SendError( playerid, "This player is currently in class selection." );
-		else if ( IsPlayerInEvent( playerid ) ) return SendError( playerid, "You cannot use this command since you're in an event." );
 		else if ( IsPlayerAFK( victimid ) && GetPlayerState( playerid ) != PLAYER_STATE_WASTED ) return SendError( playerid, "This player is in an AFK state." );
 		else if ( IsPlayerInPlayerGang( playerid, victimid ) ) return SendError( playerid, "You cannot use this command on your homies!" );
+
+		// event check
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_RAPE ) )
+		#else
+		if ( IsPlayerInEvent( playerid ) )
+		#endif
+		{
+			return SendError( playerid, "You cannot use this command since you're in an event." );
+		}
 
   		new iRandom = random( 101 );
         if ( IsPlayerJob( playerid, JOB_MUGGER ) ) { iRandom += 10; } // Adds more success to muggers
@@ -7006,7 +7052,9 @@ stock IsPlayerAFK( playerid ) return ( ( GetTickCount( ) - p_AFKTime[ playerid ]
 
 stock GetPlayerVIPDuration( playerid ) return p_VIPExpiretime[ playerid ] - g_iTime;
 
+#if !defined __cloudy_event_system
 stock IsPlayerInEvent( playerid ) return ( GetPlayerVirtualWorld( playerid ) == 69 );
+#endif
 
 stock UpdatePlayerEntranceExitTick( playerid, seconds = 2 ) {
 	p_EntranceTimestamp[ playerid ] = g_iTime + seconds;
