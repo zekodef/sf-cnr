@@ -24,6 +24,7 @@ CMD:destroyallav( playerid, params[ ] )
 	return 1;
 }
 
+#if !defined __cloudy_event_system
 CMD:event( playerid, params[ ] )
 {
  	if ( p_AdminLevel[ playerid ] < 4 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
@@ -31,6 +32,7 @@ CMD:event( playerid, params[ ] )
 	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have your world to 69." );
 	return SetPlayerVirtualWorld( playerid, 69 );
 }
+#endif
 
 CMD:setworld( playerid, params[ ] )
 {

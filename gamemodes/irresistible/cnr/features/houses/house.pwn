@@ -630,10 +630,10 @@ thread OnHouseLoad( )
 	}
 	printf( "[HOUSES]: %d houses have been loaded. (Tick: %dms)", rows, GetTickCount( ) - loadingTick );
 
-	// Make Damen the owner of unowned VIP houses
+	// Make server operator the owner of unowned VIP houses
 	foreach ( new houseid : houses ) if ( g_houseData[ houseid ] [ E_COST ] < 10000 ) {
 		if ( strmatch( g_houseData[ houseid ] [ E_OWNER ], "No-one" ) ) {
-			SetHouseOwner( houseid, 1, "Damen" );
+			SetHouseOwner( houseid, SERVER_OPERATOR_ACC_ID, SERVER_OPERATOR );
 		}
 	}
 	return 1;
