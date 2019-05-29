@@ -12,11 +12,11 @@
  *      plugins mysql crashdetect sscanf streamer socket Whirlpool regex gvar FileManager profiler FCNPC
 */
 
-#pragma compat 1 
+#pragma compat 1
 #pragma option -d3
 #pragma dynamic 7200000
 
-//#define DEBUG_MODE
+#define DEBUG_MODE
 
 #if defined DEBUG_MODE
 	#pragma option -d3
@@ -197,7 +197,7 @@ public OnServerUpdateTimer( )
 
 	// better to store in a variable as we are getting the timestamp from hardware
 	g_iTime = gettime( );
-	
+
 	UpdatePlayerCounters();
 
 	// for hooks
@@ -408,7 +408,7 @@ public OnPlayerRequestClass( playerid, classid )
 	TextDrawHideForPlayer( playerid, g_DoubleXPTD );
 	p_MoneyBag{ playerid } = false;
 	CallLocalFunction( "OnPlayerUnloadTextdraws", "d", playerid );
-	return 1; 
+	return 1;
 }
 
 public OnNpcConnect( npcid )
@@ -3425,12 +3425,14 @@ CMD:stoprob( playerid, params[ ] )
 	return 1;
 }
 
+#if !defined __cloudy_event_system
 CMD:exit( playerid, params[ ] ) return cmd_enter( playerid, params );
 CMD:enter( playerid, params[ ] )
 {
 	GameTextForPlayer(playerid, "~n~~n~~r~~k~~VEHICLE_ENTER_EXIT~~n~~w~press this key in a enterable checkpoint.", 5000, 3);
 	return 1;
 }
+#endif
 
 CMD:kill( playerid, params[ ] )
 {
@@ -7006,7 +7008,9 @@ stock IsPlayerAFK( playerid ) return ( ( GetTickCount( ) - p_AFKTime[ playerid ]
 
 stock GetPlayerVIPDuration( playerid ) return p_VIPExpiretime[ playerid ] - g_iTime;
 
+#if !defined __cloudy_event_system
 stock IsPlayerInEvent( playerid ) return ( GetPlayerVirtualWorld( playerid ) == 69 );
+#endif
 
 stock UpdatePlayerEntranceExitTick( playerid, seconds = 2 ) {
 	p_EntranceTimestamp[ playerid ] = g_iTime + seconds;
