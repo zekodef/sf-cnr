@@ -1,129 +1,86 @@
 /*
  * Irresistible Gaming (c) 2018
- * Developed by Lorenc
+ * Developed by Lorenc and Night
  * Module: cnr\discord\discord_commands.pwn
  * Purpose: commands that can be used on the discord channel
  */
 
-/* ** Error Checking ** */
-#if defined DISCORD_DISABLED
-    #endinput
-#endif
+/* ** Includes ** */
+#include 							< YSI\y_hooks >
+#include							< discord-command >
 
-/* ** Definitions ** */
-DQCMD:lastlogged( DCC_Channel: channel, DCC_User: user, params[ ] )
+/* ** Commands ** */
+DISCORD:commands( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVoice, hasPermission );
-
-	if ( hasPermission )
-	{
-		static
-		    player[ MAX_PLAYER_NAME ];
-
-		if ( sscanf( params, "s[24]", player ) ) return 0;
-		else
-		{
-			format( szNormalString, sizeof( szNormalString ), "SELECT `LASTLOGGED` FROM `USERS` WHERE `NAME` = '%s' LIMIT 0,1", mysql_escape( player ) );
-	  		mysql_function_query( dbHandle, szNormalString, true, "OnPlayerLastLogged", "iis", INVALID_PLAYER_ID, 1, player );
-		}
+	if (channel != discordCmdsChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_COMMANDS_CHAN);
+		return 1;
 	}
-	else DCC_SendUserMessage( user, "**Error:** This command requires voice." );
+
+	new
+		bool: hasMember;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
+
+	if ( hasMember )
+	{
+		DCC_SendChannelMessage(channel, "**Commands:**\n**!stats** - Displays the statistics of a user.\n**!say** - Sends a message to in-game chat.\n**!players** - Displays the current online players.\
+										\n**!admins** - Displays the current online administrators.\n**!weeklytime** - Shows the weekly time of a player.\n**!lastlogged** - Shows the last played time of a user." );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate role to use this command." );
 	return 1;
 }
 
-DQCMD:weeklytime( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:say( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVoice, hasPermission );
-
-	if ( hasPermission )
-	{
-		static
-		    player[ MAX_PLAYER_NAME ]
-		;
-
-		if ( sscanf( params, "s[24]", player ) ) return 0;
-		else
-		{
-			format( szNormalString, sizeof( szNormalString ), "SELECT `UPTIME`,`WEEKEND_UPTIME` FROM `USERS` WHERE `NAME` = '%s' LIMIT 0,1", mysql_escape( player ) );
-	  		mysql_function_query( dbHandle, szNormalString, true, "OnPlayerWeeklyTime", "iis", INVALID_PLAYER_ID, 1, player );
-		}
+	if (channel != discordChatChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_CHAT_CHAN);
+		return 1;
 	}
-	else DCC_SendUserMessage( user, "**Error:** This command requires voice." );
-	return 1;
-}
 
-DQCMD:idof( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
 	new
-		bool: hasPermission;
+		bool: hasMember;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVoice, hasPermission );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
 
-	if ( hasPermission )
-	{
-		new pID;
-		if ( sscanf( params, "u", pID ) ) return 0;
-		if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return 0;
-		format( szNormalString, sizeof( szNormalString ), "**In-game ID of %s:** %d", ReturnPlayerName( pID ), pID );
-		DCC_SendChannelMessage( discordGeneralChan, szNormalString );
-	}
-	else DCC_SendUserMessage( user, "**Error:** This command requires voice." );
-	return 1;
-}
-
-DQCMD:say( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVoice, hasPermission );
-
-	if ( hasPermission )
+	if ( hasMember )
 	{
 		new
 			szAntispam[ 64 ];
-		printf("SAY %s", params);
+
 		if ( !isnull( params ) && !textContainsIP( params ) )
 		{
-			format( szAntispam, 64, "!say_%s", ReturnDiscordName( user ) );
+			format( szAntispam, 64, "!say_%s", ReturnDiscordName( author ) );
 			if ( GetGVarInt( szAntispam ) < g_iTime )
 			{
-				new
-					bool: hasAdmin;
-
-				DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasAdmin );
-
-				if ( hasAdmin )
-					SetGVarInt( szAntispam, g_iTime + 2 );
+				if ( hasMember )
+					SetGVarInt( szAntispam, g_iTime + 10 );
 
 				// send message
-				SendClientMessageToAllFormatted( -1, "{4DFF88}(Discord %s) {00CD45}%s:{FFFFFF} %s", discordLevelToString( user ), ReturnDiscordName( user ), params );
-				DCC_SendChannelMessageFormatted( discordGeneralChan, "**(Discord %s) %s:** %s", discordLevelToString( user ), ReturnDiscordName( user ), params );
+				SendClientMessageToAllFormatted( -1, "{7289DA}(Discord %s) {FFFFFF}%s:{99AAB5} %s", discordLevelToString( author ), ReturnDiscordName( author ), params );
+				DCC_SendChannelMessageFormatted( discordChatChan, "**(Discord %s) %s:** %s", discordLevelToString( author ), ReturnDiscordName( author ), params );
 			}
-			else DCC_SendUserMessage( user, "You must wait 2 seconds before speaking again." );
+			else DCC_SendChannelMessage( channel, "You must wait 10 seconds before speaking again." );
 		}
 	}
-	else DCC_SendUserMessage( user, "**Error:** This command requires voice." );
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate role to use this command." );
 	return 1;
 }
 
-DQCMD:players( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:players( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
+	if (channel != discordCmdsChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_COMMANDS_CHAN);
+		return 1;
+	}
+
 	new
-		bool: hasPermission;
+		bool: hasMember;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVoice, hasPermission );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
 
-	print("Called players");
-	if ( hasPermission )
+	if ( hasMember )
 	{
-		print("Has permission");
 		new
 			iPlayers = Iter_Count(Player);
 
@@ -131,331 +88,624 @@ DQCMD:players( DCC_Channel: channel, DCC_User: user, params[ ] )
 		if ( iPlayers <= 25 )
 		{
 			foreach(new i : Player) {
-			    if ( IsPlayerConnected( i ) ) {
-			        format( szLargeString, sizeof( szLargeString ), "%s%s(%d), ", szLargeString, ReturnPlayerName( i ), i );
-			    }
+				if ( IsPlayerConnected( i ) ) {
+					format( szLargeString, sizeof( szLargeString ), "There are **%d** player(s) online.", iPlayers );
+				}
 			}
 		}
-		format( szLargeString, sizeof( szLargeString ), "%sThere are %d player(s) online.", szLargeString, iPlayers );
-		DCC_SendChannelMessage( discordGeneralChan, szLargeString );
+		format( szLargeString, sizeof( szLargeString ), "There are **%d** player(s) online.", iPlayers );
+		DCC_SendChannelMessage( discordCmdsChan, szLargeString );
 	}
-	else DCC_SendUserMessage( user, "**Error:** This command requires voice." );
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** You don't have an appropriate role to use this command." );
 	return 1;
 }
 
-DQCMD:admins( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:admins( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
+	if (channel != discordCmdsChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_COMMANDS_CHAN);
+		return 1;
+	}
+
 	new
-		bool: hasPermission;
+		bool: hasMember;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVoice, hasPermission );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
 
-	if ( hasPermission )
+	if ( hasMember )
 	{
 		new count = 0;
 		szBigString[ 0 ] = '\0';
 
 		foreach(new i : Player) {
-		    if ( IsPlayerConnected( i ) && p_AdminLevel[ i ] > 0 ) {
-		        format( szBigString, sizeof( szBigString ), "%s%s(%d), ", szBigString, ReturnPlayerName( i ), i );
-		        count++;
-		    }
+			if ( IsPlayerConnected( i ) && p_AdminLevel[ i ] > 0 ) {
+				format( szBigString, sizeof( szBigString ), "%s**%s** (**ID: %d**)\n", szBigString, ReturnPlayerName( i ), i );
+				count++;
+			}
 		}
 
-		format( szBigString, sizeof( szBigString ), "%sThere are %d admin(s) online.", szBigString, count );
-		DCC_SendChannelMessage( discordGeneralChan, szBigString );
+		format( szBigString, sizeof( szBigString ), "%sThere are **%d** admin(s) online.", szBigString, count );
+		DCC_SendChannelMessage( discordCmdsChan, szBigString );
 	}
-	else DCC_SendUserMessage( user, "**Error:** This command requires voice." );
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** You don't have an appropriate role to use this command." );
 	return 1;
 }
 
-/* HALF OP */
-DQCMD:acmds( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:stats( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
-	{
- 		DCC_SendUserMessage( user, 	"__**Lead Admin:**__ !kick, !ban, !suspend, !warn, !jail, !getip, !(un)mute\n"\
- 							 		"__**Admin:**__ !unban, !unbanip" );
+	if (channel != discordCmdsChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_COMMANDS_CHAN);
+		return 1;
 	}
+
+	new
+		bool: hasMember;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
+
+	if ( isnull( params ) || strlen( params ) > 24 ) return DCC_SendChannelMessage( discordCmdsChan, "**[USAGE]** !stats [PLAYER_NAME]" );
+
+	if ( hasMember )
+	{
+		format( szNormalString, sizeof( szNormalString ), "SELECT * FROM `USERS` WHERE `NAME`='%s' LIMIT 0,1", mysql_escape( params ) );
+		mysql_tquery( dbHandle, szNormalString, "OnPlayerDiscordStats", "ds", INVALID_PLAYER_ID, params );
+	}
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** You don't have an appropriate role to use this command." );
 	return 1;
 }
 
-DQCMD:kick( DCC_Channel: channel, DCC_User: user, params[ ] )
+thread OnPlayerDiscordStats( playerid, params[ ] )
 {
 	new
-		bool: hasPermission;
+		iScore, iDeaths, iKills, iVIP,
+		rows, fields;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
+	cache_get_data( rows, fields );
+
+	if ( rows ) 
 	{
-		new pID, reason[64];
-		if (sscanf( params, "uS(No reason)[64]", pID, reason)) return DCC_SendUserMessage( user, "**Usage:** !kick [PLAYER_ID] [REASON]" );
-		if (IsPlayerConnected(pID))
+		iScore		= cache_get_field_content_int( 0, "SCORE", dbHandle );
+		iKills		= cache_get_field_content_int( 0, "KILLS", dbHandle );
+		iDeaths		= cache_get_field_content_int( 0, "DEATHS", dbHandle );
+		iVIP		= cache_get_field_content_int( 0, "VIP_PACKAGE", dbHandle );
+
+		DCC_SendChannelMessageFormatted( discordCmdsChan, "__**%s**__ - **Score:** %d, **Kills:** %d, **Deaths:** %d, **Ratio:** %0.2f, **VIP:** %s", params, iScore, iKills, iDeaths, floatdiv( iKills, iDeaths ), VIPToString( iVIP ) );
+	}
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** This player doesn't exist." );
+	return 1;
+}
+
+DISCORD:weeklytime( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordCmdsChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_COMMANDS_CHAN);
+		return 1;
+	}
+
+	new
+		bool: hasMember;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
+
+	if ( isnull( params ) || strlen( params ) > 24 ) return DCC_SendChannelMessage( discordCmdsChan, "**[USAGE]** !weeklytime [PLAYER_NAME]" );
+
+	if ( hasMember )
+	{
+		format( szNormalString, sizeof( szNormalString ), "SELECT `UPTIME`,`WEEKEND_UPTIME` FROM `USERS` WHERE `NAME` = '%s' LIMIT 0,1", mysql_escape( params ) );
+		mysql_tquery( dbHandle, szNormalString, "OnPlayerDiscordWeekly", "is", INVALID_PLAYER_ID, params );
+	}
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** You don't have an appropriate role to use this command." );
+	return 1;
+}
+
+thread OnPlayerDiscordWeekly( playerid, params[ ] )
+{
+	new
+		rows, fields,
+		iCurrentUptime, iLastUptime
+	;
+	cache_get_data( rows, fields );
+
+	if ( rows )
+	{
+		iCurrentUptime		= cache_get_field_content_int( 0, "UPTIME", dbHandle );
+		iLastUptime 		= cache_get_field_content_int( 0, "WEEKEND_UPTIME", dbHandle );
+
+		DCC_SendChannelMessageFormatted( discordCmdsChan, "**%s's** weekly time is **%s**.", params, secondstotime( iCurrentUptime - iLastUptime ) );
+	}
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** This player doesn't exist." );
+	return 1;
+}
+
+DISCORD:lastlogged( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordCmdsChan) {
+		DCC_SendChannelMessageFormatted(channel, "**[ERROR]** You can only use this command in <#%s> channel!", DISCORD_COMMANDS_CHAN);
+		return 1;
+	}
+
+	new
+		bool: hasMember;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
+
+	if ( isnull( params ) || strlen( params ) > 24 ) return DCC_SendChannelMessage( discordCmdsChan, "**[USAGE]** !lastlogged [PLAYER_NAME]" );
+
+	if ( hasMember )
+	{
+		format( szNormalString, sizeof( szNormalString ), "SELECT `LASTLOGGED` FROM `USERS` WHERE `NAME` = '%s' LIMIT 0,1", mysql_escape( params ) );
+		mysql_tquery( dbHandle, szNormalString, "OnPlayerDiscordLastLogged", "is", INVALID_PLAYER_ID, params );
+	}
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** You don't have an appropriate role to use this command." );
+	return 1;
+}
+
+thread OnPlayerDiscordLastLogged( playerid, params[ ] )
+{
+	new
+		rows, fields, 
+		time, Field[ 50 ]
+	;
+	cache_get_data( rows, fields );
+
+	if ( rows )
+	{
+		cache_get_field_content( 0, "LASTLOGGED", Field );
+
+		time = g_iTime - strval( Field );
+		if ( time > 86400 )
 		{
-			DCC_SendChannelMessageFormatted( discordAdminChan, "**Command Success:** %s(%d) has been kicked.", ReturnPlayerName( pID ), pID );
-		    SendGlobalMessage( -1, ""COL_PINK"[DISCORD ADMIN]{FFFFFF} %s(%d) has been kicked by %s "COL_GREEN"[REASON: %s]", ReturnPlayerName(pID), pID, ReturnDiscordName( user ), reason);
-			KickPlayerTimed( pID );
+			time /= 86400;
+			format( Field, sizeof( Field ), "%d day(s) ago.", time );
 		}
-		else DCC_SendUserMessage( user, "**Command Error:** Player is not connected!" );
-	}
-	return 1;
-}
-
-DQCMD:ban( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
-	{
-		new pID, reason[64];
-		if (sscanf( params, "uS(No reason)[64]", pID, reason)) return DCC_SendUserMessage( user, "**Usage:** !ban [PLAYER_ID] [REASON]" );
-		if (IsPlayerConnected(pID))
+		else if ( time > 3600 )
 		{
-			DCC_SendChannelMessageFormatted( discordAdminChan, "**Command Success:** %s(%d) has been banned.", ReturnPlayerName( pID ), pID );
-		    SendGlobalMessage( -1, ""COL_PINK"[DISCORD ADMIN]{FFFFFF} %s has banned %s(%d) "COL_GREEN"[REASON: %s]", ReturnDiscordName( user ), ReturnPlayerName( pID ), pID, reason );
-			AdvancedBan( pID, "Discord Administrator", reason, ReturnPlayerIP( pID ) );
+			time /= 3600;
+			format( Field, sizeof( Field ), "%d hour(s) ago.", time );
 		}
-		else DCC_SendUserMessage( user, "**Command Error:** Player is not connected!" );
-	}
-	return 1;
-}
-
-DQCMD:suspend( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
-	{
-		new pID, reason[50], hours, days;
-		if ( sscanf( params, "uddS(No Reason)[50]", pID, hours, days, reason ) ) return DCC_SendUserMessage( user, "**Usage:** !suspend [PLAYER_ID] [HOURS] [DAYS] [REASON]" );
-		if ( hours < 0 || hours > 24 ) return DCC_SendUserMessage( user, "**Command Error:** Please specify an hour between 0 and 24." );
-		if ( days < 0 || days > 60 ) return DCC_SendUserMessage( user, "**Command Error:** Please specifiy the amount of days between 0 and 60." );
-		if ( days == 0 && hours == 0 ) return DCC_SendUserMessage( user, "**Command Error:** Invalid time specified." );
-		if ( IsPlayerConnected( pID ) )
+		else
 		{
-			DCC_SendChannelMessageFormatted( discordAdminChan, "**Command Success:** %s(%d) has been suspended for %d hour(s) and %d day(s).", ReturnPlayerName( pID ), pID, hours, days );
-			SendGlobalMessage( -1, ""COL_PINK"[DISCORD ADMIN]{FFFFFF} %s has suspended %s(%d) for %d hour(s) and %d day(s) "COL_GREEN"[REASON: %s]", ReturnDiscordName( user ), ReturnPlayerName( pID ), pID, hours, days, reason );
-			new time = g_iTime + ( hours * 3600 ) + ( days * 86400 );
-			AdvancedBan( pID, "Discord Administrator", reason, ReturnPlayerIP( pID ), time );
+			time /= 60;
+			format( Field, sizeof( Field ), "%d minute(s) ago.", time );
 		}
-		else DCC_SendUserMessage( user, "**Command Error:** Player is not connected!" );
+
+		DCC_SendChannelMessageFormatted( discordCmdsChan, "**%s** last logged **%s**", params, Field );
 	}
+	else DCC_SendChannelMessage( discordCmdsChan, "**[ERROR]** This player doesn't exist." );
 	return 1;
 }
 
-DQCMD:warn( DCC_Channel: channel, DCC_User: user, params[ ] )
+/* Level 1+ */
+DISCORD:acmds( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
-	new
-		bool: hasPermission;
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
+	{
+ 		DCC_SendChannelMessage( discordAdminChan, "**Commands:**\n**!kick** - Kicking a player from the server.\n**!mute** - Muting a player.\n**!unmute** - Un-muting a player.\n**!suspend** - Suspending a player.\
+		 											\n**!ban** - Banning a player.\n**!unban** - Unban a player from the server.\n**!jail** - Jailing a player.\n**!unjail** - Un-jailing a player\
+													\n**!getip** - Getting IP of a player.\n**!warn** - Warning a player.\n**!ans** - Answering a question.");
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+
+DISCORD:warn( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
 		new pID, reason[50];
-		if ( sscanf( params, "uS(No Reason)[32]", pID, reason ) ) return DCC_SendUserMessage( user, "**Usage:** !warn [PLAYER_ID] [REASON]" );
+		if ( sscanf( params, "uS(No Reason)[32]", pID, reason ) ) DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !warn [PLAYER_ID] [REASON]" );
 		if ( IsPlayerConnected( pID ) )
 		{
-	    	p_Warns[ pID ] ++;
-			DCC_SendChannelMessageFormatted( discordAdminChan, "**Command Success:** %s(%d) has been warned [%d/3].", ReturnPlayerName( pID ), pID, p_Warns[ pID ] );
-        	SendGlobalMessage( -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) has been warned by %s "COL_GREEN"[REASON: %s]", ReturnPlayerName( pID ), pID, ReturnDiscordName( user ), reason );
+			p_Warns[ pID ] ++;
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has warned **%s(%d) [%d/3]** **[REASON: %s]**.", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID,p_Warns[ pID ], reason );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has warned {FFFFFF}%s(%d) [%d/3] "COL_GREEN"[REASON: %s]", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID,p_Warns[ pID ], reason );
 
 			if ( p_Warns[ pID ] >= 3 )
-		    {
-		        p_Warns[ pID ] = 0;
-		        SendGlobalMessage( -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) has been kicked from the server. "COL_GREEN"[REASON: Excessive Warns]", ReturnPlayerName( pID ), pID );
-		        KickPlayerTimed( pID );
-		        return 1;
-		    }
+			{
+				p_Warns[ pID ] = 0;
+				SendGlobalMessage( -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) has been kicked from the server. "COL_GREEN"[REASON: Excessive Warns]", ReturnPlayerName( pID ), pID );
+				KickPlayerTimed( pID );
+				return 1;
+			}
 		}
-		else DCC_SendUserMessage( user, "**Command Error:** Player is not connected!" );
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
 	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
 	return 1;
 }
 
-DQCMD:jail( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:jail( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
-	new
-		bool: hasPermission;
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
 		new pID, reason[50], Seconds;
-		if ( sscanf( params, "udS(No Reason)[32]", pID, Seconds, reason ) ) return DCC_SendUserMessage( user, "**Usage:** !jail [PLAYER_ID] [SECONDS] [REASON]" );
-		if ( Seconds > 20000 || Seconds < 1 ) return DCC_SendUserMessage( user, "**Command Error:** You're misleading the seconds limit! ( 0 - 20000 )");
+		if ( sscanf( params, "udS(No Reason)[32]", pID, Seconds, reason ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !jail [PLAYER_ID] [SECONDS] [REASON]" );
+		if ( Seconds > 20000 || Seconds < 1 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** You're misleading the seconds limit! ( 0 - 20000 )" );
 		if ( IsPlayerConnected( pID ) )
 		{
-			DCC_SendChannelMessageFormatted( discordAdminChan, "**Command Success:** %s(%d) has been jailed for %d seconds.", ReturnPlayerName( pID ), pID, Seconds );
-	    	SendGlobalMessage( -1, ""COL_GOLD"[DISCORD JAIL]{FFFFFF} %s(%d) has been sent to jail for %d seconds by %s "COL_GREEN"[REASON: %s]", ReturnPlayerName( pID ), pID, Seconds, ReturnDiscordName( user ), reason );
-        	JailPlayer( pID, Seconds, 1 );
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has sent **%s(%d)** to jail for **%d** seconds. **[REASON: %s]**", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, Seconds, reason );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has sent {FFFFFF}%s(%d) {99AAB5}to jail for {FFFFFF}%d seconds. "COL_GREEN"[REASON: %s]", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, Seconds, reason );
+			JailPlayer( pID, Seconds, 1 );
 		}
-		else DCC_SendUserMessage( user, "**Command Error:** Player is not connected!" );
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
 	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
 	return 1;
 }
 
-DQCMD:mute( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:unjail( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
 	new
-		bool: hasPermission;
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
-	    new pID, seconds, reason[ 32 ];
-
-		if ( sscanf( params, "udS(No Reason)[32]", pID, seconds, reason ) ) return DCC_SendUserMessage( user, "**Usage:** !amute [PLAYER_ID] [SECONDS] [REASON]");
-	    else if ( !IsPlayerConnected( pID ) ) DCC_SendUserMessage( user, "**Command Error:** Invalid Player ID.");
-		else if ( p_AdminLevel[ pID ] > 4 ) return DCC_SendUserMessage( user, "**Command Error:** No sexy head admin targetting!");
-	    else if ( seconds < 0 || seconds > 10000000 ) return DCC_SendUserMessage( user, "**Command Error:** Specify the amount of seconds from 1 - 10000000." );
-	    else
+		new
+			pID
+		;
+		if ( sscanf( params, "u", pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !unjail [PLAYER_ID]" );
+		if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Invalid Player ID." );
+		if ( !IsPlayerJailed( pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** The player is not jailed." );
+		if ( IsPlayerConnected( pID ) )
 		{
-	        SendGlobalMessage( -1, ""COL_PINK"[DISCORD ADMIN]{FFFFFF} %s has been muted by %s for %d seconds "COL_GREEN"[REASON: %s]", ReturnPlayerName( pID ), ReturnDiscordName( user ), seconds, reason );
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has unjailed **%s(%d)**.", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has unjailed{FFFFFF} %s(%d).", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID );
+			CallLocalFunction( "OnPlayerUnjailed", "dd", pID, 3 );
+		}
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+DISCORD:ans( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
+	{
+		new
+			pID, msg[ 90 ]
+		;
+		if ( sscanf( params, "us[90]", pID, msg ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !ans [PLAYER_ID] [ANSWER]" );
+		if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Invalid Player ID." );
+		if ( IsPlayerConnected( pID ) )
+		{
+		SendClientMessageToAdmins( -1, "{7289DA}[DISCORD]{99AAB5} ({FFFFFF}%s{99AAB5} >> {FFFFFF}%s{99AAB5}):{FFFFFF} %s", ReturnDiscordName( author ), ReturnPlayerName( pID ), msg );
+		SendClientMessageFormatted( pID, -1, "{7289DA}[DISCORD ANSWER] {FFFFFF}%s:{99AAB5} %s", ReturnDiscordName( author ), msg );
+		DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has answered **%s(%d)'s** question.", ReturnDiscordName( author ), ReturnPlayerName(pID), pID );
+		Beep( pID );
+		}
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+
+/* Level 2+ */
+DISCORD:kick( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
+	{
+		new pID, reason[64];
+
+		if (sscanf( params, "uS(No reason)[64]", pID, reason)) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !kick [PLAYER_ID] [REASON]" );
+		if (IsPlayerConnected(pID))
+		{
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has kicked **%s(%d)**. **[REASON: %s]**", ReturnDiscordName( author ), ReturnPlayerName(pID), pID, reason );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has kicked {FFFFFF}%s(%d) "COL_GREEN"[REASON: %s]", ReturnDiscordName( author ), ReturnPlayerName(pID), pID, reason );
+			KickPlayerTimed( pID );
+		}
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+
+DISCORD:mute( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
+	{
+		new pID, seconds, reason[ 32 ];
+
+		if ( sscanf( params, "udS(No Reason)[32]", pID, seconds, reason ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !mute [PLAYER_ID] [SECONDS] [REASON]" );
+		else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Invalid Player ID." );
+		else if ( p_AdminLevel[ pID ] > 4 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** You cannot use this command on admins higher than level 4.");
+		else if ( seconds < 0 || seconds > 10000000 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Specify the amount of seconds from 1 - 10000000." );
+		else
+		{
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has muted **%s(%d)** for **%d** seconds. **[REASON: %s]**", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, seconds, reason );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has muted{FFFFFF} %s(%d) {99AAB5}for {FFFFFF}%d {99AAB5}seconds "COL_GREEN"[REASON: %s]", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, seconds, reason );
 			GameTextForPlayer( pID, "~r~Muted!", 4000, 4 );
-	        p_Muted{ pID } = true;
-	        p_MutedTime[ pID ] = g_iTime + seconds;
-	    }
+			p_Muted{ pID } = true;
+			p_MutedTime[ pID ] = g_iTime + seconds;
+		}
 	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
 	return 1;
 }
 
-DQCMD:unmute( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:unmute( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
-	{
-    	new pID;
-	    if ( sscanf( params, "u", pID )) return DCC_SendUserMessage( user, "/mute [PLAYER_ID]");
-	    else if ( !IsPlayerConnected( pID ) ) return DCC_SendUserMessage( user,  "**Command Error:** Invalid Player ID");
-	    else if ( !p_Muted{ pID } ) return DCC_SendUserMessage( user,  "**Command Error:** This player isn't muted" );
-	    else
-		{
-	        SendGlobalMessage( -1, ""COL_PINK"[DISCORD ADMIN]{FFFFFF} %s has been un-muted by %s.", ReturnPlayerName( pID ), ReturnDiscordName( user ) );
-			GameTextForPlayer( pID, "~g~Un-Muted!", 4000, 4 );
-	        p_Muted{ pID } = false;
-	        p_MutedTime[ pID ] = 0;
-	    }
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
 	}
-    return 1;
-}
 
-DQCMD:getip( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
 	new
-		bool: hasPermission;
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasPermission );
-	if ( hasPermission )
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
 	{
 		new pID;
-		if ( sscanf( params, "u", pID ) ) return DCC_SendUserMessage( user, "**Usage:** !warn [PLAYER_ID] [REASON]" );
-		if ( IsPlayerConnected( pID ) )
+		if ( sscanf( params, "u", pID )) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !unmute [PLAYER_ID]");
+		else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Invalid Player ID." );
+		else if ( !p_Muted{ pID } ) return DCC_SendChannelMessage( discordAdminChan,  "**[ERROR]** This player isn't muted" );
+		else
 		{
-			if ( p_AdminLevel[ pID ] > 4 ) return DCC_SendUserMessage( user, "**Command Error:** No sexy head admin targetting!");
-			DCC_SendChannelMessageFormatted( discordAdminChan, "**Command Success:** %s(%d)'s IP is 14%s", ReturnPlayerName( pID ), pID, ReturnPlayerIP( pID ) );
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has un-muted **%s(%d)**.", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has un-muted{FFFFFF} %s(%d).", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID );
+			GameTextForPlayer( pID, "~g~Un-Muted!", 4000, 4 );
+			p_Muted{ pID } = false;
+			p_MutedTime[ pID ] = 0;
 		}
-		else DCC_SendUserMessage( user, "**Command Error:** Player is not connected!" );
 	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
 	return 1;
 }
 
-/* OP */
-DQCMD:unban( DCC_Channel: channel, DCC_User: user, params[ ] )
+DISCORD:suspend( DCC_Channel: channel, DCC_User: author, params[ ] )
 {
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior, bool: hasGeneral;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
+	{
+		new pID, reason[50], hours, days;
+		if ( sscanf( params, "uddS(No Reason)[50]", pID, hours, days, reason ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !suspend [PLAYER_ID] [HOURS] [DAYS] [REASON]" );
+		if ( hours < 0 || hours > 24 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Please specify an hour between 0 and 24." );
+		if ( days < 0 || days > 60 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Please specifiy the amount of days between 0 and 60." );
+		if ( days == 0 && hours == 0 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Invalid time specified." );
+
+		if ( IsPlayerConnected( pID ) )
+		{
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has suspended **%s(%d)** for **%d hour(s)** and **%d day(s)** **[REASON: %s]**", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, hours, days, reason );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has suspended {FFFFFF}%s(%d) {99AAB5}for {FFFFFF}%d {99AAB5}hour(s) and {FFFFFF}%d {99AAB5}day(s).", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, hours, days );
+			new time = g_iTime + ( hours * 3600 ) + ( days * 86400 );
+			AdvancedBan( pID, "DISCORDistrator", reason, ReturnPlayerIP( pID ), time );
+		}
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+
+/* Level 3+ */
+DISCORD:ban( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior )
+	{
+		new pID, reason[64];
+		if (sscanf( params, "uS(No reason)[64]", pID, reason)) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !ban [PLAYER_ID] [REASON]" );
+		if (IsPlayerConnected(pID))
+		{
+			if ( p_AdminLevel[ pID ] >= 3 ) return DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** You can't use this on higher level admins." );
+			DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** **%s** has banned **%s(%d)**. **[REASON: %s]**", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, reason );
+			SendGlobalMessage( -1, "{7289DA}[DISCORD]{FFFFFF} %s {99AAB5}has banned{FFFFFF} %s(%d) "COL_GREEN"[REASON: %s]", ReturnDiscordName( author ), ReturnPlayerName( pID ), pID, reason );
+			AdvancedBan( pID, "DISCORDistrator", reason, ReturnPlayerIP( pID ) );
+		}
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+
+DISCORD:getip( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
+	new
+		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasLead, bool: hasSenior;
+
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	
+	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior )
+	{
+		new pID;
+		if ( sscanf( params, "u", pID ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !getip [PLAYER_ID]" );
+		if ( IsPlayerConnected( pID ) )
+		{
+			if ( p_AdminLevel[ pID ] >= 5 || IsPlayerServerMaintainer( pID ) ) return DCC_SendChannelMessage( discordAdminChan, "I love this person so much that I wont give you his IP :)");
+			DCC_SendChannelMessageFormatted( discordAdminChan, "**[DISCORD LOG]** **%s(%d)'s** IP is **%s**", ReturnPlayerName( pID ), pID, ReturnPlayerIP( pID ) );
+		}
+		else DCC_SendChannelMessage( discordAdminChan, "**[ERROR]** Player is not connected!" );
+	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
+	return 1;
+}
+
+/* Level 5+ */
+DISCORD:unban( DCC_Channel: channel, DCC_User: author, params[ ] )
+{
+	if (channel != discordAdminChan) {
+		DCC_SendChannelMessage(channel, "**[ERROR]** You can only use this command in admin channel!");
+		return 1;
+	}
+
 	new
 		player[24],
 		Query[70],
-		bool: hasPermission
+		bool: hasCouncil, bool: hasExec, bool: hasDev
 	;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleHead, hasPermission );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
 
-	if ( ! hasPermission ) return 0;
-	else if ( sscanf( params, "s[24]", player ) ) return DCC_SendUserMessage( user, "**Usage:** !unban [PLAYER]" );
-	else
+	if ( hasCouncil || hasExec || hasDev )
 	{
-		format( Query, sizeof( Query ), "SELECT `NAME` FROM `BANS` WHERE `NAME` = '%s'", mysql_escape( player ) );
-		mysql_function_query( dbHandle, Query, true, "OnPlayerUnbanPlayer", "dds", INVALID_PLAYER_ID, 1, player );
-	}
-	return 1;
-}
-
-DQCMD:unbanip( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
-	new
-		address[16],
-		Query[70],
-		bool: hasPermission
-	;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleHead, hasPermission );
-
-	if ( ! hasPermission ) return 0;
-	else if (sscanf(params, "s[16]", address)) return DCC_SendUserMessage( user, "**Usage:** !unbanip [IP]" );
-	else
-	{
-		format( Query, sizeof( Query ), "SELECT `IP` FROM `BANS` WHERE `IP` = '%s'", mysql_escape( address ) );
-		mysql_function_query( dbHandle, Query, true, "OnPlayerUnbanIP", "dds", INVALID_PLAYER_ID, 0, address );
-	}
-	return 1;
-}
-
-/* Executive */
-DQCMD:kickall( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleExecutive, hasPermission );
-	if ( hasPermission )
-	{
-		SendGlobalMessage( -1, ""COL_PINK"[ADMIN]"COL_WHITE" Everyone has been kicked from the server due to a server update." );
-		for( new i, g = GetMaxPlayers( ); i < g; i++ )
+		if ( sscanf( params, "s[24]", player ) ) return DCC_SendChannelMessage( discordAdminChan, "**[USAGE]** !unban [PLAYER_ID]" );
+		else
 		{
-		    if ( IsPlayerConnected( i ) )
-		    {
-		        Kick( i );
-		    }
-		}
-		DCC_SendChannelMessage( discordAdminChan, "**Command Success:** All users have been kicked from the server." );
-	}
-	return 1;
-}
-
-DQCMD:rcon( DCC_Channel: channel, DCC_User: user, params[ ] )
-{
-	new
-		bool: hasPermission;
-
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleExecutive, hasPermission );
-
-	if ( hasPermission )
-	{
-		if ( ! isnull( params ) )
-		{
-			if ( strcmp( params, "exit", true ) != 0 )
-			{
-				DCC_SendChannelMessageFormatted( discordAdminChan, "RCON command **%s** has been executed.", params );
-				SendRconCommand( params );
-			}
+			format( Query, sizeof( Query ), "SELECT `NAME` FROM `BANS` WHERE `NAME` = '%s'", mysql_escape( player ) );
+			mysql_function_query( dbHandle, Query, true, "OnPlayerUnbanPlayer", "dds", INVALID_PLAYER_ID, 1, player );
 		}
 	}
+	else DCC_SendChannelMessage(channel, "**[ERROR]** You don't have an appropriate administration role to use this command." );
 	return 1;
-}
-
-/* ** In-Game Discord Commands * **/
-CMD:discord( playerid, params[ ] )
-{
-	return SendServerMessage( playerid, "You can access our Discord server at {7289da}sfcnr.com/discord" );
 }

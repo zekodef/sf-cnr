@@ -5,38 +5,55 @@
  * Purpose: discord implementation in-game
  */
 
- #define DISCORD_DISABLED 			// !!!! DISABLED BY DEFAULT !!!!
+//#define DISCORD_DISABLED 			// !!!! DISABLED BY DEFAULT !!!!
 
 /* ** Includes ** */
 #include 							< YSI\y_hooks >
-//#include                          < discord-connector >
+#include 							< discord-connector >
 
 /* ** Definitions ** */
-#define DISCORD_GENERAL 			"191078670360641536"
-#define DISCORD_ADMINISTRATION 		"191078670360641536"
-#define DISCORD_SPAM 				"364725535256870913"
+/* Guild */
+#define DISCORD_GUILD				"571071428921655348"
 
-#define DISCORD_ROLE_EXEC 			"191727949404176384"
-#define DISCORD_ROLE_HEAD 			"191134988354191360"
-#define DISCORD_ROLE_LEAD			"191080382689443841"
-#define DISCORD_ROLE_VIP			"191180697547833344"
-#define DISCORD_ROLE_VOICE			"364678874681966592"
+/* Channels */
+#define DISCORD_ADMIN_CHAN			"578879515552382986"
+#define DISCORD_LOG_CHAN			"578879541838348308"
+#define DISCORD_CHAT_CHAN			"578879608032722944"
+#define DISCORD_COMMANDS_CHAN		"578879719571849217"
+#define DISCORD_ASK_CHAN			"582137050602405918"
 
-/* ** Macros ** */
-#define DQCMD:%1(%2) 				forward discord_%1(%2); public discord_%1(%2)
+/* Roles */
+#define DISCORD_ROLE_EXEC 			"571072485617827870"
+#define DISCORD_ROLE_DEV 			"578885173555232789"
+#define DISCORD_ROLE_COUNCIL 		"571073680059269193"
+#define DISCORD_ROLE_LEAD 			"571073881733857302"
+#define DISCORD_ROLE_SENIOR 		"578885422822850560"
+#define DISCORD_ROLE_GENERAL 		"578885496655052820"
+#define DISCORD_ROLE_TRIAL 			"578885593988202496"
+#define DISCORD_ROLE_SUPPORT 		"578885684979302419"
+#define DISCORD_ROLE_VIP 			"571073955138502656"
+#define DISCORD_ROLE_MEMBER 		"578886006783213597"
 
 /* ** Variables ** */
 new stock
 	DCC_Guild: discordGuild,
-	DCC_Channel: discordGeneralChan,
-	DCC_Channel: discordAdminChan,
-	DCC_Channel: discordSpamChan,
 
-	DCC_Role: discordRoleExecutive,
-	DCC_Role: discordRoleHead,
+	DCC_Channel: discordAdminChan,
+	DCC_Channel: discordLogChan,
+	DCC_Channel: discordChatChan,
+	DCC_Channel: discordCmdsChan,
+	DCC_Channel: discordAskChan,
+
+	DCC_Role: discordRoleExec,
+	DCC_Role: discordRoleDev,
+	DCC_Role: discordRoleCouncil,
 	DCC_Role: discordRoleLead,
+	DCC_Role: discordRoleSenior,
+	DCC_Role: discordRoleGeneral,
+	DCC_Role: discordRoleTrial,
+	DCC_Role: discordRoleSupport,
 	DCC_Role: discordRoleVIP,
-	DCC_Role: discordRoleVoice
+	DCC_Role: discordRoleMember
 ;
 
 stock DCC_SendChannelMessageFormatted( DCC_Channel: channel, const format[ ], va_args< > ) {
@@ -50,9 +67,9 @@ stock DCC_SendChannelMessageFormatted( DCC_Channel: channel, const format[ ], va
 		#pragma unused message
 		return 1;
 	}
-	stock DCC_SendUserMessage( DCC_User: user, const message[ ] )
+	stock DCC_SendUserMessage( DCC_User: author, const message[ ] )
 	{
-		#pragma unused user
+		#pragma unused author
 		#pragma unused message
 		return 1;
 	}
@@ -60,104 +77,93 @@ stock DCC_SendChannelMessageFormatted( DCC_Channel: channel, const format[ ], va
 #endif
 
 /* ** Hooks ** */
-hook OnScriptInit( )
+hook OnGameModeInit( )
 {
-    discordGuild = DCC_FindGuildById( DISCORD_GENERAL );
-    discordGeneralChan = DCC_FindChannelById( DISCORD_GENERAL );
-    discordSpamChan = DCC_FindChannelById( DISCORD_SPAM );
+    discordGuild = DCC_FindGuildById( DISCORD_GUILD );
 
-    discordRoleExecutive = DCC_FindRoleById( DISCORD_ROLE_EXEC );
-    discordRoleHead = DCC_FindRoleById( DISCORD_ROLE_HEAD );
-    discordRoleLead = DCC_FindRoleById( DISCORD_ROLE_LEAD );
-    discordRoleVIP = DCC_FindRoleById( DISCORD_ROLE_VIP );
-    discordRoleVoice = DCC_FindRoleById( DISCORD_ROLE_VOICE );
+	discordAdminChan = DCC_FindChannelById( DISCORD_ADMIN_CHAN );
+	discordLogChan = DCC_FindChannelById( DISCORD_LOG_CHAN );
+	discordChatChan = DCC_FindChannelById( DISCORD_CHAT_CHAN );
+	discordCmdsChan = DCC_FindChannelById( DISCORD_COMMANDS_CHAN );
+	discordAskChan = DCC_FindChannelById( DISCORD_ASK_CHAN );
 
-    DCC_SendChannelMessage( discordGeneralChan, "**The discord plugin has been initiaized.**" );
+	discordRoleExec = DCC_FindRoleById ( DISCORD_ROLE_EXEC );
+	discordRoleDev = DCC_FindRoleById ( DISCORD_ROLE_DEV );
+	discordRoleCouncil = DCC_FindRoleById ( DISCORD_ROLE_COUNCIL );
+	discordRoleLead = DCC_FindRoleById ( DISCORD_ROLE_LEAD );
+	discordRoleSenior = DCC_FindRoleById ( DISCORD_ROLE_SENIOR );
+	discordRoleGeneral = DCC_FindRoleById ( DISCORD_ROLE_GENERAL );
+	discordRoleTrial = DCC_FindRoleById ( DISCORD_ROLE_TRIAL );
+	discordRoleSupport = DCC_FindRoleById ( DISCORD_ROLE_SUPPORT );
+	discordRoleVIP = DCC_FindRoleById ( DISCORD_ROLE_VIP );
+	discordRoleMember = DCC_FindRoleById ( DISCORD_ROLE_MEMBER );
+
+    DCC_SendChannelMessage( discordChatChan, "**Stephanie v1.0 is here.**" );
     return 1;
 }
 
-/* ** Commands ** */
-CMD:discordpm( playerid, params[ ] )
-{
-	new
-		msg[ 128 ];
-
-	if ( sscanf( params, "s[100]", msg ) ) SendUsage( playerid, "/discordpm [message]" );
-	else
-	{
- 		Beep( playerid );
- 		format( msg, sizeof( msg ), "__[Discord PM]__ **%s(%d):** %s", ReturnPlayerName( playerid ), playerid, msg );
-    	DCC_SendChannelMessage( discordGeneralChan, msg );
-		SendServerMessage( playerid, "Your typed message has been sent to the Discord #sfcnr channel!" );
-	}
-	return 1;
-}
-
 /* ** Functions ** */
-hook DCC_OnChannelMessage( DCC_Channel: channel, DCC_User: author, const message[ ] )
-{
-	// ignore outside of #sfcnr and #admin
-	if ( channel != discordGeneralChan && channel != discordAdminChan )
-		return 1;
-
-	// process commands
-	if ( message[ 0 ] == '!' )
-	{
-		new
-			functiona[ 32 ], posi = 0;
-
-		while ( message[ ++posi ] > ' ' ) {
-			functiona[ posi - 1 ] = tolower( message[ posi ] );
-		}
-
-		format( functiona, sizeof( functiona ), "discord_%s", functiona );
-
-		while ( message[ posi ] == ' ' ) {
-			posi++;
-		}
-
-		if ( ! message[ posi ] ) {
-			CallLocalFunction( functiona, "dds", _: channel, _: author, "\1" );
-		} else {
-			CallLocalFunction( functiona, "dds", _: channel, _: author, message[ posi ] );
-		}
-	}
-	return 1;
-}
-
-stock ReturnDiscordName( DCC_User: user ) {
+stock ReturnDiscordName( DCC_User: author ) {
 	static
 		name[ 32 ];
 
-	DCC_GetUserName( user, name, sizeof( name ) );
+	DCC_GetUserName( author, name, sizeof( name ) );
 	return name;
 }
 
-stock discordLevelToString( DCC_User: user )
+stock discordLevelToString( DCC_User: author )
 {
 	static
-		szRank[ 12 ], bool: hasExecutive, bool: hasHead, bool: hasLead, bool: hasVIP;
+		szRank[ 15 ], 
+		bool: hasExec, bool: hasDev, bool: hasCouncil, bool: hasLead, bool: hasSenior,
+		bool: hasGeneral, bool: hasTrial, bool: hasSupport, bool: hasVIP, bool: hasMember;
 
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleExecutive, hasExecutive );
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleHead, hasHead );
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleLead, hasLead );
-	DCC_HasGuildMemberRole( discordGuild, user, discordRoleVIP, hasVIP );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleDev, hasDev );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSupport, hasSupport );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleVIP, hasVIP );
+	DCC_HasGuildMemberRole( discordGuild, author, discordRoleMember, hasMember );
 
-	if ( hasExecutive ) szRank = "Executive";
-	else if ( hasHead ) szRank = "Head Admin";
+	if ( hasExec ) szRank = "Executive";
+	else if ( hasDev ) szRank = "Developer";
+	else if ( hasCouncil ) szRank = "Council";
 	else if ( hasLead ) szRank = "Lead Admin";
+	else if ( hasSenior ) szRank = "Senior Admin";
+	else if ( hasGeneral ) szRank = "General Admin";
+	else if ( hasTrial ) szRank = "Trial Admin";
+	else if ( hasSupport ) szRank = "Supporter";
 	else if ( hasVIP ) szRank = "VIP";
-	else szRank = "Voice";
+	else if ( hasMember ) szRank = "Member";
 
     return szRank;
 }
 
-stock DCC_SendUserMessage( DCC_User: user, const message[ ] )
+stock DCC_SendUserUsage( DCC_User: author, const message[ ] )
 {
 	static
 		user_id[ 64 ];
 
-	DCC_GetUserId( user, user_id, sizeof( user_id ) );
-	format( szBigString, sizeof( szBigString ), "<@%s> ... %s", user_id, message );
-	return DCC_SendChannelMessage( discordSpamChan, szBigString );
+	DCC_GetUserId( author, user_id, sizeof( user_id ) );
+	format( szBigString, sizeof( szBigString ), "<@%s> %s", user_id, message );
+	return DCC_SendChannelMessage( discordCmdsChan, szBigString );
+}
+
+public OnDiscordCommandPerformed(DCC_Channel: channel, DCC_User: author, bool: success) 
+{
+	if (!success) {
+		return DCC_SendChannelMessage(channel, "**[ERROR]** You have entered an invalid command. To display the command list type !commands.");
+	}
+
+	return 1;
+}
+
+public DCC_OnGuildMemberAdd(DCC_Guild:guild, DCC_User:user) 
+{
+	DCC_SendUserUsage(user, "Hey there! I am **Stephanie**, i am here to help you out!\nUse **!commands** to see all commands i offer.\nYou need to have **member** role trough to use them, so first verify your account!");
+	return 1;
 }

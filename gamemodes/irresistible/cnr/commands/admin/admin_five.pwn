@@ -422,7 +422,7 @@ thread OnPlayerUnbanIP( playerid, irc, address[ ] )
 		}
 		else
 		{
-    		DCC_SendChannelMessageFormatted( discordGeneralChan, "**(UNBANNED)** IP %s has been un-banned from the server.", address );
+    		DCC_SendChannelMessageFormatted( discordLogChan, "**[DISCORD LOG]** IP %s has been un-banned from the server.", address );
 		}
 		format( szNormalString, sizeof( szNormalString ), "DELETE FROM `BANS` WHERE `IP` = '%s'", mysql_escape( address ) );
 		mysql_single_query( szNormalString );
@@ -461,8 +461,8 @@ thread OnPlayerUnbanPlayer( playerid, irc, player[ ] )
    	 	if ( !irc ) AddAdminLogLineFormatted( "%s(%d) has un-banned %s", ReturnPlayerName( playerid ), playerid, player );
 		else
 		{
-			format(szNormalString, sizeof(szNormalString),"**(UNBANNED)** %s has been un-banned from the server.", player);
-    		DCC_SendChannelMessage( discordGeneralChan, szNormalString );
+			format(szNormalString, sizeof(szNormalString),"**[DISCORD LOG]** %s has been un-banned from the server.", player);
+    		DCC_SendChannelMessage( discordLogChan, szNormalString );
 		}
 		format(szNormalString, sizeof(szNormalString), "DELETE FROM `BANS` WHERE `NAME` = '%s'", mysql_escape( player ) );
 		mysql_single_query( szNormalString );

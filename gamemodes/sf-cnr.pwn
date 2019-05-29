@@ -457,8 +457,8 @@ public OnLookupComplete( playerid, success )
 		SendClientMessage( i, COLOR_CONNECT, szNormalString );
 	}
 
-	format( szNormalString, sizeof( szNormalString ), "*%s*", szNormalString );
-	DCC_SendChannelMessage( discordGeneralChan, szNormalString );
+	//format( szNormalString, sizeof( szNormalString ), "*%s*", szNormalString );
+	//DCC_SendChannelMessage( discordGeneralChan, szNormalString );
 	return 1;
 }
 
@@ -628,8 +628,8 @@ public OnPlayerDisconnect( playerid, reason )
 		p_BlockedPM[ playerid ] [ i ] = false;
 	}
 
-	format( string, sizeof( string ), "*%s*", string );
-	DCC_SendChannelMessage( discordGeneralChan, string );
+	//format( string, sizeof( string ), "*%s*", string );
+	//DCC_SendChannelMessage( discordGeneralChan, string );
 	return 1;
 }
 
@@ -1243,7 +1243,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 
 		SendDeathMessage( killerid, playerid, reason );
 
-		DCC_SendChannelMessageFormatted( discordGeneralChan, "*%s(%d) has killed %s(%d) - %s!*", ReturnPlayerName( killerid ), killerid,  ReturnPlayerName( playerid ), playerid, ReturnWeaponName( reason ) );
+		//DCC_SendChannelMessageFormatted( discordGeneralChan, "*%s(%d) has killed %s(%d) - %s!*", ReturnPlayerName( killerid ), killerid,  ReturnPlayerName( playerid ), playerid, ReturnWeaponName( reason ) );
 
 		if ( !IsPlayerAdminOnDuty( killerid ) )
 		{
@@ -1388,7 +1388,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 	else if ( IsPlayerNPC( killerid ) ) SendDeathMessage( killerid, playerid, reason );
 	else
 	{
-		DCC_SendChannelMessageFormatted( discordGeneralChan, "*%s(%d) has committed suicide!*", ReturnPlayerName( playerid ), playerid );
+		//DCC_SendChannelMessageFormatted( discordGeneralChan, "*%s(%d) has committed suicide!*", ReturnPlayerName( playerid ), playerid );
 	    SendDeathMessage( INVALID_PLAYER_ID, playerid, 53 );
 	    DeletePVar( playerid, "used_cmd_kill" );
 	}
@@ -1574,7 +1574,7 @@ public OnPlayerText( playerid, text[ ] )
 			{
 			    if ( p_VIPLevel[ playerid ] > 0 )
 			    {
-					DCC_SendChannelMessageFormatted( discordGeneralChan, "__**(VIP) %s(%d):**__ %s", ReturnPlayerName( playerid ), playerid, text[ 1 ] );
+					DCC_SendChannelMessageFormatted( discordChatChan, "**[%s] (VIP) %s(%d):** %s", getCurrentTime(), ReturnPlayerName( playerid ), playerid, text[ 1 ] );
 					SendClientMessageToAllFormatted( 0x3eff3eff, "[VIP] %s(%d):{9ec34f} %s", ReturnPlayerName( playerid ), playerid, text[ 1 ] );
 			        return 0;
 			    }
@@ -1591,7 +1591,7 @@ public OnPlayerText( playerid, text[ ] )
 		}
 	}
 
-	DCC_SendChannelMessageFormatted( discordGeneralChan, "**%s(%d):** %s", ReturnPlayerName( playerid ), playerid, text ); // p_Class[ playerid ] == CLASS_POLICE ? 12 : 4
+	DCC_SendChannelMessageFormatted( discordChatChan, "**[%s] %s(%d):** %s", getCurrentTime(), ReturnPlayerName( playerid ), playerid, text ); // p_Class[ playerid ] == CLASS_POLICE ? 12 : 4
 
 	// custom player id setting
 	foreach ( new iPlayer : Player ) {
@@ -2207,7 +2207,7 @@ CMD:vsay( playerid, params[ ] )
 		   		return SendError( playerid, "You cannot speak as you are muted for %s.", secondstotime( p_MutedTime[ playerid ] - time ) );
 		}
 
-		DCC_SendChannelMessageFormatted( discordGeneralChan, "__**(VIP) %s(%d):**__ %s", ReturnPlayerName( playerid ), playerid, msg );
+		DCC_SendChannelMessageFormatted( discordChatChan, "**[%s] (VIP) %s(%d):** %s", getCurrentTime(), ReturnPlayerName( playerid ), playerid, msg );
 		SendClientMessageToAllFormatted( 0x3eff3eff, "[VIP] %s(%d):{9ec34f} %s", ReturnPlayerName( playerid ), playerid, msg );
 	}
 	return 1;
@@ -2486,6 +2486,7 @@ CMD:ask( playerid, params[ ] )
 		Beep( playerid );
         SendClientMessageToAdmins( -1, "{FE5700}[QUESTION] %s(%d):{FFFFFF} %s", ReturnPlayerName( playerid ), playerid, szMessage );
 		SendClientMessageFormatted( playerid, -1, "{FE5700}[QUESTION]"COL_WHITE" You've asked \"%s\".", szMessage );
+		DCC_SendChannelMessageFormatted( discordAskChan, "**[QUESTION]** __**%s(%d)**__: %s", ReturnPlayerName( playerid ), playerid, szMessage );
 	}
 	return 1;
 }
@@ -2601,10 +2602,6 @@ thread OnPlayerLastLogged( playerid, irc, player[ ] )
 		}
 
 		if ( !irc ) SendClientMessageFormatted( playerid, COLOR_GREY, "[SERVER]"COL_RED" %s:"COL_WHITE" Last Logged: %s", player, Field );
-		else {
-			format( szNormalString, sizeof( szNormalString ),"7LAST LOGGED OF '%s': %s", player, Field );
-			DCC_SendChannelMessage( discordGeneralChan, szNormalString );
-		}
 	}
 	else {
 		if ( !irc ) SendError( playerid, "Player not found." );
@@ -2640,11 +2637,6 @@ thread OnPlayerWeeklyTime( playerid, irc, player[ ] )
 		iLastUptime 	= cache_get_field_content_int( 0, "WEEKEND_UPTIME", dbHandle );
 
 		if ( !irc ) SendClientMessageFormatted( playerid, COLOR_GREY, "[SERVER]"COL_GREY" %s:"COL_WHITE" %s", player, secondstotime( iCurrentUptime - iLastUptime ) );
-		else
-		{
-			format( szNormalString, sizeof( szNormalString ),"7WEEKLY TIME OF '%s': %s", player, secondstotime( iCurrentUptime - iLastUptime ) );
-			DCC_SendChannelMessage( discordGeneralChan, szNormalString );
-		}
 	}
 	else
 	{
@@ -3342,7 +3334,7 @@ CMD:me( playerid, params[ ] )
 	else if ( sscanf( params, "s[70]", action ) ) return SendUsage( playerid, "/me [ACTION]" );
 	else
 	{
-    	DCC_SendChannelMessageFormatted( discordGeneralChan, "** * * * %s(%d) %s **", ReturnPlayerName( playerid ), playerid, action );
+    	//DCC_SendChannelMessageFormatted( discordGeneralChan, "** * * * %s(%d) %s **", ReturnPlayerName( playerid ), playerid, action );
 		SendClientMessageToAllFormatted( GetPlayerColor( playerid ), "*** %s(%d) %s", ReturnPlayerName( playerid ), playerid, action );
 	}
 	return 1;
@@ -5794,7 +5786,7 @@ stock SendGlobalMessage( colour, const format[ ], va_args<> )
 	strreplace( out, #COL_PINK, 	"**" );
 	strreplace( out, #COL_GREY,		"**" );
 	strreplace( out, #COL_WHITE, 	"**" );
-	DCC_SendChannelMessage( discordGeneralChan, out );
+	//DCC_SendChannelMessage( discordGeneralChan, out );
 	return 1;
 }
 
@@ -6210,7 +6202,7 @@ stock AddAdminLogLine( szMessage[ sizeof( log__Text[ ] ) ] )
 		memcpy( log__Text[ iPos ], log__Text[ iPos + 1 ], 0, sizeof( log__Text[ ] ) * 4 );
 
 	strcpy( log__Text[ 4 ], szMessage );
-	DCC_SendChannelMessage( discordAdminChan, szMessage );
+	DCC_SendChannelMessageFormatted( discordLogChan, "**[SERVER LOG]** %s" ,szMessage );
 
 	format( szLargeString, 500,	"%s~n~%s~n~%s~n~%s~n~%s", log__Text[ 0 ], log__Text[ 1 ], log__Text[ 2 ], log__Text[ 3 ], log__Text[ 4 ] );
 	return TextDrawSetString( g_AdminLogTD, szLargeString );
