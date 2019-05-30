@@ -5,11 +5,24 @@
  * Purpose: discord implementation in-game
  */
 
-//#define DISCORD_DISABLED 			// !!!! DISABLED BY DEFAULT !!!!
+/* ** Enable or disable discord ** */
+// #define DISCORD_DISABLED 			// !!!! DISABLED BY DEFAULT !!!!
 
 /* ** Includes ** */
 #include 							< YSI\y_hooks >
-#include 							< discord-connector >
+#tryinclude 						< discord-connector >
+#tryinclude							< discord-command >
+
+/* ** Disable if discord connector not enabled ** */
+#if !defined dcconnector_included && !defined DISCORD_DISABLED
+	#warning "Discord is disabled as the connector is not found. (https://github.com/maddinat0r/samp-discord-connector)"
+	#define DISCORD_DISABLED
+#endif
+
+#if !defined _discordcmd_included && !defined DISCORD_DISABLED
+	#warning "Discord is disabled as the command handler is not found. (https://github.com/AliLogic/discord-command)"
+	#define DISCORD_DISABLED
+#endif
 
 /* ** Definitions ** */
 /* Guild */
@@ -56,21 +69,31 @@ new stock
 	DCC_Role: discordRoleMember
 ;
 
-stock DCC_SendChannelMessageFormatted( DCC_Channel: channel, const format[ ], va_args< > ) {
-	return DCC_SendChannelMessage( channel, va_return( format, va_start< 2 > ) );
-}
-
 /* ** Error Checking ** */
 #if defined DISCORD_DISABLED
-	stock DCC_SendChannelMessage( DCC_Channel: channel, const message[ ] ) {
+	stock TMP_DCC_SendChannelMessage( DCC_Channel: channel, const message[ ] ) {
 		#pragma unused channel
 		#pragma unused message
 		return 1;
 	}
+
+    #if defined _ALS_DCC_SendChannelMessage
+        #undef DCC_SendChannelMessage
+    #else
+        #define _ALS_DCC_SendChannelMessage
+    #endif
+    #define DCC_SendChannelMessage TMP_DCC_SendChannelMessage
+
 	stock DCC_SendUserMessage( DCC_User: author, const message[ ] )
 	{
 		#pragma unused author
 		#pragma unused message
+		return 1;
+	}
+
+	stock DCC_SendChannelMessageFormatted( DCC_Channel: channel, const format[ ], va_args< > ) {
+		#pragma unused channel
+		#pragma unused format
 		return 1;
 	}
 	#endinput
@@ -114,7 +137,7 @@ stock ReturnDiscordName( DCC_User: author ) {
 stock discordLevelToString( DCC_User: author )
 {
 	static
-		szRank[ 15 ], 
+		szRank[ 15 ],
 		bool: hasExec, bool: hasDev, bool: hasCouncil, bool: hasLead, bool: hasSenior,
 		bool: hasGeneral, bool: hasTrial, bool: hasSupport, bool: hasVIP, bool: hasMember;
 
@@ -153,7 +176,7 @@ stock DCC_SendUserUsage( DCC_User: author, const message[ ] )
 	return DCC_SendChannelMessage( discordCmdsChan, szBigString );
 }
 
-public OnDiscordCommandPerformed(DCC_Channel: channel, DCC_User: author, bool: success) 
+public OnDiscordCommandPerformed(DCC_Channel: channel, DCC_User: author, bool: success)
 {
 	if (!success) {
 		return DCC_SendChannelMessage(channel, "**[ERROR]** You have entered an invalid command. To display the command list type !commands.");
@@ -162,8 +185,12 @@ public OnDiscordCommandPerformed(DCC_Channel: channel, DCC_User: author, bool: s
 	return 1;
 }
 
-public DCC_OnGuildMemberAdd(DCC_Guild:guild, DCC_User:user) 
+public DCC_OnGuildMemberAdd(DCC_Guild:guild, DCC_User:user)
 {
 	DCC_SendUserUsage(user, "Hey there! I am **Stephanie**, i am here to help you out!\nUse **!commands** to see all commands i offer.\nYou need to have **member** role trough to use them, so first verify your account!");
 	return 1;
+}
+
+stock DCC_SendChannelMessageFormatted( DCC_Channel: channel, const format[ ], va_args< > ) {
+	return DCC_SendChannelMessage( channel, va_return( format, va_start< 2 > ) );
 }

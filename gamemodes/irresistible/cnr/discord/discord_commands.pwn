@@ -5,9 +5,13 @@
  * Purpose: commands that can be used on the discord channel
  */
 
+/* ** Error Checking ** */
+#if defined DISCORD_DISABLED
+	#endinput
+#endif
+
 /* ** Includes ** */
 #include 							< YSI\y_hooks >
-#include							< discord-command >
 
 /* ** Commands ** */
 DISCORD:commands( DCC_Channel: channel, DCC_User: author, params[ ] )
@@ -162,7 +166,7 @@ thread OnPlayerDiscordStats( playerid, params[ ] )
 
 	cache_get_data( rows, fields );
 
-	if ( rows ) 
+	if ( rows )
 	{
 		iScore		= cache_get_field_content_int( 0, "SCORE", dbHandle );
 		iKills		= cache_get_field_content_int( 0, "KILLS", dbHandle );
@@ -243,7 +247,7 @@ DISCORD:lastlogged( DCC_Channel: channel, DCC_User: author, params[ ] )
 thread OnPlayerDiscordLastLogged( playerid, params[ ] )
 {
 	new
-		rows, fields, 
+		rows, fields,
 		time, Field[ 50 ]
 	;
 	cache_get_data( rows, fields );
@@ -284,7 +288,7 @@ DISCORD:acmds( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -294,7 +298,7 @@ DISCORD:acmds( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
  		DCC_SendChannelMessage( discordAdminChan, "**Commands:**\n**!kick** - Kicking a player from the server.\n**!mute** - Muting a player.\n**!unmute** - Un-muting a player.\n**!suspend** - Suspending a player.\
@@ -313,7 +317,7 @@ DISCORD:warn( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -323,7 +327,7 @@ DISCORD:warn( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
 		new pID, reason[50];
@@ -356,7 +360,7 @@ DISCORD:jail( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -366,7 +370,7 @@ DISCORD:jail( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
 		new pID, reason[50], Seconds;
@@ -392,7 +396,7 @@ DISCORD:unjail( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -402,7 +406,7 @@ DISCORD:unjail( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
 		new
@@ -430,7 +434,7 @@ DISCORD:ans( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral, bool: hasTrial;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -440,7 +444,7 @@ DISCORD:ans( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleTrial, hasTrial );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral || hasTrial )
 	{
 		new
@@ -470,7 +474,7 @@ DISCORD:kick( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -479,7 +483,7 @@ DISCORD:kick( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
 	{
 		new pID, reason[64];
@@ -505,7 +509,7 @@ DISCORD:mute( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -514,7 +518,7 @@ DISCORD:mute( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
 	{
 		new pID, seconds, reason[ 32 ];
@@ -544,7 +548,7 @@ DISCORD:unmute( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -553,7 +557,7 @@ DISCORD:unmute( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
 	{
 		new pID;
@@ -581,7 +585,7 @@ DISCORD:suspend( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior, bool: hasGeneral;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -590,7 +594,7 @@ DISCORD:suspend( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleGeneral, hasGeneral );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior || hasGeneral )
 	{
 		new pID, reason[50], hours, days;
@@ -621,7 +625,7 @@ DISCORD:ban( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -629,7 +633,7 @@ DISCORD:ban( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior )
 	{
 		new pID, reason[64];
@@ -655,7 +659,7 @@ DISCORD:getip( DCC_Channel: channel, DCC_User: author, params[ ] )
 	}
 
 	new
-		bool: hasExec, bool: hasDev, bool: hasCouncil, 
+		bool: hasExec, bool: hasDev, bool: hasCouncil,
 		bool: hasLead, bool: hasSenior;
 
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleExec, hasExec );
@@ -663,7 +667,7 @@ DISCORD:getip( DCC_Channel: channel, DCC_User: author, params[ ] )
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleCouncil, hasCouncil );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleLead, hasLead );
 	DCC_HasGuildMemberRole( discordGuild, author, discordRoleSenior, hasSenior );
-	
+
 	if ( hasExec || hasDev || hasCouncil || hasLead || hasSenior )
 	{
 		new pID;
