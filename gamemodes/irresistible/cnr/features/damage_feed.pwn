@@ -221,9 +221,10 @@ public OnPlayerTakenDamage( playerid, issuerid, Float: amount, weaponid, bodypar
 					SetTimerEx( "HideDamageObject", 1000, false, "d", playerid );
 				}
 
-				// mark player as hit
-				p_GotHit{ playerid } = true;
 			}
+			
+			// mark player as hit
+			p_GotHit{ playerid } = true;
 		}
 
 		/* ** Hitmarker ** */
