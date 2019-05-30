@@ -6,6 +6,7 @@ server.cfg.sample
 *.dll
 *.txt
 *.rec
+*.log
 
 # include
 include/*
