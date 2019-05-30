@@ -36,7 +36,7 @@ static const Float: STOCK_DEFAULT_START_DONATIONS = 0.0;	// the default amount t
 static const Float: STOCK_DEFAULT_START_PRICE = 0.0; 		// the default starting price for a new report (useless)
 
 static const Float: STOCK_BANKRUPTCY_PERCENT = -80.0;		// the % that makes a company go bankrupt
-static const Float: STOCK_BANKRUPTCY_LOSS_PERCENT = 20.0;	// the % that is lost by the user when a stock drops
+static const Float: STOCK_BANKRUPTCY_LOSS_PERCENT = 5.0;	// the % that is lost by the user when a stock drops
 // static const Float: STOCK_BANKRUPTCY_MIN_PERCENT = -5.0; 	// the % that should make a company go bankrupt 'again' after it is $1
 
 /* ** Variables ** */
