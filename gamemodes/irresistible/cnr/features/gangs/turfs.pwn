@@ -251,7 +251,6 @@ hook OnServerGameDayEnd( )
 		new
 			afk_members, online_members = GetOnlineGangMembers( g, .afk_members = afk_members );
 
-		printf("Online %d/%d",online_members,afk_members);
 		if ( online_members >= TAKEOVER_NEEDED_PEOPLE )
 		{
 			new
