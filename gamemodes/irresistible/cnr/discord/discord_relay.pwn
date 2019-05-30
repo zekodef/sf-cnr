@@ -10,10 +10,13 @@
 
 /* ** Includes ** */
 #include 							< YSI\y_hooks >
-#tryinclude 						< discord-connector >
-#tryinclude							< discord-command >
 
 /* ** Disable if discord connector not enabled ** */
+#if !defined DISCORD_DISABLED
+	#tryinclude 						< discord-connector >
+	#tryinclude							< discord-command >
+#endif
+
 #if !defined dcconnector_included && !defined DISCORD_DISABLED
 	#warning "Discord is disabled as the connector is not found. (https://github.com/maddinat0r/samp-discord-connector)"
 	#define DISCORD_DISABLED
