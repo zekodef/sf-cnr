@@ -1,2 +1,4 @@
 (+) Cloudy's advanced event system has been added.
+(+) Night's discord implementation has been added.
+(/) Players will lose only 5% of their stock if it drops 80% in a day.
 (/) Full reversion of the turf war system to how it was pre-hardpoint.
