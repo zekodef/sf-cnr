@@ -322,7 +322,7 @@ hook OnPlayerEditDynObject( playerid, objectid, response, Float: x, Float: y, Fl
 					g_gateData[ gID ] [ E_RX ] = float( floatround( rx ) );
 					g_gateData[ gID ] [ E_RY ] = float( floatround( ry ) );
 					g_gateData[ gID ] [ E_RZ ] = float( floatround( rz ) );
-					SendClientMessageFormatted( playerid, -1, ""COL_PINK"[GATE]"COL_WHITE" Gate Open Position: "COL_GREY" %f, %f, %f, %f, %f, %f", g_gateData[ gID ] [ E_X ], g_gateData[ gID ] [ E_Y ], g_gateData[ gID ] [ E_Z ], g_gateData[ gID ] [ E_RX ], g_gateData[ gID ] [ E_RY ], g_gateData[ gID ] [ E_RZ ] );
+					SendClientMessageFormatted( playerid, -1, ""COL_PINK"[GATE]"COL_WHITE" Gate Close Position: "COL_GREY" %f, %f, %f, %f, %f, %f", g_gateData[ gID ] [ E_X ], g_gateData[ gID ] [ E_Y ], g_gateData[ gID ] [ E_Z ], g_gateData[ gID ] [ E_RX ], g_gateData[ gID ] [ E_RY ], g_gateData[ gID ] [ E_RZ ] );
 				}
 				case 10:
 				{

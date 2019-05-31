@@ -507,7 +507,7 @@ CMD:ban( playerid, params [ ] )
 
 CMD:banlog( playerid, params[ ] )
 {
-	new 
+	new
 		iName[ MAX_PLAYER_NAME ];
 
 	if ( p_AdminLevel[ playerid ] < 3 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
@@ -522,14 +522,14 @@ CMD:banlog( playerid, params[ ] )
 
 thread OnPlayerBanLog( playerid, const Name[ ] )
 {
-	new 
+	new
 		rows = cache_get_row_count( );
 
 	if ( ! rows ) {
 		return SendError( playerid, "This player isn't banned." );
 	}
 
-	static 
+	static
 		ban_ip[ 16 ],
 		ban_reason[ 80 ],
 		ban_by[ 24 ],
@@ -632,8 +632,7 @@ CMD:chatban( playerid, params[ ] )
 		p_ChatBannedBy[ pID ] = ReturnPlayerName( playerid );
 		p_ChatBanReason[ pID ] = reason;
 		mysql_single_query( sprintf( "INSERT INTO `CHAT_BANS` (`ID`, `NAME`, `BANNED_BY_ID`, `BANNED_BY`, `REASON`) VALUES (%d, '%s', %d, '%s', '%s')", p_AccountID[ pID ], mysql_escape( ReturnPlayerName( pID ) ), p_AccountID[ playerid ], mysql_escape( ReturnPlayerName( playerid ) ), mysql_escape( reason ) ) );
-		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat banned by %s for '%s'.", ReturnPlayerName( playerid ), reason );
-		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have chat banned %s for '%s'.", ReturnPlayerName( pID ), reason );
+		SendGlobalMessage( -1, ""COL_PINK"[ADMIN]{FFFFFF} %s has chat banned %s(%d) "COL_GREEN"[REASON: %s]", ReturnPlayerName( playerid ), ReturnPlayerName( pID ), pID, reason );
 		AddAdminLogLineFormatted( "%s(%d) has chat banned %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
 		SaveToAdminLog( playerid, p_AccountID[ pID ], "chat ban" );
 	}
@@ -643,7 +642,7 @@ CMD:chatban( playerid, params[ ] )
 
 CMD:unchatban( playerid, params[ ] )
 {
-	
+
 	new pID;
 
 	if ( p_AdminLevel[ playerid ] < 3 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
@@ -655,8 +654,7 @@ CMD:unchatban( playerid, params[ ] )
 	{
 		p_ChatBanned{ pID } = false;
 		mysql_single_query( sprintf( "DELETE FROM `CHAT_BANS` WHERE `ID`=%d", p_AccountID[ pID ] ) );
-		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have been chat unbanned by %s.", ReturnPlayerName( pID ) );
-		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have chat unbanned %s.", ReturnPlayerName( pID ) );
+		SendGlobalMessage( -1, ""COL_PINK"[ADMIN]{FFFFFF} %s(%d) has been chat un-banned by %s", ReturnPlayerName( pID ), pID, ReturnPlayerName( playerid ) );
 		AddAdminLogLineFormatted( "%s(%d) has chat unbanned %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
 		SaveToAdminLog( playerid, p_AccountID[ pID ], "chat unban" );
 	}
