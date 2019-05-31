@@ -1,8 +1,8 @@
 /*
  * Irresistible Gaming (c) 2018
- * Developed by Steven
+ * Developed by Stev
  * Module: cnr/features/duel.pwn
- * Purpose: player duling system
+ * Purpose: player dueling system
  */
 
 /* ** Includes ** */
@@ -10,15 +10,6 @@
 
 /* ** Definitions ** */
 #define COL_DUEL 					"{B74AFF}"
-
-// #define DIALOG_DUEL 				7360
-// #define DIALOG_DUEL_PLAYER			7361
-// #define DIALOG_DUEL_LOCATION		7362
-// #define DIALOG_DUEL_WEAPON			7363
-// #define DIALOG_DUEL_WAGER			7364
-// #define DIALOG_DUEL_WEAPON_TWO 		7365
-// #define DIALOG_DUEL_HEALTH 			7366
-// #define DIALOG_DUEL_ARMOUR			7367
 
 /* ** Variables ** */
 enum E_DUEL_DATA
@@ -30,7 +21,7 @@ enum E_DUEL_DATA
 
 enum E_DUEL_LOCATION_DATA
 {
-	E_NAME [ 19 ],					Float: E_POS_ONE[ 3 ], 				Float: E_POS_TWO[ 3 ]
+	E_NAME [ 22 ],					Float: E_POS_ONE[ 3 ], 				Float: E_POS_TWO[ 3 ]
 };
 
 new
@@ -39,18 +30,17 @@ new
 	g_duelData 						[ MAX_PLAYERS ][ E_DUEL_DATA ],
 	g_duelLocationData 				[ ][ E_DUEL_LOCATION_DATA ] =
 	{
-		{ "Santa Maria Beach",		{ 369.75770, -1831.576, 7.67190 }, { 369.65890, -1871.215, 7.67190 }},
-		{ "Greenglass College",		{ 1078.0353, 1084.4989, 10.8359 }, { 1095.4019, 1064.7239, 10.8359 }},
-		{ "Baseball Arena",			{ 1393.0995, 2177.4585, 9.75780 }, { 1377.7881, 2195.4214, 9.75780 }},
-		//{"The Visage",			{ 1960.4512, 1907.6881, 130.937 }, { 1969.4047, 1923.2622, 130.937 }},
-		{ "Mount Chilliad",			{ -2318.471, -1632.880, 483.703 }, { -2329.174, -1604.657, 483.760 }},
-		{ "The Farm",				{ -1044.856, -996.8120, 129.218 }, { -1125.599, -996.7523, 129.218 }},
-		{ "Tennis Courts",			{ 755.93790, -1280.710, 13.5565 }, { 755.93960, -1238.688, 13.5516 }},
-		{ "Underwater World",		{ 520.59600, -2125.663, -28.257 }, { 517.96600, -2093.610, -28.257 }},
-		{ "Grove Street",			{ 2476.4580, -1668.631, 13.3249 }, { 2501.1560, -1667.655, 13.3559 }},
-		{ "Ocean Docks",			{ 2683.5440, -2485.137, 13.5425 }, { 2683.8470, -2433.726, 13.5553 }}
+		{ "Santa Maria Beach",		{ 369.75770, -1831.576, 7.67190 }, { 369.65890, -1871.215, 7.67190 } },
+		{ "Greenglass College",		{ 1078.0353, 1084.4989, 10.8359 }, { 1095.4019, 1064.7239, 10.8359 } },
+		{ "Baseball Arena",			{ 1393.0995, 2177.4585, 9.75780 }, { 1377.7881, 2195.4214, 9.75780 } },
+		{ "Mount Chilliad",			{ -2318.471, -1632.880, 483.703 }, { -2329.174, -1604.657, 483.760 } },
+		{ "The Farm",				{ -1044.856, -996.8120, 129.218 }, { -1125.599, -996.7523, 129.218 } },
+		{ "Tennis Courts",			{ 755.93790, -1280.710, 13.5565 }, { 755.93960, -1238.688, 13.5516 } },
+		{ "Underwater World",		{ 520.59600, -2125.663, -28.257 }, { 517.96600, -2093.610, -28.257 } },
+		{ "Grove Street",			{ 2476.4580, -1668.631, 13.3249 }, { 2501.1560, -1667.655, 13.3559 } },
+		{ "Ocean Docks",			{ 2683.5440, -2485.137, 13.5425 }, { 2683.8470, -2433.726, 13.5553 } },
+		{ "Gacia Baseball Ground",	{ -2305.7549, 92.3505, 35.3516  }, { -2322.0908, 108.5021, 35.3984 } }
 	},
-
 
 	bool: p_playerDueling			[ MAX_PLAYERS char ],
 	p_duelInvitation           		[ MAX_PLAYERS ][ MAX_PLAYERS ],
