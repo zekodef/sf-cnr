@@ -996,7 +996,7 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 {
 	if ( !IsPlayerStreamedIn( issuerid, playerid ) || IsPlayerAFK( issuerid ) )
 		return 0;
-	
+
 	// Boxing immunity
 	if ( IsPlayerBoxing( playerid ) && ! IsPlayerBoxing( issuerid ) )
 		 return ShowPlayerHelpDialog( issuerid, 2000, "You cannot damage a boxing player!" ), 0;
@@ -1050,7 +1050,7 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 		{
 			if ( p_Class[ issuerid ] == CLASS_CIVILIAN && g_eventData[ EV_FIGHT_TYPE ] == 0 ) // Cops Vs Civilians
 				return 0;
-			
+
 			if ( p_Class[ issuerid ] == CLASS_POLICE && g_eventData[ EV_FIGHT_TYPE ] < 2 ) // ( Cops Vs Civilians ) Or ( Civilians Vs Civilians Vs Cops )
 				return 0;
 		}
@@ -1062,14 +1062,18 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 	#else
 	if ( p_Class[ issuerid ] == CLASS_POLICE && p_Class[ playerid ] != CLASS_POLICE && !p_WantedLevel[ playerid ] && GetPlayerState( playerid ) != PLAYER_STATE_WASTED )
 	#endif
+	{
 	 	return ShowPlayerHelpDialog( issuerid, 2000, "You cannot hurt innocent civilians, you're a ~b~cop~w~~h~!" ), 0;
+	}
 
 	#if defined __cloudy_event_system
 	if ( p_Class[ playerid ] == p_Class[ issuerid ] && p_Class[ playerid ] != CLASS_CIVILIAN && ! ( IsPlayerInEvent( issuerid ) && IsPlayerInEvent( playerid ) && g_eventData[ EV_FIGHT_TYPE ] == 2 ) )
 	#else
 	if ( p_Class[ playerid ] == p_Class[ issuerid ] && p_Class[ playerid ] != CLASS_CIVILIAN )
 	#endif
+	{
 		return 0;
+	}
 
 	if ( p_BulletInvulnerbility[ playerid ] > g_iTime )
 	 	return ShowPlayerHelpDialog( issuerid, 2000, "This player is immune from damage!" ), 0;
@@ -1091,7 +1095,9 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 		#else
 		if ( IsPlayerInPlayerGang( issuerid, playerid ) )
 		#endif
+		{
 			return ShowPlayerHelpDialog( issuerid, 2000, "You cannot damage your homies!" ), 0;
+		}
 
 		// Anti Random Deathmatch
 		if ( IsRandomDeathmatch( issuerid, playerid ) ) {
@@ -1121,7 +1127,7 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 	if ( ( weaponid == WEAPON_SNIPER || weaponid == WEAPON_RIFLE ) && bodypart == 9 )
 	#endif
 		amount *= 1.5;
-	
+
 	// Paintball Headshot
 	if ( issuerid != INVALID_PLAYER_ID && p_inPaintBall{ playerid } == true )
 	{
