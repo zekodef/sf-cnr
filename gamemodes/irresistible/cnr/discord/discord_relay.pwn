@@ -6,7 +6,7 @@
  */
 
 /* ** Enable or disable discord ** */
-// #define DISCORD_DISABLED 			// !!!! DISABLED BY DEFAULT !!!!
+#define DISCORD_DISABLED 			// !!!! DISABLED BY DEFAULT !!!!
 
 /* ** Includes ** */
 #include 							< YSI\y_hooks >
