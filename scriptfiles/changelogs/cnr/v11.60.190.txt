@@ -5,3 +5,5 @@
 (/) Players will lose only 5% of their stock if it drops 80% in a day.
 (/) Full reversion of the turf war system to how it was pre-hardpoint.
 (/) You need Bronze V.I.P to send Irresistible Coins.
+(/) Army is now vulnerable to damage in rhinos.
+(/) Police are now paid 10% extra.
