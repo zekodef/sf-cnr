@@ -1058,9 +1058,9 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 	if ( IsPlayerTazed( playerid ) || IsPlayerCuffed( playerid ) || IsPlayerKidnapped( playerid ) || IsPlayerTied( playerid ) || IsPlayerLoadingObjects( playerid ) || IsPlayerAdminOnDuty( playerid ) || IsPlayerSpawnProtected( playerid ) )
 		return 0;
 
-	// Rhino damage invulnerable
-	if ( p_Class[ playerid ] == CLASS_POLICE && IsPlayerInAnyVehicle( playerid ) && GetVehicleModel( GetPlayerVehicleID( playerid ) ) == 432 )
-		return 0;
+	// // Rhino damage invulnerable
+	// if ( p_Class[ playerid ] == CLASS_POLICE && IsPlayerInAnyVehicle( playerid ) && GetVehicleModel( GetPlayerVehicleID( playerid ) ) == 432 )
+	// 	return 0;
 
 	// Anti RDM and gang member damage
 	if ( ! IsPlayerInEvent( playerid ) && ! IsPlayerInPaintBall( playerid ) && ! IsPlayerBoxing( playerid ) && ! IsPlayerDueling( playerid ) && ! IsPlayerInBattleRoyale( playerid ) )
@@ -1297,7 +1297,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 				    if ( p_WantedLevel[ playerid ] > 5 )
 					{
 						static const killedWords[ ] [ ] = { { "murked" }, { "killed" }, { "ended" }, { "slain" }, { "massacred" }, { "destroyed" }, { "screwed" } };
-				        new cashEarned = ( p_WantedLevel[ playerid ] < MAX_WANTED_LVL ? p_WantedLevel[ playerid ] : MAX_WANTED_LVL ) * ( reason == 38 || reason == 51 ? 160 : 270 );
+				        new cashEarned = ( p_WantedLevel[ playerid ] < MAX_WANTED_LVL ? p_WantedLevel[ playerid ] : MAX_WANTED_LVL ) * ( reason == 38 || reason == 51 ? 150 : 300 );
 				        GivePlayerCash( killerid, cashEarned );
 				        GivePlayerScore( killerid, 2 );
 						GivePlayerExperience( killerid, E_POLICE, 0.5 );

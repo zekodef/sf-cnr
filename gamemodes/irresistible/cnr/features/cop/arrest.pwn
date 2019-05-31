@@ -9,6 +9,8 @@
 #include 							< YSI\y_hooks >
 
 /* ** Variables ** */
+static const COP_ARREST_PAY_PER_WANTED = 330;
+static const COP_DETAIN_PAY_PER_WANTED = 385;
 
 /* ** Forwards ** */
 forward OnPlayerArrested( playerid, victimid, totalarrests, totalpeople );
@@ -54,7 +56,7 @@ hook OnPlayerEnterDynamicCP( playerid, checkpointid )
 							totalSeconds = p_WantedLevel[ victimid ] * ( JAIL_SECONDS_MULTIPLIER );
 
 						iDetained++;
-						iCashEarned += ( p_WantedLevel[ victimid ] < MAX_WANTED_LVL ? p_WantedLevel[ victimid ] : MAX_WANTED_LVL ) * ( 350 );
+						iCashEarned += ( p_WantedLevel[ victimid ] < MAX_WANTED_LVL ? p_WantedLevel[ victimid ] : MAX_WANTED_LVL ) * ( COP_DETAIN_PAY_PER_WANTED );
 						KillTimer( p_CuffAbuseTimer[ victimid ] );
 						SetPlayerSpecialAction( victimid, SPECIAL_ACTION_NONE );
 			        	RemovePlayerAttachedObject( victimid, 2 );
@@ -176,7 +178,7 @@ CMD:arrest( playerid, params[ ] )
 		if ( IsPlayerInAnyVehicle( victimid ) ) return SendError( playerid, "You cannot arrest a person that is inside a vehicle." );
 		if ( IsPlayerAdminOnDuty( victimid ) ) return SendError( playerid, "You cannot use this command on admins that are on duty." );
 		if ( GetPlayerState( playerid ) == PLAYER_STATE_WASTED ) return SendError( playerid, "You cannot use this command since you are dead." );
-		new totalCash = ( p_WantedLevel[ victimid ] < MAX_WANTED_LVL ? p_WantedLevel[ victimid ] : MAX_WANTED_LVL ) * ( 300 );
+		new totalCash = ( p_WantedLevel[ victimid ] < MAX_WANTED_LVL ? p_WantedLevel[ victimid ] : MAX_WANTED_LVL ) * ( COP_ARREST_PAY_PER_WANTED );
 		new totalSeconds = p_WantedLevel[ victimid ] * ( JAIL_SECONDS_MULTIPLIER );
 		GivePlayerScore( playerid, 2 );
 		GivePlayerExperience( playerid, E_POLICE );
