@@ -17,6 +17,7 @@ enum E_DUEL_DATA
 	E_PLAYER,						E_WEAPON[ 2 ],						E_BET,
 	Float: E_ARMOUR, 				Float: E_HEALTH, 					E_COUNTDOWN,
 	E_TIMER, 						E_LOCATION_ID, 						E_ROUNDS,
+	bool: E_CAC
 };
 
 enum E_DUEL_LOCATION_DATA
@@ -169,6 +170,13 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[] )
 
 			case 7:
 			{
+				g_duelData[ playerid ][ E_CAC ] = !g_duelData[ playerid ][ E_CAC ];
+
+				SendClientMessageFormatted( playerid, -1, ""COL_DUEL"[DUEL]{FFFFFF} You have %s "COL_GREY"CAC Only"COL_WHITE".", g_duelData[ playerid ][ E_CAC ] ? ( "enabled" ) : ( "disabled" ) );
+			}
+
+			case 8:
+			{
 				new
 					pID = g_duelData [ playerid ][ E_PLAYER ];
 
@@ -178,8 +186,15 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[] )
 					return ShowPlayerDuelMenu( playerid );
 				}
 
+				if ( g_duelData[ playerid ][ E_CAC ] && ( ! IsPlayerUsingSampAC( pID ) && ! IsPlayerUsingSampAC( playerid ) ) )
+				{
+					SendError( playerid, "You and your opponent must be using CAC to duel!" );
+					return ShowPlayerDuelMenu( playerid );
+				}
+
 				p_duelInvitation[ playerid ][ pID ] = gettime( ) + 60;
-				ShowPlayerHelpDialog( pID, 10000, "%s wants to duel!~n~~n~~y~Location: ~w~%s~n~~y~Weapon: ~w~%s and %s~n~~y~Wager: ~w~%s", ReturnPlayerName( playerid ), g_duelLocationData [ g_duelData[ playerid ][ E_LOCATION_ID ] ][ E_NAME ], ReturnWeaponName( g_duelData[ playerid ][ E_WEAPON ][ 0 ] ), ReturnWeaponName( g_duelData[ playerid ][ E_WEAPON ][ 1 ] ), cash_format(g_duelData[ playerid ][ E_BET ]));
+				ShowPlayerHelpDialog( pID, 10000, "%s wants to duel!~n~~n~~y~Location: ~w~%s~n~~y~Weapon: ~w~%s and %s~n~~y~Wager: ~w~%s~n~~y~CAC: ~w~%s", ReturnPlayerName( playerid ), g_duelLocationData [ g_duelData[ playerid ][ E_LOCATION_ID ] ][ E_NAME ], ReturnWeaponName( g_duelData[ playerid ][ E_WEAPON ][ 0 ] ), ReturnWeaponName( g_duelData[ playerid ][ E_WEAPON ][ 1 ] ), cash_format(g_duelData[ playerid ][ E_BET ] ), g_duelData[ playerid ][ E_CAC ] ? ( "~g~Yes" ) : ( "~r~No" ) );
+				
 				SendClientMessageFormatted( playerid, -1, ""COL_DUEL"[DUEL]"COL_WHITE" You have sent a duel invitation to %s for "COL_GOLD"%s"COL_WHITE".", ReturnPlayerName( pID ), cash_format( g_duelData[ playerid ][ E_BET ] ) );
 				SendClientMessageFormatted( pID, -1, ""COL_DUEL"[DUEL]"COL_WHITE" You are invited to duel %s for "COL_GOLD"%s"COL_WHITE", use \"/duel accept %d\".", ReturnPlayerName( playerid ), cash_format( g_duelData[ playerid ][ E_BET ] ), playerid );
 			}
@@ -485,14 +500,15 @@ stock ShowPlayerDuelMenu( playerid )
 		return SendError( playerid, "You cannot duel whilst having a wanted level.");
 
 	format( szBigString, sizeof(szBigString),
-		"Player\t"COL_GREY"%s\nHealth\t"COL_GREY"%.2f%%\nArmour\t"COL_GREY"%.2f%%\nPrimary Weapon\t"COL_GREY"%s\nSecondary Weapon\t"COL_GREY"%s\nLocation\t"COL_GREY"%s\nWager\t"COL_GREY"%s\n"COL_GOLD"Send Invite\t"COL_GOLD">>>",
+		"Player\t"COL_GREY"%s\nHealth\t"COL_GREY"%.2f%%\nArmour\t"COL_GREY"%.2f%%\nPrimary Weapon\t"COL_GREY"%s\nSecondary Weapon\t"COL_GREY"%s\nLocation\t"COL_GREY"%s\nWager\t"COL_GREY"%s\nCAC Only\t"COL_GREY"%s\n"COL_GOLD"Send Invite\t"COL_GOLD">>>",
 		( ! IsPlayerConnected( g_duelData[ playerid ][ E_PLAYER ] ) ? ( ""COL_RED"No-one" ) : ( ReturnPlayerName( g_duelData[ playerid ][ E_PLAYER ] ) ) ),
 		g_duelData[ playerid ][ E_HEALTH ],
 		g_duelData[ playerid ][ E_ARMOUR ],
 		ReturnWeaponName( g_duelData[ playerid ][ E_WEAPON ][ 0 ] ),
 		ReturnWeaponName( g_duelData[ playerid ][ E_WEAPON ][ 1 ] ),
 		g_duelLocationData[ g_duelData[ playerid ][ E_LOCATION_ID ] ][ E_NAME ],
-		cash_format( g_duelData[ playerid ][ E_BET ] )
+		cash_format( g_duelData[ playerid ][ E_BET ] ),
+		( g_duelData[ playerid ][ E_CAC ] ? ( ""COL_GREEN"ENABLED" ) : ( ""COL_RED"DISABLED" ) )
 	);
 
 	ShowPlayerDialog( playerid, DIALOG_DUEL, DIALOG_STYLE_TABLIST, ""COL_WHITE"Duel Settings", szBigString, "Select", "Cancel" );
