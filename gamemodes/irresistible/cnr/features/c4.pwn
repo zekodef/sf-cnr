@@ -366,6 +366,6 @@ stock SetPlayerC4Amount( playerid, amount ) {
 
 stock GivePlayerC4( playerid, amount )
 {
-    mysql_single_query( sprintf( "UPDATE `USERS` SET `C4` = %d WHERE `ID` = %d", p_C4Amount[ playerid ], GetPlayerAccountID( playerid ) ) );
+    mysql_single_query( sprintf( "UPDATE `USERS` SET `C4` = %d WHERE `ID` = %d", GetPlayerC4Amount( playerid ) + amount, GetPlayerAccountID( playerid ) ) );
     SetPlayerC4Amount( playerid, GetPlayerC4Amount( playerid ) + amount );
 }
