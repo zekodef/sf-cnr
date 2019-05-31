@@ -755,7 +755,7 @@ CMD:unforceac( playerid, params[ ] )
 		Query[ 70 ];
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "s[24]", player ) ) SendUsage( playerid, "/unban [NAME]" );
+	else if ( sscanf( params, "s[24]", player ) ) SendUsage( playerid, "/unforceac [PLAYER_NAME]" );
 	else
 	{
 		new pID = GetPlayerIDFromName( player );
@@ -780,7 +780,7 @@ thread OnPlayerUnforceAC( playerid, player[ ], pID, bool:offline )
 		Query[ 70 ], rows = cache_get_row_count( );
 
 	if ( !rows ) return SendError( playerid, "The database does not contain the username you are attempting to remove from forced ac." );
-	
+
 	if ( offline )
 	{
 

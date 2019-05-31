@@ -72,7 +72,7 @@ CMD:createentrance( playerid, params[ ] )
 	;
 
 	if ( p_AdminLevel[ playerid ] < 6 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "ufffdddds[32]", ownerid, toX, toY, toZ, interior, world, customInterior, vipOnly, label ) ) return SendUsage( playerid, "/createhouse [OWNER] [TO_X] [TO_Y] [TO_Z] [INTERIOR] [WORLD] [CUSTOM_INTERIOR] [VIP_ONLY] [LABEL]" );
+	else if ( sscanf( params, "ufffdddds[32]", ownerid, toX, toY, toZ, interior, world, customInterior, vipOnly, label ) ) return SendUsage( playerid, "/createentrance [OWNER] [TO_X] [TO_Y] [TO_Z] [INTERIOR] [WORLD] [CUSTOM_INTERIOR] [VIP_ONLY] [LABEL]" );
 	else if ( !IsPlayerConnected( ownerid ) || IsPlayerNPC( ownerid ) ) return SendError( playerid, "Invalid Player ID." );
 	else
 	{
@@ -83,7 +83,7 @@ CMD:createentrance( playerid, params[ ] )
 				entranceid = CreateEntrance( label, X, Y, Z, toX, toY, toZ, interior, world, customInterior > 0, vipOnly > 0 );
 
 		    if ( entranceid == -1 )
-				return SendClientMessage( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" Unable to create a entrance due to a unexpected error." );
+				return SendClientMessage( playerid, -1, ""COL_PINK"[ENTRANCE]"COL_WHITE" Unable to create a entrance due to a unexpected error." );
 
 			SaveToAdminLog( playerid, entranceid, "created entrance" );
 			g_entranceData[ entranceid ] [ E_SAVED ] = true;
@@ -91,7 +91,7 @@ CMD:createentrance( playerid, params[ ] )
 			format( szBigString, 256, "INSERT INTO `ENTRANCES` (`OWNER`, `LABEL`, `X`, `Y`, `Z`, `EX`, `EY`, `EZ`, `INTERIOR`, `WORLD`, `CUSTOM`, `VIP_ONLY`) VALUES ('%s','%s',%f,%f,%f,%f,%f,%f,%d,%d,%d,%d)", mysql_escape( ReturnPlayerName( ownerid ) ), mysql_escape( label ), X, Y, Z, toX, toY, toZ, interior, world, customInterior, vipOnly );
 			mysql_single_query( szBigString );
 
-	    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" You have created a entrance using id %d.", entranceid );
+	    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ENTRANCE]"COL_WHITE" You have created a entrance using id %d.", entranceid );
 		}
 	}
 	return 1;
