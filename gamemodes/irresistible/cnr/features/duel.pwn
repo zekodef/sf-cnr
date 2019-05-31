@@ -173,6 +173,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[] )
 				g_duelData[ playerid ][ E_CAC ] = !g_duelData[ playerid ][ E_CAC ];
 
 				SendClientMessageFormatted( playerid, -1, ""COL_DUEL"[DUEL]{FFFFFF} You have %s "COL_GREY"CAC Only"COL_WHITE".", g_duelData[ playerid ][ E_CAC ] ? ( "enabled" ) : ( "disabled" ) );
+				ShowPlayerDuelMenu( playerid );
 			}
 
 			case 8:
