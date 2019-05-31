@@ -212,7 +212,7 @@ thread OnGrabLatestDonor( hidden )
 		new Float: funding_goal = GetServerVariableFloat( "donation_goal_amount" );
 
 		// make this optional
-		if ( funding_goal <= 0.0 ) {
+		if ( funding_goal > 0.0 ) {
 			new Float: funding_goal_percent = total_donations / funding_goal * 100.0;
 
 			// Prevents total revenue for the month being disclosed mathematically
