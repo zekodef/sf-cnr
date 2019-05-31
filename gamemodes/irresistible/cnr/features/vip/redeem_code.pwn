@@ -208,13 +208,20 @@ thread OnGrabLatestDonor( hidden )
 
 		new Float: last_donation = cache_get_field_content_float( 0, "LAST_AMOUNT", dbHandle );
 		new Float: total_donations = cache_get_field_content_float( 0, "TOTAL_DONATIONS", dbHandle );
-		new Float: funding_goal_percent = total_donations / GetServerVariableFloat( "donation_goal_amount" ) * 100.0;
 
-		// Prevents total revenue for the month being disclosed mathematically
-		if ( funding_goal_percent >= 100.0 ) {
-			TextDrawSetString( g_TopDonorTD, sprintf( "Latest Donor %s - $%0.2f, ~g~Month Is Fully %0.2f%% Funded!", szName, last_donation, 100.0 ) );
+		new Float: funding_goal = GetServerVariableFloat( "donation_goal_amount" );
+
+		// make this optional
+		if ( funding_goal <= 0.0 ) {
+			// Prevents total revenue for the month being disclosed mathematically
+			if ( funding_goal_percent >= 100.0 ) {
+				TextDrawSetString( g_TopDonorTD, sprintf( "Latest Donor %s - $%0.2f, ~g~Month Is Fully %0.2f%% Funded!", szName, last_donation, 100.0 ) );
+			} else {
+				new Float: funding_goal_percent = total_donations / funding_goal * 100.0;
+				TextDrawSetString( g_TopDonorTD, sprintf( "Latest Donor %s - $%0.2f, ~r~Month Is Only %0.2f%% Funded!", szName, last_donation, funding_goal_percent ) );
+			}
 		} else {
-			TextDrawSetString( g_TopDonorTD, sprintf( "Latest Donor %s - $%0.2f, ~r~Month Is Only %0.2f%% Funded!", szName, last_donation, funding_goal_percent ) );
+			TextDrawSetString( g_TopDonorTD, sprintf( "Latest Donor %s - $%0.2f", szName, last_donation ) );
 		}
 
 		// Play song!
