@@ -417,6 +417,10 @@ CMD:p( playerid, params[ ] )
     else
 	{
 		SendClientMessageToPaintball( id, -1, ""COL_GREY"<Paintball Chat> %s(%d):"COL_WHITE" %s", ReturnPlayerName( playerid ), playerid, msg );
+
+		foreach ( new i : Player ) if ( ( p_AdminLevel[ i ] >= 5 || IsPlayerUnderCover( i ) ) && p_TogglePBChat{ i } == true )  {
+			SendClientMessageFormatted( i, -1, ""COL_GREY"<Paintball Chat Lobby %d > %s(%d):"COL_WHITE" %s", id, ReturnPlayerName( playerid ), playerid, msg );
+		}
 	}
 	return 1;
 }
