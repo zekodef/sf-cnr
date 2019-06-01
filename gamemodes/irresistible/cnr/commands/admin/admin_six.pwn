@@ -9,27 +9,68 @@
 CMD:createbusiness( playerid, params[ ] )
 {
     new
-		Float: X, Float: Y, Float: Z, cost, type
-	;
+		pID, cost, type;
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "dd", cost, type ) ) return SendUsage( playerid, "/createbusiness [COST] [TYPE]" );
+	else if ( sscanf( params, "ddU(-1)", cost, type, pID ) ) return SendUsage( playerid, "/createhouse [COST] [TYPE] [PLAYER_ID (optional)]" );
+	else if ( ! IsPlayerServerMaintainer( playerid ) && ! IsPlayerConnected( pID ) && cost < 50000 ) return SendError( playerid, "You must specify a player for business under $50,000." );
 	else if ( cost < 100 ) return SendError( playerid, "The price must be located above 100 dollars." );
 	else if ( ! ( 0 <= type <= 3 ) ) return SendError( playerid, "Invalid business type (Weed=0, Meth=1, Coke=2, Weapons=3)." );
 	else
 	{
-		GetPlayerPos( playerid, X, Y, Z );
-		AddAdminLogLineFormatted( "%s(%d) has created a business", ReturnPlayerName( playerid ), playerid );
+		mysql_format(
+			dbHandle, szBigString, sizeof( szBigString ),
+			"SELECT * FROM `NOTES` WHERE (`NOTE` LIKE '{FFDC2E}%%Business%%') AND USER_ID=%d AND `DELETED` IS NULL LIMIT 0,1",
+			IsPlayerConnected( pID ) ? GetPlayerAccountID( pID ) : 0
+		);
+		mysql_tquery( dbHandle, szBigString, "OnAdminCreateBusiness", "dddd", playerid, pID, cost, type );
+	}
+	return 1;
+}
 
+thread OnAdminCreateBusiness( playerid, targetid, cost, type )
+{
+	new
+		num_rows = cache_get_row_count( );
+
+	// if there is a note or the player is a maintainer
+	if ( IsPlayerServerMaintainer( playerid ) || num_rows || cost >= 50000 )
+	{
 		new
-			iTmp = CreateBusiness( 0, "Business", cost, type, X, Y, Z );
+			noteid = -1; // incase the lead maintainer makes it anyway
 
-	    if ( iTmp != ITER_NONE ) {
-			SaveToAdminLog( playerid, iTmp, "created business" );
-	    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[BUSINESS]"COL_WHITE" You have created a %s business taking up business id %d.", cash_format( cost ), iTmp );
-	    } else {
+		// remove the note if there is one
+		if ( num_rows )
+		{
+			// get the first note
+			noteid = cache_get_field_content_int( 0, "ID", dbHandle );
+
+			// remove the note
+			SaveToAdminLog( playerid, noteid, "consumed player's note" );
+			mysql_single_query( sprintf( "UPDATE `NOTES` SET `DELETED`=%d WHERE `ID`=%d", GetPlayerAccountID( playerid ), noteid ) );
+		}
+
+		static
+			Float: X, Float: Y, Float: Z, iTmp;
+
+		// proceed by creating the business
+		if ( GetPlayerPos( playerid, X, Y, Z ) && ( iTmp = CreateBusiness( 0, "Business", cost, type, X, Y, Z ) != ITER_NONE ) ) {
+			if ( IsPlayerConnected( targetid ) ) {
+				SaveToAdminLogFormatted( playerid, iTmp, "created business (business id %d) for %s (acc id %d, note id %d)", iTmp, ReturnPlayerName( targetid  ), p_AccountID[ targetid  ], noteid );
+				SendClientMessageFormatted( playerid, -1, ""COL_PINK"[BUSINESS]"COL_WHITE" You have created a business in the name of %s(%d).", ReturnPlayerName( targetid  ), targetid  );
+				AddAdminLogLineFormatted( "%s(%d) has created a business for %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( targetid ), targetid );
+			} else {
+				SaveToAdminLogFormatted( playerid, iTmp, "created business (business id %d)", iTmp );
+				SendClientMessageFormatted( playerid, -1, ""COL_PINK"[BUSINESS]"COL_WHITE" You have created a business." );
+				AddAdminLogLineFormatted( "%s(%d) has created a business", ReturnPlayerName( playerid ), playerid );
+			}
+		} else {
 			SendClientMessage( playerid, -1, ""COL_PINK"[BUSINESS]"COL_WHITE" Unable to create a business due to a unexpected error." );
 		}
+	}
+	else
+	{
+		SendError( playerid, "This user does not have a V.I.P Business note." );
 	}
 	return 1;
 }
@@ -72,7 +113,7 @@ CMD:createentrance( playerid, params[ ] )
 	;
 
 	if ( p_AdminLevel[ playerid ] < 6 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "ufffdddds[32]", ownerid, toX, toY, toZ, interior, world, customInterior, vipOnly, label ) ) return SendUsage( playerid, "/createhouse [OWNER] [TO_X] [TO_Y] [TO_Z] [INTERIOR] [WORLD] [CUSTOM_INTERIOR] [VIP_ONLY] [LABEL]" );
+	else if ( sscanf( params, "ufffdddds[32]", ownerid, toX, toY, toZ, interior, world, customInterior, vipOnly, label ) ) return SendUsage( playerid, "/createentrance [OWNER] [TO_X] [TO_Y] [TO_Z] [INTERIOR] [WORLD] [CUSTOM_INTERIOR] [VIP_ONLY] [LABEL]" );
 	else if ( !IsPlayerConnected( ownerid ) || IsPlayerNPC( ownerid ) ) return SendError( playerid, "Invalid Player ID." );
 	else
 	{
@@ -83,7 +124,7 @@ CMD:createentrance( playerid, params[ ] )
 				entranceid = CreateEntrance( label, X, Y, Z, toX, toY, toZ, interior, world, customInterior > 0, vipOnly > 0 );
 
 		    if ( entranceid == -1 )
-				return SendClientMessage( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" Unable to create a entrance due to a unexpected error." );
+				return SendClientMessage( playerid, -1, ""COL_PINK"[ENTRANCE]"COL_WHITE" Unable to create a entrance due to a unexpected error." );
 
 			SaveToAdminLog( playerid, entranceid, "created entrance" );
 			g_entranceData[ entranceid ] [ E_SAVED ] = true;
@@ -91,7 +132,7 @@ CMD:createentrance( playerid, params[ ] )
 			format( szBigString, 256, "INSERT INTO `ENTRANCES` (`OWNER`, `LABEL`, `X`, `Y`, `Z`, `EX`, `EY`, `EZ`, `INTERIOR`, `WORLD`, `CUSTOM`, `VIP_ONLY`) VALUES ('%s','%s',%f,%f,%f,%f,%f,%f,%d,%d,%d,%d)", mysql_escape( ReturnPlayerName( ownerid ) ), mysql_escape( label ), X, Y, Z, toX, toY, toZ, interior, world, customInterior, vipOnly );
 			mysql_single_query( szBigString );
 
-	    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" You have created a entrance using id %d.", entranceid );
+	    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ENTRANCE]"COL_WHITE" You have created a entrance using id %d.", entranceid );
 		}
 	}
 	return 1;
