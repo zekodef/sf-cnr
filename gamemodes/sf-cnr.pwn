@@ -727,7 +727,19 @@ public OnPlayerSpawn( playerid )
 		SpawnToPaintball( playerid, p_PaintBallArena{ playerid } );
 		return 1;
 	}
-
+	
+	#if defined __cloudy_event_system
+	else if ( IsPlayerInEvent( playerid ) )
+	{
+		if( ! EventSettingAllow( 0 ) && g_eventData[ EV_STARTED ] ) 
+		{	
+			SetPlayerInEvent( playerid ); // respawns player in event.
+			return 1;
+		}
+		else RemovePlayerFromEvent( playerid, true ); // changes the InEvent variable to false.
+	}
+	#endif
+	
 	if ( p_Class[ playerid ] == CLASS_CIVILIAN )
 	{
 		if ( !p_JobSet{ playerid } )
