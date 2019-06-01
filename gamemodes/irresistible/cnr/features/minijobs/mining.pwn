@@ -44,6 +44,7 @@ static stock
 	g_orePrices                		[ ] = { 675, 900, 600, 2750, 3000, 3500, 4000, 2200, 2300, 1200 },
 	g_oreMiningTime					[ ] = { 2000, 2800, 1600, 6800, 7200, 7600, 8000, 6400, 6560, 4000 },
 	g_oreQuanities					[ ] = { 8, 8, 8, 8, 5, 3, 3, 5, 5, 6 },
+	g_oreProbability 				[ ] = { 85, 80, 90, 45, 35, 30, 25, 52, 30, 75 },
 
 	// Iterator
 	Iterator: miningrock 			< MAX_ROCKS >
@@ -155,22 +156,17 @@ hook OnProgressCompleted( playerid, progressid, params )
 	if ( progressid == PROGRESS_MINING )
 	{
 		new m = p_MiningOre{ playerid };
-		new iRandom = random( 101 );
+		new iRandom = random( 100 );
 
 		p_isMining{ playerid } = false;
 		g_miningData[ m ] [ E_MINING ] = INVALID_PLAYER_ID;
 
-		if ( ( g_miningData[ m ] [ E_ORE ] == ORE_IRON && iRandom > 80 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_BAUXITE && iRandom > 85 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_GOLD && iRandom > 45 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_COAL && iRandom > 90 ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_DIAMOND && iRandom > 30 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_RUBY && iRandom > 35 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_SAPHHIRE && iRandom > 30 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_EMERALD && iRandom > 52 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_PLATINUM && iRandom > 25 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_AMETHYST && iRandom > 75 ) )
-		)
+		new Float: random_chance = fRandomEx( 0.0, 101.0 );
+		
+		random_chance += GetPlayerLevel( playerid, E_ROLEPLAY ) * 0.2;
+
+		// potential for a 20% success rate
+		if ( random_chance < 20.0 )
 		{
 			SetPlayerMineOre( playerid, m );
 			return SendError( playerid, "You did not find any ore. Mining again." );
@@ -384,7 +380,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
 			GivePlayerCash( playerid, cashEarned );
 			StockMarket_UpdateEarnings( E_STOCK_MINING_COMPANY, cashEarned, 0.5 );
 			GivePlayerScore( playerid, floatround( oresExported / 2 ) ); // 16 score is a bit too much for ore... so half that = 8
-			//GivePlayerExperience( playerid, E_MINING, float( oresExported ) * 0.2 );
+			GivePlayerExperience( playerid, E_ROLEPLAY, float( oresExported ) * 0.2 );
 			SendServerMessage( playerid, "You have exported %d rock ore(s) to an industry, earning you "COL_GOLD"%s"COL_WHITE".", oresExported, cash_format( cashEarned ) );
 		}
 		return Y_HOOKS_BREAK_RETURN_1;
