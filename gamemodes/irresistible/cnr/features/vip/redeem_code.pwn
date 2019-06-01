@@ -307,7 +307,7 @@ CMD:updatedonategoal( playerid, params[ ] )
 
 	if ( ! IsPlayerAdmin( playerid ) && ! IsPlayerLeadMaintainer( playerid ) ) return 0;
 	else if ( sscanf( params, "f", donation_goal ) ) return SendUsage( playerid, "/updatedonationreq [DONATION_GOAL_AMOUNT]" );
-	else if ( ! ( 1.0 <= donation_goal < 10000.0 ) ) return SendError( playerid, "Donation goal amount must be between $1 and $10,000." );
+	else if ( ! ( 0.0 <= donation_goal < 10000.0 ) ) return SendError( playerid, "Donation goal amount must be between $0 and $10,000." );
 	else
 	{
 		new
