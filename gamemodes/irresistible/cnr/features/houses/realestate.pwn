@@ -18,7 +18,7 @@
 
 /* ** Constants ** */
 static const
-	HOUSE_LISTING_FEE 				= 75000;
+	HOUSE_LISTING_FEE 				= 50000;
 
 /* ** Variables ** */
 static stock
@@ -124,8 +124,8 @@ CMD:estate( playerid, params[ ] )
 		else if ( ! Iter_Contains( houses, houseid ) ) return SendError( playerid, "You are not inside of any home." );
 		else if ( g_houseData[ houseid ] [ E_COST ] > 2500 ) return SendError( playerid, "This home is not a V.I.P home." );
 		else if ( ! IsPlayerHomeOwner( playerid, houseid ) ) return SendError( playerid, "You are not the owner of this home." );
-		else if ( cash < 10000 ) return SendError( playerid, "Please specify an ask price greater than $100.000." );
-		else if ( cash > 100000000 ) return SendError( playerid, "Please specify an ask price less than $100.000.000." );
+		else if ( cash < 10000 ) return SendError( playerid, "Please specify an ask price greater than $100,000." );
+		else if ( cash > 100000000 ) return SendError( playerid, "Please specify an ask price less than $100,000,000." );
 		else if ( GetPlayerCash( playerid ) < HOUSE_LISTING_FEE && GetPlayerVIPLevel( playerid ) < VIP_PLATINUM ) return SendError( playerid, "You need at least %s to create a house listing.", cash_format( HOUSE_LISTING_FEE ) );
 		else
 		{
@@ -314,7 +314,7 @@ thread HouseListing_OnCreateListing( playerid, houseid, ask_price )
 
 		// insert into database and notify
 		mysql_single_query( sprintf( "INSERT INTO `HOUSE_LISTINGS` (`HOUSE_ID`, `USER_ID`, `ASK`) VALUES (%d, %d, %d)", houseid, GetPlayerAccountID( playerid ), ask_price ) );
-		return SendServerMessage( playerid, "You have listed your home. You can retract your listing using "COL_GREY"/estate list cancel"COL_WHITE"." );
+		return SendServerMessage( playerid, "You have listed your home for "COL_GOLD"%s"COL_WHITE". Retract the listing by "COL_GREY"/estate list cancel"COL_WHITE".", cash_format( ask_price ) );
 	}
 	else
 	{

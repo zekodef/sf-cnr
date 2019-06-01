@@ -145,6 +145,7 @@ static stock
 		{ 5, "/achangename", 		"Change a players name" },
 		{ 5, "/unbanip", 			"Unbanning a IP address" },
 		{ 5, "/unban", 				"Unban a player from the server" },
+		{ 5, "/unforceac", 			"Unforce a player from using CAC" },
 		{ 5, "/doublexp", 			"Enable/disable double XP" },
 		{ 5, "/toggleviewpm", 		"Toggle to view private messages" },
 		{ 5, "/respawnallv", 		"Respawning all server vehicles" },

@@ -275,6 +275,10 @@ stock JailPlayer( playerid, seconds, admin = 0 )
 	SetPlayerPosToPrison 		( playerid );
 	Player_CheckPokerGame 		( playerid, "Jailed" );
 
+	#if defined __cloudy_event_system
+	RemovePlayerFromEvent		( playerid, true );
+	#endif
+
 	// External Functions
 	SetPlayerSpecialAction		( playerid, SPECIAL_ACTION_NONE );
 	ClearAnimations 			( playerid );
