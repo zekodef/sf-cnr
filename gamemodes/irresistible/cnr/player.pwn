@@ -38,6 +38,7 @@ new
   	bool: p_Kidnapped       	  	[ MAX_PLAYERS char ],
   	bool: p_ToggledViewPM        	[ MAX_PLAYERS char ],
   	bool: p_ToggleCopChat			[ MAX_PLAYERS char ],
+	bool: p_TogglePBChat			[ MAX_PLAYERS char ],
 	bool: p_pausedToLoad    	    [ MAX_PLAYERS char ],
 	bool: p_CantUseReport           [ MAX_PLAYERS char ],
 	p_pausedToLoadTimer     	    [ MAX_PLAYERS ],
