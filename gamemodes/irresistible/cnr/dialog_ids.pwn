@@ -210,8 +210,9 @@
 #define DIALOG_COMPONENTS_SELL 				1200
 #define DIALOG_HOUSE_SELL 					1201
 #define DIALOG_BUSINESS_SELL_CONFIRM 		1202
-#define DIALOG_NEXT_PAGE_VIP				1204
-#define DIALOG_XPMARKET_SELL                1205
+#define DIALOG_VIP_MAIN						1204
+#define DIALOG_XPMARKET_SELL				1205
+#define DIALOG_BUY_VIP_MAIN					1206
 
 /* ** Hooks ** */
 hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )

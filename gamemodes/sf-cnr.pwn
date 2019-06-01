@@ -5284,11 +5284,13 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	        {
 				if ( p_VIPLevel[ playerid ] < VIP_REGULAR ) return SendError( playerid, "You are not a V.I.P, to become one visit "COL_GREY"donate.sfcnr.com" );
 				szCMDS[ 0 ] = '\0';
-	            strcat( szCMDS, ""COL_GREY"/viplist{FFFFFF} - A list of all online V.I.P. players.\n"\
-								""COL_GREY"/vipspawnwep{FFFFFF} - Configure your V.I.P. weapons that you are given on spawning.\n"\
-								""COL_GREY"/vipgun{FFFFFF} - Use the V.I.P. Lounge Weapon vending machine.\n"\
-								""COL_GREY"/vipskin{FFFFFF} - Configure your V.I.P. skin.\n"\
-								""COL_GREY"/vipjob{FFFFFF} - Choose your V.I.P. job that allows you to have two jobs at once.\n" );
+	            strcat( szCMDS, ""COL_GREY"/vipspawnwep{FFFFFF} - Configure your spawning weapons\n"\
+								""COL_GREY"/vipskin{FFFFFF} - Configure your spawning skin\n"\
+								""COL_GREY"/viplist{FFFFFF} - A list of all online V.I.P. players.\n"\
+								""COL_GREY"/vipgun{FFFFFF} - Redeem weapons or an armour vest from the gun locker\n"\
+								""COL_GREY"/vsay{FFFFFF} - Global V.I.P Chat\n"\
+								""COL_GREY"/vipjob{FFFFFF} - Choose your V.I.P. job that allows you to have two jobs at once.\n"\
+								""COL_GREY"/mynotes{FFFFFF} - Access your VIP notes and material" );
 				ShowPlayerDialog( playerid, DIALOG_CMDS_REDIRECT, DIALOG_STYLE_MSGBOX, ""COL_GOLD"V.I.P. Commands", szCMDS, "Okay", "Back" );
 	        }
 	    }
