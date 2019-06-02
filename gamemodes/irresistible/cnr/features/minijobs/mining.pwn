@@ -155,17 +155,22 @@ hook OnProgressCompleted( playerid, progressid, params )
 	if ( progressid == PROGRESS_MINING )
 	{
 		new m = p_MiningOre{ playerid };
-		new iRandom = random( 100 );
+		new iRandom = random( 101 );
 
 		p_isMining{ playerid } = false;
 		g_miningData[ m ] [ E_MINING ] = INVALID_PLAYER_ID;
 
-		new Float: random_chance = fRandomEx( 0.0, 101.0 );
-		
-		random_chance += GetPlayerLevel( playerid, E_ROLEPLAY ) * 0.2;
-
-		// potential for a 20% success rate
-		if ( random_chance < 20.0 )
+		if ( ( g_miningData[ m ] [ E_ORE ] == ORE_IRON && iRandom > 80 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_BAUXITE && iRandom > 85 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_GOLD && iRandom > 45 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_COAL && iRandom > 90 ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_DIAMOND && iRandom > 30 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_RUBY && iRandom > 35 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_SAPHHIRE && iRandom > 30 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_EMERALD && iRandom > 52 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_PLATINUM && iRandom > 25 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_AMETHYST && iRandom > 75 ) )
+		)
 		{
 			SetPlayerMineOre( playerid, m );
 			return SendError( playerid, "You did not find any ore. Mining again." );
