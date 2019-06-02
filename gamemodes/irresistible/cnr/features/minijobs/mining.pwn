@@ -43,6 +43,7 @@ static stock
 
 	g_orePrices                		[ ] = { 675, 900, 600, 2750, 3000, 3500, 4000, 2200, 2300, 1200 },
 	g_oreMiningTime					[ ] = { 2000, 2800, 1600, 6800, 7200, 7600, 8000, 6400, 6560, 4000 },
+    Float: g_oreMiningXp            [ ] = { 0.25, 0.35, 0.2, 0.85, 0.9, 0.8, 1.0, 0.8, 0.82, 0.5 },
 	g_oreQuanities					[ ] = { 8, 8, 8, 8, 5, 3, 3, 5, 5, 6 },
 
 	// Iterator
@@ -155,21 +156,24 @@ hook OnProgressCompleted( playerid, progressid, params )
 	if ( progressid == PROGRESS_MINING )
 	{
 		new m = p_MiningOre{ playerid };
-		new iRandom = random( 101 );
+		new Float: iRandom = fRandomEx( 0.0, 100.0 );
+
+        // increase success rate parallel to the player roleplay level
+        iRandom *= 1.0 + ( GetPlayerLevel( playerid, E_ROLEPLAY ) / 100.0 );
 
 		p_isMining{ playerid } = false;
 		g_miningData[ m ] [ E_MINING ] = INVALID_PLAYER_ID;
 
-		if ( ( g_miningData[ m ] [ E_ORE ] == ORE_IRON && iRandom > 80 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_BAUXITE && iRandom > 85 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_GOLD && iRandom > 45 ) ||
+		if ( ( g_miningData[ m ] [ E_ORE ] == ORE_IRON && iRandom > 80.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_BAUXITE && iRandom > 85.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_GOLD && iRandom > 45.0 ) ||
 			( g_miningData[ m ] [ E_ORE ] == ORE_COAL && iRandom > 90 ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_DIAMOND && iRandom > 30 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_RUBY && iRandom > 35 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_SAPHHIRE && iRandom > 30 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_EMERALD && iRandom > 52 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_PLATINUM && iRandom > 25 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_AMETHYST && iRandom > 75 ) )
+			( g_miningData[ m ] [ E_ORE ] == ORE_DIAMOND && iRandom > 30.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_RUBY && iRandom > 35.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_SAPHHIRE && iRandom > 30.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_EMERALD && iRandom > 52.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_PLATINUM && iRandom > 25.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_AMETHYST && iRandom > 75.0 ) )
 		)
 		{
 			SetPlayerMineOre( playerid, m );
@@ -188,7 +192,7 @@ hook OnProgressCompleted( playerid, progressid, params )
 			SendServerMessage( playerid, "Great you've mined an ore, now store it in a "COL_GREY"Dune"COL_WHITE"." );
 		}
 
-		//GivePlayerExperience( playerid, E_MINING );
+		GivePlayerExperience( playerid, E_ROLEPLAY, g_oreMiningXp[ g_miningData[ m ] [ E_ORE ] ] );
 		SetPVarInt( playerid, "carrying_ore", m );
 		SetPlayerSpecialAction( playerid, SPECIAL_ACTION_CARRY );
 		SetPlayerAttachedObject( playerid, 4, 2936, 5, 0.000000, 0.197999, 0.133999, 113.099983, -153.799987, 57.300003, 0.631000, 0.597000, 0.659999, g_miningData[ m ] [ E_ARGB ], g_miningData[ m ] [ E_ARGB ] );
@@ -209,6 +213,7 @@ hook OnPlayerEnterDynamicCP( playerid, checkpointid )
 
 			new earned_money = floatround( float( g_orePrices[ g_miningData[ ore ] [ E_ORE ] ] ) * 0.5 );
 
+			GivePlayerExperience( playerid, E_ROLEPLAY, 0.2 );
 			GivePlayerCash( playerid, earned_money );
 			StockMarket_UpdateEarnings( E_STOCK_MINING_COMPANY, earned_money, 0.5 );
 			SendServerMessage( playerid, "You have crushed a "COL_GREY"%s"COL_WHITE" Ore and earned "COL_GOLD"%s"COL_WHITE".", getOreName( g_miningData[ ore ] [ E_ORE ] ), cash_format( earned_money ) );
@@ -383,7 +388,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
 			GivePlayerCash( playerid, cashEarned );
 			StockMarket_UpdateEarnings( E_STOCK_MINING_COMPANY, cashEarned, 0.5 );
 			GivePlayerScore( playerid, floatround( oresExported / 2 ) ); // 16 score is a bit too much for ore... so half that = 8
-			//GivePlayerExperience( playerid, E_MINING, float( oresExported ) * 0.2 );
+			GivePlayerExperience( playerid, E_ROLEPLAY, float( oresExported ) * 0.2 );
 			SendServerMessage( playerid, "You have exported %d rock ore(s) to an industry, earning you "COL_GOLD"%s"COL_WHITE".", oresExported, cash_format( cashEarned ) );
 		}
 		return Y_HOOKS_BREAK_RETURN_1;
