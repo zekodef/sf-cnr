@@ -157,7 +157,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 			p_CoinMarketPage{ playerid } = ICM_PAGE_DEFAULT;
 			p_CoinMarketSelectedItem{ playerid } = listitem;
-			return ShowPlayerDialog( playerid, DIALOG_YOU_SURE_VIP, DIALOG_STYLE_MSGBOX, ""COL_GOLD"Irresistible Coin -{FFFFFF} Confirmation", sprintf( ""COL_WHITE"Are you sure that you want to spend %s IC?", number_format( iCoinRequirement, .decimals = 2 ) ), "Yes", "No" );
+			return ShowPlayerDialog( playerid, DIALOG_YOU_SURE_VIP, DIALOG_STYLE_MSGBOX, ""COL_GOLD"Irresistible Coin -"COL_WHITE" Confirmation", sprintf( ""COL_WHITE"Are you sure that you want to spend %s IC?", number_format( iCoinRequirement, .decimals = 2 ) ), "Yes", "No" );
 		}
 	}
 	else if ( dialogid == DIALOG_IC_MARKET_2 || dialogid == DIALOG_IC_MARKET_3 )
@@ -178,7 +178,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 		p_CoinMarketPage{ playerid } = ( dialogid == DIALOG_IC_MARKET_3 ) ? ICM_PAGE_CASHCARD : ICM_PAGE_ASSETS;
 		p_CoinMarketSelectedItem{ playerid } = listitem;
-		return ShowPlayerDialog( playerid, DIALOG_YOU_SURE_VIP, DIALOG_STYLE_MSGBOX, ""COL_GOLD"Irresistible Coin -{FFFFFF} Confirmation", sprintf( ""COL_WHITE"Are you sure that you want to spend %s IC?", number_format( iCoinRequirement, .decimals = 2 ) ), "Yes", "No" );
+		return ShowPlayerDialog( playerid, DIALOG_YOU_SURE_VIP, DIALOG_STYLE_MSGBOX, ""COL_GOLD"Irresistible Coin -"COL_WHITE" Confirmation", sprintf( ""COL_WHITE"Are you sure that you want to spend %s IC?", number_format( iCoinRequirement, .decimals = 2 ) ), "Yes", "No" );
 	}
 	else if ( dialogid == DIALOG_YOU_SURE_VIP )
 	{
@@ -366,188 +366,188 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 		switch ( listitem )
 		{
-			case 0: format( vip_description, sizeof( vip_description ), "\t{C0C0C0}Feature\t{C0C0C0}Reward\n"\
-																		"Money Provided\t{6EF83C}$25,000,000\n"\
-																		"House Provided\t{6EF83C}Yes\n"\
-																		"Vehicle Provided\t{6EF83C}Yes\n"\
-																		"Garage Provided\t{6EF83C}Yes\n"\
-																		"Gate Provided\t{6EF83C}Yes\n"\
-																		"Weed Business Provided\t{6EF83C}Yes\n"\
-																		"House Customization\t{6EF83C}Large\n"\
-																		"Total house slots\t{6EF83C}No limit\n"\
-																		"Total garage slots\t{6EF83C}No limit\n"\
-																		"Total business slots\t{6EF83C}No limit\n"\
-																		"Total vehicle slots\t{6EF83C}20\n"\
-																		"Weapons on spawn\t{6EF83C}3\n"\
-																		"Armour on spawn\t{6EF83C}Yes\n"\
-																		"Coin generation increase\t{6EF83C}25%%\n"\
-																		"Ability to transfer coins P2P\t{6EF83C}Yes\n"\
-																		"Ability to sell coins on the coin market (/ic sell)\t{6EF83C}Yes\n"\
-																		"Ability to use two jobs (/vipjob)\t{6EF83C}Yes\n"\
-																		"Premium home listing fees waived\t{6EF83C}Yes\n"\
-																		"Tax reduction\t{6EF83C}50%%\n"\
-																		"Inactive asset protection\t{6EF83C}30 days\n"\
-																		"Total Vehicle component editing slots\t{6EF83C}10\n"\
-																		"Furniture slots available\t{6EF83C}50\n"\
-																		"V.I.P Lounge Weapon Redeeming Cooldown\t{6EF83C}No limit\n"\
-																		"V.I.P Tag On Forum\t{6EF83C}Yes\n"\
-																		"Access to V.I.P chat\t{6EF83C}Yes\n"\
-																		"Access to V.I.P lounge\t{6EF83C}Yes\n"\
-																		"Can spawn with a specific skin\t{6EF83C}Yes\n"\
-																		"Access to V.I.P toys\t{6EF83C}Yes\n"\
-																		"Access to custom gang colors (/gangcolor)\t{6EF83C}Yes\n"\
-																		"Access to extra house weapon storage slots\t{6EF83C}Yes\n"\
-																		"Can play custom radio URLs (/radio)\t{6EF83C}Yes\n"\
-																		"Ability to adjust your label's color (/labelcolor)\t{6EF83C}Yes\n"\
-																		"Can show a message to people you kill (/deathmsg)\t{6EF83C}Yes\n"\
-																		"Can adjust the sound of your hitmarker (/hitmarker)\t{6EF83C}Yes" );
+			case 0: format( vip_description, sizeof( vip_description ), "\t"COL_GREY"Feature\t"COL_GREY"Reward\n"\
+																		"Money Provided\t"COL_GREEN"$25,000,000\n"\
+																		"House Provided\t"COL_GREEN"Yes\n"\
+																		"Vehicle Provided\t"COL_GREEN"Yes\n"\
+																		"Garage Provided\t"COL_GREEN"Yes\n"\
+																		"Gate Provided\t"COL_GREEN"Yes\n"\
+																		"Weed Business Provided\t"COL_GREEN"Yes\n"\
+																		"House Customization\t"COL_GREEN"Large\n"\
+																		"Total house slots\t"COL_GREEN"No limit\n"\
+																		"Total garage slots\t"COL_GREEN"No limit\n"\
+																		"Total business slots\t"COL_GREEN"No limit\n"\
+																		"Total vehicle slots\t"COL_GREEN"20\n"\
+																		"Weapons on spawn\t"COL_GREEN"3\n"\
+																		"Armour on spawn\t"COL_GREEN"Yes\n"\
+																		"Coin generation increase\t"COL_GREEN"25%%\n"\
+																		"Ability to transfer coins P2P\t"COL_GREEN"Yes\n"\
+																		"Ability to sell coins on the coin market (/ic sell)\t"COL_GREEN"Yes\n"\
+																		"Ability to use two jobs (/vipjob)\t"COL_GREEN"Yes\n"\
+																		"Premium home listing fees waived\t"COL_GREEN"Yes\n"\
+																		"Tax reduction\t"COL_GREEN"50%%\n"\
+																		"Inactive asset protection\t"COL_GREEN"30 days\n"\
+																		"Total Vehicle component editing slots\t"COL_GREEN"10\n"\
+																		"Furniture slots available\t"COL_GREEN"50\n"\
+																		"V.I.P Lounge Weapon Redeeming Cooldown\t"COL_GREEN"No limit\n"\
+																		"V.I.P Tag On Forum\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P chat\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P lounge\t"COL_GREEN"Yes\n"\
+																		"Can spawn with a specific skin\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P toys\t"COL_GREEN"Yes\n"\
+																		"Access to custom gang colors (/gangcolor)\t"COL_GREEN"Yes\n"\
+																		"Access to extra house weapon storage slots\t"COL_GREEN"Yes\n"\
+																		"Can play custom radio URLs (/radio)\t"COL_GREEN"Yes\n"\
+																		"Ability to adjust your label's color (/labelcolor)\t"COL_GREEN"Yes\n"\
+																		"Can show a message to people you kill (/deathmsg)\t"COL_GREEN"Yes\n"\
+																		"Can adjust the sound of your hitmarker (/hitmarker)\t"COL_GREEN"Yes" );
 
-			case 1: format( vip_description, sizeof( vip_description ), "\t{C0C0C0}Feature\t{C0C0C0}Reward\n"\
-																		"Money Provided\t{6EF83C}$12,500,000\n"\
-																		"House Provided\t{6EF83C}Yes\n"\
-																		"Vehicle Provided\t{6EF83C}Yes\n"\
-																		"Garage Provided\t{F81414}No\n"\
-																		"Gate Provided\t{F81414}No\n"\
-																		"Weed Business Provided\t{F81414}No\n"\
-																		"House Customization\t{6EF83C}Medium\n"\
-																		"Total house slots\t{6EF83C}10\n"\
-																		"Total garage slots\t{6EF83C}10\n"\
-																		"Total business slots\t{6EF83C}10\n"\
-																		"Total vehicle slots\t{6EF83C}10\n"\
-																		"Weapons on spawn\t{6EF83C}3\n"\
-																		"Armour on spawn\t{6EF83C}Yes\n"\
-																		"Coin generation increase\t{6EF83C}10%%\n"\
-																		"Ability to transfer coins P2P\t{6EF83C}Yes\n"\
-																		"Ability to sell coins on the coin market (/ic sell)\t{6EF83C}Yes\n"\
-																		"Ability to use two jobs (/vipjob)\t{F81414}No\n"\
-																		"Premium home listing fees waived\t{6EF83C}Yes\n"\
-																		"Tax reduction\t{F81414}0%%\n"\
-																		"Inactive asset protection\t{6EF83C}14 days\n"\
-																		"Total Vehicle component editing slots\t{6EF83C}8\n"\
-																		"Furniture slots available\t{6EF83C}45\n"\
-																		"V.I.P Lounge Weapon Redeeming Cooldown\t{6EF83C}1 minutes\n"\
-																		"V.I.P Tag On Forum\t{6EF83C}Yes\n"\
-																		"Access to V.I.P chat\t{6EF83C}Yes\n"\
-																		"Access to V.I.P lounge\t{6EF83C}Yes\n"\
-																		"Can spawn with a specific skin\t{6EF83C}Yes\n"\
-																		"Access to V.I.P toys\t{6EF83C}Yes\n"\
-																		"Access to custom gang colors (/gangcolor)\t{6EF83C}Yes\n"\
-																		"Access to extra house weapon storage slots\t{6EF83C}Yes\n"\
-																		"Can play custom radio URLs (/radio)\t{6EF83C}Yes\n"\
-																		"Ability to adjust your label's color (/labelcolor)\t{6EF83C}Yes\n"\
-																		"Can show a message to people you kill (/deathmsg)\t{6EF83C}Yes\n"\
-																		"Can adjust the sound of your hitmarker (/hitmarker)\t{6EF83C}Yes" );
+			case 1: format( vip_description, sizeof( vip_description ), "\t"COL_GREY"Feature\t"COL_GREY"Reward\n"\
+																		"Money Provided\t"COL_GREEN"$12,500,000\n"\
+																		"House Provided\t"COL_GREEN"Yes\n"\
+																		"Vehicle Provided\t"COL_GREEN"Yes\n"\
+																		"Garage Provided\t"COL_RED"No\n"\
+																		"Gate Provided\t"COL_RED"No\n"\
+																		"Weed Business Provided\t"COL_RED"No\n"\
+																		"House Customization\t"COL_GREEN"Medium\n"\
+																		"Total house slots\t"COL_GREEN"10\n"\
+																		"Total garage slots\t"COL_GREEN"10\n"\
+																		"Total business slots\t"COL_GREEN"10\n"\
+																		"Total vehicle slots\t"COL_GREEN"10\n"\
+																		"Weapons on spawn\t"COL_GREEN"3\n"\
+																		"Armour on spawn\t"COL_GREEN"Yes\n"\
+																		"Coin generation increase\t"COL_GREEN"10%%\n"\
+																		"Ability to transfer coins P2P\t"COL_GREEN"Yes\n"\
+																		"Ability to sell coins on the coin market (/ic sell)\t"COL_GREEN"Yes\n"\
+																		"Ability to use two jobs (/vipjob)\t"COL_RED"No\n"\
+																		"Premium home listing fees waived\t"COL_GREEN"Yes\n"\
+																		"Tax reduction\t"COL_RED"0%%\n"\
+																		"Inactive asset protection\t"COL_GREEN"14 days\n"\
+																		"Total Vehicle component editing slots\t"COL_GREEN"8\n"\
+																		"Furniture slots available\t"COL_GREEN"45\n"\
+																		"V.I.P Lounge Weapon Redeeming Cooldown\t"COL_GREEN"1 minutes\n"\
+																		"V.I.P Tag On Forum\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P chat\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P lounge\t"COL_GREEN"Yes\n"\
+																		"Can spawn with a specific skin\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P toys\t"COL_GREEN"Yes\n"\
+																		"Access to custom gang colors (/gangcolor)\t"COL_GREEN"Yes\n"\
+																		"Access to extra house weapon storage slots\t"COL_GREEN"Yes\n"\
+																		"Can play custom radio URLs (/radio)\t"COL_GREEN"Yes\n"\
+																		"Ability to adjust your label's color (/labelcolor)\t"COL_GREEN"Yes\n"\
+																		"Can show a message to people you kill (/deathmsg)\t"COL_GREEN"Yes\n"\
+																		"Can adjust the sound of your hitmarker (/hitmarker)\t"COL_GREEN"Yes" );
 
-			case 2: format( vip_description, sizeof( vip_description ), "\t{C0C0C0}Feature\t{C0C0C0}Reward\n"\
-																		"Money Provided\t{6EF83C}$5,000,000\n"\
-																		"House Provided\t{6EF83C}Yes\n"\
-																		"Vehicle Provided\t{6EF83C}Yes\n"\
-																		"Garage Provided\t{F81414}No\n"\
-																		"Gate Provided\t{F81414}No\n"\
-																		"Weed Business Provided\t{F81414}No\n"\
-																		"House Customization\t{6EF83C}Small\n"\
-																		"Total house slots\t{6EF83C}8\n"\
-																		"Total garage slots\t{6EF83C}8\n"\
-																		"Total business slots\t{6EF83C}8\n"\
-																		"Total vehicle slots\t{6EF83C}6\n"\
-																		"Weapons on spawn\t{6EF83C}2\n"\
-																		"Armour on spawn\t{6EF83C}Yes\n"\
-																		"Coin generation increase\t{F81414}0%%\n"\
-																		"Ability to transfer coins P2P\t{6EF83C}Yes\n"\
-																		"Ability to sell coins on the coin market (/ic sell)\t{6EF83C}Yes\n"\
-																		"Ability to use two jobs (/vipjob)\t{F81414}No\n"\
-																		"Premium home listing fees waived\t{F81414}No\n"\
-																		"Tax reduction\t{F81414}0%%\n"\
-																		"Inactive asset protection\t{6EF83C}14 days\n"\
-																		"Total Vehicle component editing slots\t{6EF83C}6\n"\
-																		"Furniture slots available\t{6EF83C}40\n"\
-																		"V.I.P Lounge Weapon Redeeming Cooldown\t{6EF83C}5 minutes\n"\
-																		"V.I.P Tag On Forum\t{6EF83C}Yes\n"\
-																		"Access to V.I.P chat\t{6EF83C}Yes\n"\
-																		"Access to V.I.P lounge\t{6EF83C}Yes\n"\
-																		"Can spawn with a specific skin\t{6EF83C}Yes\n"\
-																		"Access to V.I.P toys\t{6EF83C}Yes\n"\
-																		"Access to custom gang colors (/gangcolor)\t{6EF83C}Yes\n"\
-																		"Access to extra house weapon storage slots\t{6EF83C}Yes\n"\
-																		"Can play custom radio URLs (/radio)\t{6EF83C}Yes\n"\
-																		"Ability to adjust your label's color (/labelcolor)\t{6EF83C}Yes\n"\
-																		"Can show a message to people you kill (/deathmsg)\t{6EF83C}Yes\n"\
-																		"Can adjust the sound of your hitmarker (/hitmarker)\t{6EF83C}Yes" );
+			case 2: format( vip_description, sizeof( vip_description ), "\t"COL_GREY"Feature\t"COL_GREY"Reward\n"\
+																		"Money Provided\t"COL_GREEN"$5,000,000\n"\
+																		"House Provided\t"COL_GREEN"Yes\n"\
+																		"Vehicle Provided\t"COL_GREEN"Yes\n"\
+																		"Garage Provided\t"COL_RED"No\n"\
+																		"Gate Provided\t"COL_RED"No\n"\
+																		"Weed Business Provided\t"COL_RED"No\n"\
+																		"House Customization\t"COL_GREEN"Small\n"\
+																		"Total house slots\t"COL_GREEN"8\n"\
+																		"Total garage slots\t"COL_GREEN"8\n"\
+																		"Total business slots\t"COL_GREEN"8\n"\
+																		"Total vehicle slots\t"COL_GREEN"6\n"\
+																		"Weapons on spawn\t"COL_GREEN"2\n"\
+																		"Armour on spawn\t"COL_GREEN"Yes\n"\
+																		"Coin generation increase\t"COL_RED"0%%\n"\
+																		"Ability to transfer coins P2P\t"COL_GREEN"Yes\n"\
+																		"Ability to sell coins on the coin market (/ic sell)\t"COL_GREEN"Yes\n"\
+																		"Ability to use two jobs (/vipjob)\t"COL_RED"No\n"\
+																		"Premium home listing fees waived\t"COL_RED"No\n"\
+																		"Tax reduction\t"COL_RED"0%%\n"\
+																		"Inactive asset protection\t"COL_GREEN"14 days\n"\
+																		"Total Vehicle component editing slots\t"COL_GREEN"6\n"\
+																		"Furniture slots available\t"COL_GREEN"40\n"\
+																		"V.I.P Lounge Weapon Redeeming Cooldown\t"COL_GREEN"5 minutes\n"\
+																		"V.I.P Tag On Forum\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P chat\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P lounge\t"COL_GREEN"Yes\n"\
+																		"Can spawn with a specific skin\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P toys\t"COL_GREEN"Yes\n"\
+																		"Access to custom gang colors (/gangcolor)\t"COL_GREEN"Yes\n"\
+																		"Access to extra house weapon storage slots\t"COL_GREEN"Yes\n"\
+																		"Can play custom radio URLs (/radio)\t"COL_GREEN"Yes\n"\
+																		"Ability to adjust your label's color (/labelcolor)\t"COL_GREEN"Yes\n"\
+																		"Can show a message to people you kill (/deathmsg)\t"COL_GREEN"Yes\n"\
+																		"Can adjust the sound of your hitmarker (/hitmarker)\t"COL_GREEN"Yes" );
 
-			case 3: format( vip_description, sizeof( vip_description ), "\t{C0C0C0}Feature\t{C0C0C0}Reward\n"\
-																		"Money Provided\t{6EF83C}$2,500,000\n"\
-																		"House Provided\t{F81414}No\n"\
-																		"Vehicle Provided\t{F81414}No\n"\
-																		"Garage Provided\t{F81414}No\n"\
-																		"Gate Provided\t{F81414}No\n"\
-																		"Weed Business Provided\t{F81414}No\n"\
-																		"House Customization\t{F81414}No\n"\
-																		"Total house slots\t{6EF83C}6\n"\
-																		"Total garage slots\t{6EF83C}6\n"\
-																		"Total business slots\t{6EF83C}6\n"\
-																		"Total vehicle slots\t{6EF83C}4\n"\
-																		"Weapons on spawn\t{6EF83C}1\n"\
-																		"Armour on spawn\t{F81414}No\n"\
-																		"Coin generation increase\t{F81414}0%%\n"\
-																		"Ability to transfer coins P2P\t{6EF83C}Yes\n"\
-																		"Ability to sell coins on the coin market (/ic sell)\t{6EF83C}Yes\n"\
-																		"Ability to use two jobs (/vipjob)\t{F81414}No\n"\
-																		"Premium home listing fees waived\t{F81414}No\n"\
-																		"Tax reduction\t{F81414}0%%\n"\
-																		"Inactive asset protection\t{6EF83C}14 days\n"\
-																		"Total Vehicle component editing slots\t{6EF83C}4\n"\
-																		"Furniture slots available\t{6EF83C}35\n"\
-																		"V.I.P Lounge Weapon Redeeming Cooldown\t{6EF83C}5 minutes\n"\
-																		"V.I.P Tag On Forum\t{6EF83C}Yes\n"\
-																		"Access to V.I.P chat\t{6EF83C}Yes\n"\
-																		"Access to V.I.P lounge\t{6EF83C}Yes\n"\
-																		"Can spawn with a specific skin\t{6EF83C}Yes\n"\
-																		"Access to V.I.P toys\t{6EF83C}Yes\n"\
-																		"Access to custom gang colors (/gangcolor)\t{6EF83C}Yes\n"\
-																		"Access to extra house weapon storage slots\t{6EF83C}Yes\n"\
-																		"Can play custom radio URLs (/radio)\t{6EF83C}Yes\n"\
-																		"Ability to adjust your label's color (/labelcolor)\t{6EF83C}Yes\n"\
-																		"Can show a message to people you kill (/deathmsg)\t{6EF83C}Yes\n"\
-																		"Can adjust the sound of your hitmarker (/hitmarker)\t{6EF83C}Yes" );
+			case 3: format( vip_description, sizeof( vip_description ), "\t"COL_GREY"Feature\t"COL_GREY"Reward\n"\
+																		"Money Provided\t"COL_GREEN"$2,500,000\n"\
+																		"House Provided\t"COL_RED"No\n"\
+																		"Vehicle Provided\t"COL_RED"No\n"\
+																		"Garage Provided\t"COL_RED"No\n"\
+																		"Gate Provided\t"COL_RED"No\n"\
+																		"Weed Business Provided\t"COL_RED"No\n"\
+																		"House Customization\t"COL_RED"No\n"\
+																		"Total house slots\t"COL_GREEN"6\n"\
+																		"Total garage slots\t"COL_GREEN"6\n"\
+																		"Total business slots\t"COL_GREEN"6\n"\
+																		"Total vehicle slots\t"COL_GREEN"4\n"\
+																		"Weapons on spawn\t"COL_GREEN"1\n"\
+																		"Armour on spawn\t"COL_RED"No\n"\
+																		"Coin generation increase\t"COL_RED"0%%\n"\
+																		"Ability to transfer coins P2P\t"COL_GREEN"Yes\n"\
+																		"Ability to sell coins on the coin market (/ic sell)\t"COL_GREEN"Yes\n"\
+																		"Ability to use two jobs (/vipjob)\t"COL_RED"No\n"\
+																		"Premium home listing fees waived\t"COL_RED"No\n"\
+																		"Tax reduction\t"COL_RED"0%%\n"\
+																		"Inactive asset protection\t"COL_GREEN"14 days\n"\
+																		"Total Vehicle component editing slots\t"COL_GREEN"4\n"\
+																		"Furniture slots available\t"COL_GREEN"35\n"\
+																		"V.I.P Lounge Weapon Redeeming Cooldown\t"COL_GREEN"5 minutes\n"\
+																		"V.I.P Tag On Forum\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P chat\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P lounge\t"COL_GREEN"Yes\n"\
+																		"Can spawn with a specific skin\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P toys\t"COL_GREEN"Yes\n"\
+																		"Access to custom gang colors (/gangcolor)\t"COL_GREEN"Yes\n"\
+																		"Access to extra house weapon storage slots\t"COL_GREEN"Yes\n"\
+																		"Can play custom radio URLs (/radio)\t"COL_GREEN"Yes\n"\
+																		"Ability to adjust your label's color (/labelcolor)\t"COL_GREEN"Yes\n"\
+																		"Can show a message to people you kill (/deathmsg)\t"COL_GREEN"Yes\n"\
+																		"Can adjust the sound of your hitmarker (/hitmarker)\t"COL_GREEN"Yes" );
 
-			case 4: format( vip_description, sizeof( vip_description ), "\t{C0C0C0}Feature\t{C0C0C0}Reward\n"\
-																		"Money Provided\t{6EF83C}$500,000\n"\
-																		"House Provided\t{F81414}No\n"\
-																		"Vehicle Provided\t{F81414}No\n"\
-																		"Garage Provided\t{F81414}No\n"\
-																		"Gate Provided\t{F81414}No\n"\
-																		"Weed Business Provided\t{F81414}No\n"\
-																		"House Customization\t{F81414}No\n"\
-																		"Total house slots\t{6EF83C}5\n"\
-																		"Total garage slots\t{6EF83C}5\n"\
-																		"Total business slots\t{6EF83C}5\n"\
-																		"Total vehicle slots\t{6EF83C}3\n"\
-																		"Weapons on spawn\t{6EF83C}1\n"\
-																		"Armour on spawn\t{F81414}No\n"\
-																		"Coin generation increase\t{F81414}0%%\n"\
-																		"Ability to transfer coins P2P\t{F81414}No\n"\
-																		"Ability to sell coins on the coin market (/ic sell)\t{F81414}No\n"\
-																		"Ability to use two jobs (/vipjob)\t{F81414}No\n"\
-																		"Premium home listing fees waived\t{F81414}No\n"\
-																		"Tax reduction\t{F81414}0%%\n"\
-																		"Inactive asset protection\t{6EF83C}14 days\n"\
-																		"Total Vehicle component editing slots\t{6EF83C}3\n"\
-																		"Furniture slots available\t{6EF83C}30\n"\
-																		"V.I.P Lounge Weapon Redeeming Cooldown\t{6EF83C}5 minutes\n"\
-																		"V.I.P Tag On Forum\t{6EF83C}Yes\n"\
-																		"Access to V.I.P chat\t{6EF83C}Yes\n"\
-																		"Access to V.I.P lounge\t{6EF83C}Yes\n"\
-																		"Can spawn with a specific skin\t{6EF83C}Yes\n"\
-																		"Access to V.I.P toys\t{6EF83C}Yes\n"\
-																		"Access to custom gang colors (/gangcolor)\t{6EF83C}Yes\n"\
-																		"Access to extra house weapon storage slots\t{6EF83C}Yes\n"\
-																		"Can play custom radio URLs (/radio)\t{6EF83C}Yes\n"\
-																		"Ability to adjust your label's color (/labelcolor)\t{6EF83C}Yes\n"\
-																		"Can show a message to people you kill (/deathmsg)\t{6EF83C}Yes\n"\
-																		"Can adjust the sound of your hitmarker (/hitmarker)\t{6EF83C}Yes" );
+			case 4: format( vip_description, sizeof( vip_description ), "\t"COL_GREY"Feature\t"COL_GREY"Reward\n"\
+																		"Money Provided\t"COL_GREEN"$500,000\n"\
+																		"House Provided\t"COL_RED"No\n"\
+																		"Vehicle Provided\t"COL_RED"No\n"\
+																		"Garage Provided\t"COL_RED"No\n"\
+																		"Gate Provided\t"COL_RED"No\n"\
+																		"Weed Business Provided\t"COL_RED"No\n"\
+																		"House Customization\t"COL_RED"No\n"\
+																		"Total house slots\t"COL_GREEN"5\n"\
+																		"Total garage slots\t"COL_GREEN"5\n"\
+																		"Total business slots\t"COL_GREEN"5\n"\
+																		"Total vehicle slots\t"COL_GREEN"3\n"\
+																		"Weapons on spawn\t"COL_GREEN"1\n"\
+																		"Armour on spawn\t"COL_RED"No\n"\
+																		"Coin generation increase\t"COL_RED"0%%\n"\
+																		"Ability to transfer coins P2P\t"COL_RED"No\n"\
+																		"Ability to sell coins on the coin market (/ic sell)\t"COL_RED"No\n"\
+																		"Ability to use two jobs (/vipjob)\t"COL_RED"No\n"\
+																		"Premium home listing fees waived\t"COL_RED"No\n"\
+																		"Tax reduction\t"COL_RED"0%%\n"\
+																		"Inactive asset protection\t"COL_GREEN"14 days\n"\
+																		"Total Vehicle component editing slots\t"COL_GREEN"3\n"\
+																		"Furniture slots available\t"COL_GREEN"30\n"\
+																		"V.I.P Lounge Weapon Redeeming Cooldown\t"COL_GREEN"5 minutes\n"\
+																		"V.I.P Tag On Forum\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P chat\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P lounge\t"COL_GREEN"Yes\n"\
+																		"Can spawn with a specific skin\t"COL_GREEN"Yes\n"\
+																		"Access to V.I.P toys\t"COL_GREEN"Yes\n"\
+																		"Access to custom gang colors (/gangcolor)\t"COL_GREEN"Yes\n"\
+																		"Access to extra house weapon storage slots\t"COL_GREEN"Yes\n"\
+																		"Can play custom radio URLs (/radio)\t"COL_GREEN"Yes\n"\
+																		"Ability to adjust your label's color (/labelcolor)\t"COL_GREEN"Yes\n"\
+																		"Can show a message to people you kill (/deathmsg)\t"COL_GREEN"Yes\n"\
+																		"Can adjust the sound of your hitmarker (/hitmarker)\t"COL_GREEN"Yes" );
 		}
 
-		ShowPlayerDialog( playerid, DIALOG_BUY_VIP_MAIN, DIALOG_STYLE_TABLIST_HEADERS, sprintf( "{FFDC2E}%s", g_irresistibleVipItems[ listitem ][ E_NAME ] ), vip_description, "Buy", "Back" );
+		ShowPlayerDialog( playerid, DIALOG_BUY_VIP_MAIN, DIALOG_STYLE_TABLIST_HEADERS, sprintf( ""COL_GOLD"%s", g_irresistibleVipItems[ listitem ][ E_NAME ] ), vip_description, "Buy", "Back" );
 		return 1;
 	}
 	else if ( dialogid == DIALOG_BUY_VIP_MAIN )
@@ -677,7 +677,7 @@ CMD:donate( playerid, params[ ] ) return cmd_vip( playerid, params );
 CMD:vip( playerid, params[ ] )
 {
 	p_SelectedPackage{ playerid } = -1;
-	ShowPlayerDialog( playerid, DIALOG_VIP_MAIN, DIALOG_STYLE_LIST, "{FFDC2E}VIP Packages", "{4EE2EC}Diamond VIP ($100.00 USD)\n{E0E0E0}Platinum VIP ($50.00 USD)\n{FFDC2E}Gold VIP ($25.00 USD)\n{CD7F32}Bronze VIP ($15.00 USD)\n{C0C0C0}Regular VIP ($5.00 USD)", "Select", "Close" );
+	ShowPlayerDialog( playerid, DIALOG_VIP_MAIN, DIALOG_STYLE_TABLIST, ""COL_GOLD"VIP Packages", "{4EE2EC}Diamond VIP\t"COL_GREEN"$100.00 USD\n{E0E0E0}Platinum VIP\t"COL_GREEN"$50.00 USD\n"COL_GOLD"Gold VIP\t"COL_GREEN"$25.00 USD\n{CD7F32}Bronze VIP\t"COL_GREEN"$15.00 USD\n"COL_GREY"Regular VIP\t"COL_GREEN"$5.00 USD)", "Select", "Close" );
 	return 1;
 }
 
@@ -686,15 +686,15 @@ CMD:vipcmds( playerid, params[ ] )
 	if ( p_VIPLevel[ playerid ] < 1 ) return SendError( playerid, "You are not a V.I.P, to become one visit "COL_GREY"donate.sfcnr.com" );
 
 	erase( szLargeString );
-	strcat( szLargeString,	""COL_GREY"/vipspawnwep{FFFFFF} - Configure your spawning weapons\n"\
-							""COL_GREY"/vipskin{FFFFFF} - Configure your spawning skin\n"\
-							""COL_GREY"/viplist{FFFFFF} - A list of all online V.I.P. players.\n"\
-							""COL_GREY"/vipgun{FFFFFF} - Redeem weapons or an armour vest from the gun locker\n"\
-							""COL_GREY"/vsay{FFFFFF} - Global V.I.P Chat\n"\
-							""COL_GREY"/vipjob{FFFFFF} - Choose your V.I.P. job that allows you to have two jobs at once.\n"\
-							""COL_GREY"/mynotes{FFFFFF} - Access your VIP notes and material" );
+	strcat( szLargeString,	""COL_GREY"/vipspawnwep"COL_WHITE" - Configure your spawning weapons\n"\
+							""COL_GREY"/vipskin"COL_WHITE" - Configure your spawning skin\n"\
+							""COL_GREY"/viplist"COL_WHITE" - A list of all online V.I.P. players.\n"\
+							""COL_GREY"/vipgun"COL_WHITE" - Redeem weapons or an armour vest from the gun locker\n"\
+							""COL_GREY"/vsay"COL_WHITE" - Global V.I.P Chat\n"\
+							""COL_GREY"/vipjob"COL_WHITE" - Choose your V.I.P. job that allows you to have two jobs at once.\n"\
+							""COL_GREY"/mynotes"COL_WHITE" - Access your VIP notes and material" );
 
-	ShowPlayerDialog( playerid, DIALOG_NULL, DIALOG_STYLE_MSGBOX, "{FFDC2E}V.I.P Commands", szLargeString, "Okay", "" );
+	ShowPlayerDialog( playerid, DIALOG_NULL, DIALOG_STYLE_MSGBOX, ""COL_GOLD"V.I.P Commands", szLargeString, "Okay", "" );
 	return 1;
 }
 
@@ -726,7 +726,7 @@ stock ShowPlayerCoinMarketDialog( playerid, page = ICM_PAGE_DEFAULT )
 		strcat( szMarket, ""COL_GREEN"Buy shark cards...\t"COL_GREEN">>>\n" );
 		strcat( szMarket, ""COL_PURPLE"Buy premium homes...\t"COL_PURPLE">>>\n" );
 		strcat( szMarket, ""COL_GREY"See other items...\t"COL_GREY">>>" );
-		return ShowPlayerDialog( playerid, DIALOG_IC_MARKET, DIALOG_STYLE_TABLIST_HEADERS, ""COL_GOLD"Irresistible Coin -{FFFFFF} Market", szMarket, "Select", "" );
+		return ShowPlayerDialog( playerid, DIALOG_IC_MARKET, DIALOG_STYLE_TABLIST_HEADERS, ""COL_GOLD"Irresistible Coin -"COL_WHITE" Market", szMarket, "Select", "" );
 	}
 	else if ( page == ICM_PAGE_CASHCARD )
 	{
@@ -737,7 +737,7 @@ stock ShowPlayerCoinMarketDialog( playerid, page = ICM_PAGE_DEFAULT )
 			new iCoinRequirement = floatround( g_irresistibleCashCards[ i ] [ E_PRICE ] * discount );
 			format( szMarket, sizeof( szMarket ), "%s%s\t"COL_GREEN"%s\t"COL_GOLD"%s\n", szMarket, g_irresistibleCashCards[ i ] [ E_NAME ], number_format( g_irresistibleCashCards[ i ] [ E_ID ] ), number_format( iCoinRequirement, .decimals = 0 ) );
 		}
-		return ShowPlayerDialog( playerid, DIALOG_IC_MARKET_3, DIALOG_STYLE_TABLIST_HEADERS, ""COL_GOLD"Irresistible Coin -{FFFFFF} Cash Cards", szMarket, "Select", "Back" );
+		return ShowPlayerDialog( playerid, DIALOG_IC_MARKET_3, DIALOG_STYLE_TABLIST_HEADERS, ""COL_GOLD"Irresistible Coin -"COL_WHITE" Cash Cards", szMarket, "Select", "Back" );
 	}
 	else
 	{
@@ -746,7 +746,7 @@ stock ShowPlayerCoinMarketDialog( playerid, page = ICM_PAGE_DEFAULT )
 			new iCoinRequirement = floatround( g_irresistibleMarketItems[ i ] [ E_PRICE ] * discount );
 			format( szMarket, sizeof( szMarket ), "%s%s\t"COL_GOLD"%s\n", szMarket, g_irresistibleMarketItems[ i ] [ E_NAME ], number_format( iCoinRequirement, .decimals = 0 ) );
 		}
-		return ShowPlayerDialog( playerid, DIALOG_IC_MARKET_2, DIALOG_STYLE_TABLIST_HEADERS, ""COL_GOLD"Irresistible Coin -{FFFFFF} Asset Market", szMarket, "Select", "Back" );
+		return ShowPlayerDialog( playerid, DIALOG_IC_MARKET_2, DIALOG_STYLE_TABLIST_HEADERS, ""COL_GOLD"Irresistible Coin -"COL_WHITE" Asset Market", szMarket, "Select", "Back" );
 	}
 }
 
