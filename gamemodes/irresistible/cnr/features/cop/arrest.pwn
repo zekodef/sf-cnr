@@ -439,7 +439,12 @@ stock AwardNearestLEO( playerid, reason )
 {
 	if ( ! IsPlayerConnected( playerid ) || playerid == INVALID_PLAYER_ID || GetPlayerWantedLevel( playerid ) < 2 || IsPlayerDead( playerid ) )
 		return false;
-
+	
+	#if defined __cloudy_event_system
+	if ( IsPlayerInEvent( playerid ) )
+		return false;
+	#endif
+	
 	new Float: radius = ( IsPlayerInAnyVehicle( playerid ) ? 150.0 : 75.0 ); // If player is in a vehicle, increase radius due to ability to get farther quicker.
 
 	new closestLEO = GetClosestPlayerEx( playerid, CLASS_POLICE, radius );
