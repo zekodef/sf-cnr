@@ -416,7 +416,6 @@ thread StockMarket_InsertReport( stockid, Float: default_start_pool, Float: defa
 			stockid, stockid
 		);
 		mysql_tquery( dbHandle, szLargeString, "StockMarket_PanicSell", "d", stockid );
-		print(szLargeString);
 	}
 
 	// full bankruptcy if a stock is $1 (UNTESTED!)
