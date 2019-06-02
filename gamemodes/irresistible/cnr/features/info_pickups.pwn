@@ -27,7 +27,7 @@ static stock
 		{ 1954.71890, 1038.251, 992.859, 0xFFFF, "{FFFFFF}Test out your luck on the slot machines, maybe you might win the mega jackpot!" },										// Slots
 		{ 1955.69070, 1005.167, 992.468, 0xFFFF, "{FFFFFF}Roulette can payout up to $3.5M! Single bets return 35x your money whereas outside bets can return 2x to 3x!" },			// Roulette
 		{ 2085.5896, 1239.4589, 414.745, 0xFFFF, "{FFFFFF}Buy materials at a convience store and cook meth! Aim and shoot each ingredient to add them as you /meth cook!" }, 		// Meth Cook
-		{ -2980.2500, 483.4584, 4.91030, 0xFFFF, "{FFFFFF}Get a boat and sail around the sea to get a fish every few seconds of sailing." }		 									// Fishing
+		{ -1486.1608, 701.3732, 7.17900, 0xFFFF, "{FFFFFF}Get a boat and sail around the sea to get a fish every few seconds of sailing." }		 									// Fishing
 	}
 ;
 
