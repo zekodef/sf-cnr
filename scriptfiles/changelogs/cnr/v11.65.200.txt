@@ -1,0 +1,9 @@
+(+) Level 5 admins cannot create houses/cars/garages/businesses without a note being used.
+(+) Adds CAC mode and new locations for the duel system (Stev).
+(+) Adds /givearmour for level 5s (Nemesis).
+(+) Adds roleplay level. Get benefits to minijobs by levelling it up. E.g. higher success mining.
+(/) Inactive accounts will get removed now after 1 year.
+(/) Oldschool class selection has been restored.
+(/) "/vip" has been reformatted (Night).
+(*) Fix global message spam with slot machines.
+(*) Fix issue with features being shown and unavoidable on register.
