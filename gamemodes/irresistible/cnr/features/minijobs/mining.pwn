@@ -155,21 +155,24 @@ hook OnProgressCompleted( playerid, progressid, params )
 	if ( progressid == PROGRESS_MINING )
 	{
 		new m = p_MiningOre{ playerid };
-		new iRandom = random( 101 );
+		new Float: iRandom = fRandomEx( 0.0, 100.0 );
+
+        // increase success rate parallel to the player roleplay level
+        iRandom *= 1.0 + ( GetPlayerLevel( playerid, E_ROLEPLAY ) / 100.0 );
 
 		p_isMining{ playerid } = false;
 		g_miningData[ m ] [ E_MINING ] = INVALID_PLAYER_ID;
 
-		if ( ( g_miningData[ m ] [ E_ORE ] == ORE_IRON && iRandom > 80 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_BAUXITE && iRandom > 85 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_GOLD && iRandom > 45 ) ||
+		if ( ( g_miningData[ m ] [ E_ORE ] == ORE_IRON && iRandom > 80.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_BAUXITE && iRandom > 85.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_GOLD && iRandom > 45.0 ) ||
 			( g_miningData[ m ] [ E_ORE ] == ORE_COAL && iRandom > 90 ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_DIAMOND && iRandom > 30 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_RUBY && iRandom > 35 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_SAPHHIRE && iRandom > 30 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_EMERALD && iRandom > 52 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_PLATINUM && iRandom > 25 ) ||
-			( g_miningData[ m ] [ E_ORE ] == ORE_AMETHYST && iRandom > 75 ) )
+			( g_miningData[ m ] [ E_ORE ] == ORE_DIAMOND && iRandom > 30.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_RUBY && iRandom > 35.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_SAPHHIRE && iRandom > 30.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_EMERALD && iRandom > 52.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_PLATINUM && iRandom > 25.0 ) ||
+			( g_miningData[ m ] [ E_ORE ] == ORE_AMETHYST && iRandom > 75.0 ) )
 		)
 		{
 			SetPlayerMineOre( playerid, m );
@@ -209,7 +212,7 @@ hook OnPlayerEnterDynamicCP( playerid, checkpointid )
 
 			new earned_money = floatround( float( g_orePrices[ g_miningData[ ore ] [ E_ORE ] ] ) * 0.5 );
 
-			GivePlayerExperience( playerid, E_ROLEPLAY );
+			GivePlayerExperience( playerid, E_ROLEPLAY, 0.5 );
 			GivePlayerCash( playerid, earned_money );
 			StockMarket_UpdateEarnings( E_STOCK_MINING_COMPANY, earned_money, 0.5 );
 			SendServerMessage( playerid, "You have crushed a "COL_GREY"%s"COL_WHITE" Ore and earned "COL_GOLD"%s"COL_WHITE".", getOreName( g_miningData[ ore ] [ E_ORE ] ), cash_format( earned_money ) );
