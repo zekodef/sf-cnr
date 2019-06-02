@@ -677,7 +677,7 @@ CMD:donate( playerid, params[ ] ) return cmd_vip( playerid, params );
 CMD:vip( playerid, params[ ] )
 {
 	p_SelectedPackage{ playerid } = -1;
-	ShowPlayerDialog( playerid, DIALOG_VIP_MAIN, DIALOG_STYLE_TABLIST, ""COL_GOLD"VIP Packages", "{4EE2EC}Diamond VIP\t"COL_GREEN"$100.00 USD\n{E0E0E0}Platinum VIP\t"COL_GREEN"$50.00 USD\n"COL_GOLD"Gold VIP\t"COL_GREEN"$25.00 USD\n{CD7F32}Bronze VIP\t"COL_GREEN"$15.00 USD\n"COL_GREY"Regular VIP\t"COL_GREEN"$5.00 USD)", "Select", "Close" );
+	ShowPlayerDialog( playerid, DIALOG_VIP_MAIN, DIALOG_STYLE_TABLIST, ""COL_GOLD"VIP Packages", "{4EE2EC}Diamond VIP\t"COL_GREEN"$100.00 USD\n{E0E0E0}Platinum VIP\t"COL_GREEN"$50.00 USD\n"COL_GOLD"Gold VIP\t"COL_GREEN"$25.00 USD\n{CD7F32}Bronze VIP\t"COL_GREEN"$15.00 USD\n"COL_GREY"Regular VIP\t"COL_GREEN"$5.00 USD", "Select", "Close" );
 	return 1;
 }
 
