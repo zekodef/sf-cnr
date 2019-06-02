@@ -185,6 +185,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
 			GivePlayerScore( playerid, 1 + floatround( p_PilotDistance[ playerid ] / 1000.0 ) );
 			StockMarket_UpdateEarnings( E_STOCK_AVIATION, cash_earned, stock_dividend_allocation );
 			GivePlayerCash( playerid, cash_earned );
+			GivePlayerExperience( playerid, E_ROLEPLAY );
 
 			ShowPlayerHelpDialog( playerid, 5000, "You have earned ~y~%s ~w~for exporting %s!", cash_format( cash_earned ), g_CargoName[ p_PilotCargo[ playerid ] ] );
 			StopPlayerPilotWork( playerid );
