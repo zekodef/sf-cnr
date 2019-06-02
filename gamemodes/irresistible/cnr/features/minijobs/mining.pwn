@@ -44,7 +44,6 @@ static stock
 	g_orePrices                		[ ] = { 675, 900, 600, 2750, 3000, 3500, 4000, 2200, 2300, 1200 },
 	g_oreMiningTime					[ ] = { 2000, 2800, 1600, 6800, 7200, 7600, 8000, 6400, 6560, 4000 },
 	g_oreQuanities					[ ] = { 8, 8, 8, 8, 5, 3, 3, 5, 5, 6 },
-	g_oreProbability 				[ ] = { 85, 80, 90, 45, 35, 30, 25, 52, 30, 75 },
 
 	// Iterator
 	Iterator: miningrock 			< MAX_ROCKS >
