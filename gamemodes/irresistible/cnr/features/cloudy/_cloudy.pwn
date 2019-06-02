@@ -7,3 +7,4 @@
 
 /* ** Includes ** */
 #tryinclude "irresistible\cnr\features\cloudy\event_system.pwn"
+#tryinclude "irresistible\cnr\features\cloudy\fishing_system.pwn"
