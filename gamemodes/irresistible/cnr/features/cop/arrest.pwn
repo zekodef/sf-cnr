@@ -437,13 +437,14 @@ stock BreakPlayerCuffs( playerid )
 
 stock AwardNearestLEO( playerid, reason )
 {
-	#if defined __cloudy_event_system
-	if ( ! IsPlayerConnected( playerid ) || playerid == INVALID_PLAYER_ID || GetPlayerWantedLevel( playerid ) < 2 || ReturnPlayerHealth( playerid ) <= 0  || IsPlayerInEvent( playerid ) )
-	#else
 	if ( ! IsPlayerConnected( playerid ) || playerid == INVALID_PLAYER_ID || GetPlayerWantedLevel( playerid ) < 2 || ReturnPlayerHealth( playerid ) <= 0 )
-	#endif
 		return false;
-
+	
+	#if defined __cloudy_event_system
+	if ( IsPlayerInEvent( playerid ) )
+		return false;
+	#endif
+	
 	new Float: radius = ( IsPlayerInAnyVehicle( playerid ) ? 150.0 : 75.0 ); // If player is in a vehicle, increase radius due to ability to get farther quicker.
 
 	new closestLEO = GetClosestPlayerEx( playerid, CLASS_POLICE, radius );
