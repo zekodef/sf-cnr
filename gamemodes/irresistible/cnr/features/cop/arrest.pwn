@@ -437,7 +437,7 @@ stock BreakPlayerCuffs( playerid )
 
 stock AwardNearestLEO( playerid, reason )
 {
-	if ( ! IsPlayerConnected( playerid ) || playerid == INVALID_PLAYER_ID || GetPlayerWantedLevel( playerid ) < 2 || ReturnPlayerHealth( playerid ) <= 0 )
+	if ( ! IsPlayerConnected( playerid ) || playerid == INVALID_PLAYER_ID || GetPlayerWantedLevel( playerid ) < 2 || IsPlayerDead( playerid ) )
 		return false;
 	
 	#if defined __cloudy_event_system
