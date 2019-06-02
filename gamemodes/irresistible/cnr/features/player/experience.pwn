@@ -54,7 +54,7 @@ static const
 		{ "Police",				0x3E7EFFFF,		7500.0, 			20.0,			10.0 }, 	// 7.5k arrests
 		{ "Robbery", 			0xF83245FF, 	30000.0,			15.0,			10.0 }, 	// 30k robberies
 		{ "Deathmatch", 		0xFF9233FF,		75000.0,			10.0,			5.0 }, 		// 75k kills
-		{ "Roleplay",			0x33FF50FF,		75000.0,	 		10.0,			12.0 }		// 75k minijob
+		{ "Roleplay",			0x33FF50FF,		75000.0,	 		10.0,			5.0 }		// 75k minijob
 
 /*
 		{ "Fireman",			10000.0,			9.0 },		// 10k fires
