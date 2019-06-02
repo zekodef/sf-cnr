@@ -105,7 +105,7 @@ public OnGameModeInit()
 	strcat( szLargeString, "LEFT JOIN `TOYS` as a9 ON a9.`USER_ID` = a1.`ID` " );
 	strcat( szLargeString, "LEFT JOIN `GARAGES` as a10 ON a10.`OWNER` = a1.`ID` " );
 	strcat( szLargeString, "LEFT JOIN `BUSINESSES` as a11 ON a11.`OWNER_ID` = a1.`ID` " );
-	strcat( szLargeString, "WHERE UNIX_TIMESTAMP()-a1.`LASTLOGGED` > 15552000" );
+	strcat( szLargeString, "WHERE UNIX_TIMESTAMP()-a1.`LASTLOGGED` > 11510640000" );
 	mysql_function_query( dbHandle, szLargeString, true, "onRemoveInactiveRows", "d", 0 );
 
 	// Reset VIPs
@@ -727,7 +727,19 @@ public OnPlayerSpawn( playerid )
 		SpawnToPaintball( playerid, p_PaintBallArena{ playerid } );
 		return 1;
 	}
-
+	
+	#if defined __cloudy_event_system
+	else if ( IsPlayerInEvent( playerid ) )
+	{
+		if( ! EventSettingAllow( 0 ) && g_eventData[ EV_STARTED ] ) 
+		{	
+			SetPlayerInEvent( playerid ); // respawns player in event.
+			return 1;
+		}
+		else RemovePlayerFromEvent( playerid, true ); // changes the InEvent variable to false.
+	}
+	#endif
+	
 	if ( p_Class[ playerid ] == CLASS_CIVILIAN )
 	{
 		if ( !p_JobSet{ playerid } )
@@ -833,8 +845,14 @@ public OnPlayerWeaponShot( playerid, weaponid, hittype, hitid, Float: fX, Float:
 			return 1; // fcnpc
 
 		// Cop shoots innocent, they /q - so jail
+		#if defined __cloudy_event_system
+		if ( p_Class[ playerid ] == CLASS_POLICE && p_WantedLevel[ hitid ] > 2 && ! IsPlayerInEvent( playerid ) && ! IsPlayerInEvent( hitid ) )
+		#else
 		if ( p_Class[ playerid ] == CLASS_POLICE && p_WantedLevel[ hitid ] > 2 )
+		#endif
+		{	
 			p_QuitToAvoidTimestamp[ hitid ] = g_iTime + 3;
+		}
 
 		if ( p_Class[ playerid ] == CLASS_POLICE && p_Class[ hitid ] != CLASS_POLICE && !p_WantedLevel[ hitid ] && GetPlayerState( hitid ) != PLAYER_STATE_WASTED && ! IsPlayerInEvent( playerid ) && ! IsPlayerInBattleRoyale( playerid ) )
 		 	return ShowPlayerHelpDialog( playerid, 2000, "You cannot hurt innocent civilians, you're a ~b~cop~w~~h~!" ), 0;
@@ -1040,11 +1058,40 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 	/*if ( p_Class[ issuerid ] == CLASS_POLICE && p_Class[ playerid ] != CLASS_POLICE && !p_WantedLevel[ playerid ] && GetPlayerState( playerid ) != PLAYER_STATE_WASTED ) {
 		ShowPlayerHelpDialog( issuerid, 2000, "You should not hurt innocent civilians, you're a ~b~cop~w~~h~!" );
 	}*/
-	if ( p_Class[ issuerid ] == CLASS_POLICE && p_Class[ playerid ] != CLASS_POLICE && !p_WantedLevel[ playerid ] && GetPlayerState( playerid ) != PLAYER_STATE_WASTED && ! IsPlayerInEvent( issuerid ) )
-	 	return ShowPlayerHelpDialog( issuerid, 2000, "You cannot hurt innocent civilians, you're a ~b~cop~w~~h~!" ), 0;
 
-	if ( p_Class[ playerid ] == p_Class[ issuerid ] && p_Class[ playerid ] != CLASS_CIVILIAN  )
+	#if defined __cloudy_event_system
+	if( IsPlayerInEvent( issuerid ) && IsPlayerInEvent( playerid ) )
+	{
+		if( g_eventData[ EV_FIGHT_TYPE] == 3 ) return 0;
+
+		if( p_Class[ issuerid ] == p_Class[ playerid ] )
+		{
+			if ( p_Class[ issuerid ] == CLASS_CIVILIAN && g_eventData[ EV_FIGHT_TYPE ] == 0 ) // Cops Vs Civilians
+				return 0;
+
+			if ( p_Class[ issuerid ] == CLASS_POLICE && g_eventData[ EV_FIGHT_TYPE ] < 2 ) // ( Cops Vs Civilians ) Or ( Civilians Vs Civilians Vs Cops )
+				return 0;
+		}
+	}
+	#endif
+
+	#if defined __cloudy_event_system
+	if ( p_Class[ issuerid ] == CLASS_POLICE && p_Class[ playerid ] != CLASS_POLICE && !p_WantedLevel[ playerid ] && GetPlayerState( playerid ) != PLAYER_STATE_WASTED && ! ( IsPlayerInEvent( issuerid ) && IsPlayerInEvent( playerid ) && g_eventData[ EV_FIGHT_TYPE ] < 3 ) )
+	#else
+	if ( p_Class[ issuerid ] == CLASS_POLICE && p_Class[ playerid ] != CLASS_POLICE && !p_WantedLevel[ playerid ] && GetPlayerState( playerid ) != PLAYER_STATE_WASTED )
+	#endif
+	{
+	 	return ShowPlayerHelpDialog( issuerid, 2000, "You cannot hurt innocent civilians, you're a ~b~cop~w~~h~!" ), 0;
+	}
+
+	#if defined __cloudy_event_system
+	if ( p_Class[ playerid ] == p_Class[ issuerid ] && p_Class[ playerid ] != CLASS_CIVILIAN && ! ( IsPlayerInEvent( issuerid ) && IsPlayerInEvent( playerid ) && g_eventData[ EV_FIGHT_TYPE ] == 2 ) )
+	#else
+	if ( p_Class[ playerid ] == p_Class[ issuerid ] && p_Class[ playerid ] != CLASS_CIVILIAN )
+	#endif
+	{
 		return 0;
+	}
 
 	if ( p_BulletInvulnerbility[ playerid ] > g_iTime )
 	 	return ShowPlayerHelpDialog( issuerid, 2000, "This player is immune from damage!" ), 0;
@@ -1058,15 +1105,16 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 	if ( IsPlayerTazed( playerid ) || IsPlayerCuffed( playerid ) || IsPlayerKidnapped( playerid ) || IsPlayerTied( playerid ) || IsPlayerLoadingObjects( playerid ) || IsPlayerAdminOnDuty( playerid ) || IsPlayerSpawnProtected( playerid ) )
 		return 0;
 
-	// Rhino damage invulnerable
-	if ( p_Class[ playerid ] == CLASS_POLICE && IsPlayerInAnyVehicle( playerid ) && GetVehicleModel( GetPlayerVehicleID( playerid ) ) == 432 )
-		return 0;
-
 	// Anti RDM and gang member damage
-	if ( ! IsPlayerInEvent( playerid ) && ! IsPlayerInPaintBall( playerid ) && ! IsPlayerBoxing( playerid ) && ! IsPlayerDueling( playerid ) && ! IsPlayerInBattleRoyale( playerid ) )
+	if ( ! IsPlayerInPaintBall( playerid ) && ! IsPlayerBoxing( playerid ) && ! IsPlayerDueling( playerid ) && ! IsPlayerInBattleRoyale( playerid ) )
 	{
-		if ( IsPlayerInPlayerGang( issuerid, playerid ) ) {
-		 	return ShowPlayerHelpDialog( issuerid, 2000, "You cannot damage your homies!" ), 0;
+		#if defined __cloudy_event_system
+		if ( IsPlayerInPlayerGang( issuerid, playerid ) && ! ( IsPlayerInEvent( playerid ) && IsPlayerInEvent( issuerid ) && g_eventData[ EV_FIGHT_TYPE] <= 2 ) )
+		#else
+		if ( IsPlayerInPlayerGang( issuerid, playerid ) )
+		#endif
+		{
+			return ShowPlayerHelpDialog( issuerid, 2000, "You cannot damage your homies!" ), 0;
 		}
 
 		// Anti Random Deathmatch
@@ -1092,13 +1140,11 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 
 	// Headshots
 	#if defined __cloudy_event_system
-	if ( ( weaponid == WEAPON_SNIPER || weaponid == WEAPON_RIFLE ) && bodypart == 9 && ( ! IsPlayerInEvent( playerid ) || ( IsPlayerInEvent( playerid ) && EventSettingAllow( EVENT_SETTING_HEADSHOT ) ) ) )
+	if ( ( weaponid == WEAPON_SNIPER || weaponid == WEAPON_RIFLE ) && bodypart == 9 && ( ! IsPlayerInEvent( playerid ) || ( IsPlayerInEvent( playerid ) && EventSettingAllow( 3 ) ) ) )
 	#else
 	if ( ( weaponid == WEAPON_SNIPER || weaponid == WEAPON_RIFLE ) && bodypart == 9 )
 	#endif
-	{
 		amount *= 1.5;
-	}
 
 	// Paintball Headshot
 	if ( issuerid != INVALID_PLAYER_ID && p_inPaintBall{ playerid } == true )
@@ -1297,7 +1343,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 				    if ( p_WantedLevel[ playerid ] > 5 )
 					{
 						static const killedWords[ ] [ ] = { { "murked" }, { "killed" }, { "ended" }, { "slain" }, { "massacred" }, { "destroyed" }, { "screwed" } };
-				        new cashEarned = ( p_WantedLevel[ playerid ] < MAX_WANTED_LVL ? p_WantedLevel[ playerid ] : MAX_WANTED_LVL ) * ( reason == 38 || reason == 51 ? 160 : 270 );
+				        new cashEarned = ( p_WantedLevel[ playerid ] < MAX_WANTED_LVL ? p_WantedLevel[ playerid ] : MAX_WANTED_LVL ) * ( reason == 38 || reason == 51 ? 150 : 300 );
 				        GivePlayerCash( killerid, cashEarned );
 				        GivePlayerScore( killerid, 2 );
 						GivePlayerExperience( killerid, E_POLICE, 0.5 );
@@ -4768,8 +4814,6 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
             //	ShowPlayerDialog( playerid, DIALOG_SPAWN_CITY, DIALOG_STYLE_LIST, "{FFFFFF}Select Spawning City", "San Fierro\nLas Venturas\nLos Santos\nRandom City", "Select", "" );
 
            	SendServerMessage( playerid, "Your job has been set to %s. you can change it at the City Hall for "COL_GOLD"$5,000"COL_WHITE".", GetJobName( p_Job{ playerid } ) );
-
-			DisplayFeatures( playerid );
 		}
         else
         {
@@ -5258,11 +5302,13 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	        {
 				if ( p_VIPLevel[ playerid ] < VIP_REGULAR ) return SendError( playerid, "You are not a V.I.P, to become one visit "COL_GREY"donate.sfcnr.com" );
 				szCMDS[ 0 ] = '\0';
-	            strcat( szCMDS, ""COL_GREY"/viplist{FFFFFF} - A list of all online V.I.P. players.\n"\
-								""COL_GREY"/vipspawnwep{FFFFFF} - Configure your V.I.P. weapons that you are given on spawning.\n"\
-								""COL_GREY"/vipgun{FFFFFF} - Use the V.I.P. Lounge Weapon vending machine.\n"\
-								""COL_GREY"/vipskin{FFFFFF} - Configure your V.I.P. skin.\n"\
-								""COL_GREY"/vipjob{FFFFFF} - Choose your V.I.P. job that allows you to have two jobs at once.\n" );
+	            strcat( szCMDS, ""COL_GREY"/vipspawnwep{FFFFFF} - Configure your spawning weapons\n"\
+								""COL_GREY"/vipskin{FFFFFF} - Configure your spawning skin\n"\
+								""COL_GREY"/viplist{FFFFFF} - A list of all online V.I.P. players.\n"\
+								""COL_GREY"/vipgun{FFFFFF} - Redeem weapons or an armour vest from the gun locker\n"\
+								""COL_GREY"/vsay{FFFFFF} - Global V.I.P Chat\n"\
+								""COL_GREY"/vipjob{FFFFFF} - Choose your V.I.P. job that allows you to have two jobs at once.\n"\
+								""COL_GREY"/mynotes{FFFFFF} - Access your VIP notes and material" );
 				ShowPlayerDialog( playerid, DIALOG_CMDS_REDIRECT, DIALOG_STYLE_MSGBOX, ""COL_GOLD"V.I.P. Commands", szCMDS, "Okay", "Back" );
 	        }
 	    }

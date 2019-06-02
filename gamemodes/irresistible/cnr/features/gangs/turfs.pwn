@@ -285,14 +285,7 @@ hook OnPlayerEnterDynArea( playerid, areaid )
 		new
 			first_turf = Turf_GetFirstTurf( playerid );
 
-		if ( ! IsPlayerMovieMode( playerid ) )
-		{
-			if ( first_turf == INVALID_GANG_TURF )
-				return PlayerTextDrawSetString( playerid, g_ZoneOwnerTD[ playerid ], "_" );
-
-			// if ( p_GangID[ playerid ] != INVALID_GANG_ID && g_gangTurfData[ first_turf ] [ E_OWNER ] == INVALID_GANG_ID ) ShowPlayerHelpDialog( playerid, 2000, "You can take over this turf by typing ~g~/takeover" );
-			PlayerTextDrawSetString( playerid, g_ZoneOwnerTD[ playerid ], sprintf( "~r~~h~(%s)~n~~w~~h~%s", g_gangTurfData[ first_turf ] [ E_FACILITY_GANG ] != INVALID_GANG_ID ? ( "FACILITY" ) : ( "TERRITORY" ), ReturnGangName( g_gangTurfData[ first_turf ] [ E_OWNER ] ) ) );
-		}
+		CallLocalFunction( "OnPlayerUpdateGangZone", "dd", playerid, first_turf );
 	}
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }
@@ -344,6 +337,21 @@ hook OnPlayerLeaveDynArea( playerid, areaid )
 		else CallLocalFunction( "OnPlayerUpdateGangZone", "dd", playerid, INVALID_GANG_TURF );
 	}
 	return Y_HOOKS_CONTINUE_RETURN_1;
+}
+
+public OnPlayerUpdateGangZone( playerid, zoneid )
+{
+	if ( ! IsPlayerMovieMode( playerid ) )
+	{
+		if ( zoneid == INVALID_GANG_TURF )
+			return PlayerTextDrawSetString( playerid, g_ZoneOwnerTD[ playerid ], "_" );
+
+		if ( p_GangID[ playerid ] != INVALID_GANG_ID && g_gangTurfData[ zoneid ] [ E_OWNER ] == INVALID_GANG_ID )
+		 	ShowPlayerHelpDialog( playerid, 6000, "You can take over this turf by typing ~g~/takeover" );
+
+		PlayerTextDrawSetString( playerid, g_ZoneOwnerTD[ playerid ], sprintf( "~r~~h~(%s)~n~~w~~h~%s", g_gangTurfData[ zoneid ] [ E_FACILITY_GANG ] != INVALID_GANG_ID ? ( "FACILITY" ) : ( "TERRITORY" ), g_gangTurfData[ zoneid ] [ E_OWNER ] == -1 ? ( "Uncaptured" ) : ( ReturnGangName( g_gangTurfData[ zoneid ] [ E_OWNER ] ) ) ) );
+	}
+	return 1;
 }
 
 /* ** Commands ** */

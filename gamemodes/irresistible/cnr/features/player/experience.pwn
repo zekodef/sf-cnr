@@ -19,6 +19,7 @@ enum E_LEVELS {
 	E_POLICE,
 	E_ROBBERY,
 	E_DEATHMATCH,
+	E_ROLEPLAY
 
 	/*E_FIREMAN,
 	E_PARAMEDIC,
@@ -51,8 +52,10 @@ static const
 	{
 		// Level Name 			Bar Color 		Level 100 Req.		XP Dilation 	Sell Value
 		{ "Police",				0x3E7EFFFF,		7500.0, 			20.0,			10.0 }, 	// 7.5k arrests
-		{ "Robbery", 			0xF83245FF, 	30000.0,			15.0,			10.0 }, 	// 30K robberies
-		{ "Deathmatch", 		0xFF9233FF,		75000.0,			10.0,			5.0 } 		// 75K kills
+		{ "Robbery", 			0xF83245FF, 	30000.0,			15.0,			10.0 }, 	// 30k robberies
+		{ "Deathmatch", 		0xFF9233FF,		75000.0,			10.0,			5.0 }, 		// 75k kills
+		{ "Roleplay",			0x33FF50FF,		75000.0,	 		10.0,			5.0 }		// 75k minijob
+
 /*
 		{ "Fireman",			10000.0,			9.0 },		// 10k fires
 		{ "Hitman",				1500.0,				4.5 },		// 1.5k contracts

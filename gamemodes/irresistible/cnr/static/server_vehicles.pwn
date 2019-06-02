@@ -419,6 +419,16 @@ static stock InitializeServerVehicles( )
 	tmpVariable = AddStaticVehicle( 451, -1879.5490, -630.3375, 1002.1699, 318.5035, 1, 1 ); // white
 	SetVehicleVirtualWorld( tmpVariable, 31 ), LinkVehicleToInterior( tmpVariable, 9 ), SetVehicleParamsEx( tmpVariable, VEHICLE_PARAMS_OFF, VEHICLE_PARAMS_OFF, VEHICLE_PARAMS_OFF, VEHICLE_PARAMS_OFF, VEHICLE_PARAMS_OFF, VEHICLE_PARAMS_OFF, VEHICLE_PARAMS_OFF );
 
+	#if defined __cloudy_fishing_system
+	// SF Fishing Boats
+	AddStaticVehicle( 453, -1474.0452, 671.4551, -0.4139, 270.0, 56, 56 ); // 
+	AddStaticVehicle( 453, -1474.0452, 678.4317, -0.1675, 270.0, 56, 56 ); // 
+	AddStaticVehicle( 453, -1474.0452, 684.5461, -0.4814, 270.0, 56, 56 ); // 
+	AddStaticVehicle( 453, -1474.0452, 690.5830, -0.1199, 270.0, 56, 56 ); // 
+	AddStaticVehicle( 453, -1474.0452, 698.4171, -0.4731, 270.0, 56, 56 ); // 
+	AddStaticVehicle( 453, -1474.0452, 704.5991, -0.4769, 270.0, 56, 56 ); // 
+	#endif
+
 	//							//
 	//		LAS VENTURAS 		//
 	//	   Credits: Niels		//

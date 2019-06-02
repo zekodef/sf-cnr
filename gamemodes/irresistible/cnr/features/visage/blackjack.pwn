@@ -627,10 +627,8 @@ stock CheckForBlackjack( tableid )
             // alert world
 			if ( g_blackjackPlayerState[ tableid ] [ player_index ] == BLACKJACK_STATE_WIN && payout > g_blackjackData[ tableid ] [ E_PAYOUT ] && payout >= 10000 ) {
 				UpdateServerVariable( "blackjack_wins", 0, GetGVarFloat( "blackjack_wins" ) + ( float( payout ) / 1000000.0 ), "", GLOBAL_VARTYPE_FLOAT );
-                foreach(new i : Player)
-                {
-                    if ( !IsPlayerSettingToggled( i, 12 ) )
-                        SendClientMessageFormatted( i, -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has won "COL_GOLD"%s"COL_WHITE" from blackjack!", ReturnPlayerName( playerid ), playerid, cash_format( payout ) );
+                foreach ( new i : Player ) if ( ! IsPlayerSettingToggled( i, SETTING_HIDE_GAMB_MSG ) ) {
+                    SendClientMessageFormatted( i, -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has won "COL_GOLD"%s"COL_WHITE" from blackjack!", ReturnPlayerName( playerid ), playerid, cash_format( payout ) );
                 }
             }
         }

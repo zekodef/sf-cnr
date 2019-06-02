@@ -375,6 +375,11 @@ stock SavePlayerData( playerid, bool: logout = false )
 
 		if ( IsPlayerCuffed( playerid ) || IsPlayerTazed( playerid ) || IsPlayerTied( playerid ) || p_LeftCuffed{ playerid } || p_QuitToAvoidTimestamp[ playerid ] > g_iTime )
 			bQuitToAvoid = true;
+			
+		#if defined __cloudy_event_system
+		if ( IsPlayerInEvent( playerid ) )
+			bQuitToAvoid = false;
+		#endif
 
         format( Query, sizeof( Query ), "UPDATE `USERS` SET `SCORE`=%d,`ADMINLEVEL`=%d,`OWNEDHOUSES`=%d,`KILLS`=%d,`DEATHS`=%d,`VIP_PACKAGE`=%d,`OWNEDCARS`=%d,`LASTLOGGED`=%d,`VIP_EXPIRE`=%d,`LAST_SKIN`=%d,`BURGLARIES`=%d,`UPTIME`=%d,`ARRESTS`=%d,`CITY`=%d,`METH`=%d,`SODA`=%d,`ACID`=%d,`GAS`=%d,",
                                        	GetPlayerScore( playerid ), 	p_AdminLevel[ playerid ],

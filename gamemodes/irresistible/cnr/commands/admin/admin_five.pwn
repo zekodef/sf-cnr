@@ -6,6 +6,24 @@
  */
 
 /* ** Commands ** */
+CMD:givearmour( playerid, params[ ] )
+{
+    new pID;
+    if ( p_AdminLevel[ playerid] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT);
+    else if (sscanf (params, "u", pID ) ) SendUsage(playerid, "/givearmour [PLAYER_ID]");
+    else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+    else if ( IsPlayerJailed( pID ) ) return SendError( playerid, "This player is jailed, you cannot do this." );
+    else if ( IsPlayerAdminOnDuty( pID ) ) return SendError( playerid, "This player is an admin on duty, you cannot do this." );
+    else
+    {
+        SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) gave you armour.", ReturnPlayerName( playerid ), playerid );
+        SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have given armour to %s(%d).", ReturnPlayerName( pID ), pID );
+        AddAdminLogLineFormatted( "%s(%d) has given armour to %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+        SetPlayerArmour( pID, 100.0 );
+    }
+    return 1;
+}
+
 CMD:armorall( playerid, params[ ] )
 {
 	if ( p_AdminLevel[ playerid ] < 5 )
@@ -28,6 +46,18 @@ CMD:viewpolicechat( playerid, params[ ] )
 	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have %s viewing police.", p_ToggleCopChat{ playerid } == true ? ("toggled") : ("un-toggled") );
     if ( !IsPlayerUnderCover( playerid ) ) {
 		AddAdminLogLineFormatted( "%s(%d) has %s viewing police chat", ReturnPlayerName( playerid ), playerid, p_ToggleCopChat{ playerid } == true ? ("toggled") : ("un-toggled") );
+    }
+	return 1;
+}
+
+CMD:viewpbchat( playerid, params[ ] )
+{
+	if ( p_AdminLevel[ playerid ] < 5 && !IsPlayerUnderCover( playerid ) ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	p_TogglePBChat{ playerid } = !p_TogglePBChat{ playerid };
+
+	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have %s viewing paint-ball chat.", p_TogglePBChat{ playerid } == true ? ("toggled") : ("un-toggled") );
+    if ( !IsPlayerUnderCover( playerid ) ) {
+		AddAdminLogLineFormatted( "%s(%d) has %s viewing paintball chat", ReturnPlayerName( playerid ), playerid, p_TogglePBChat{ playerid } == true ? ("toggled") : ("un-toggled") );
     }
 	return 1;
 }
@@ -111,28 +141,68 @@ CMD:c( playerid, params[ ] )
 CMD:creategarage( playerid, params[ ] )
 {
     new
-		cost, iTmp, iVehicle,
-		Float: X, Float: Y, Float: Z, Float: Angle
-	;
+		pID, cost;
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "d", cost ) ) return SendUsage( playerid, "/creategarage [COST]" );
+	else if ( sscanf( params, "dU(-1)", cost, pID ) ) return SendUsage( playerid, "/creategarage [COST] [PLAYER_ID (optional)]" );
+	else if ( ! IsPlayerServerMaintainer( playerid ) && ! IsPlayerConnected( pID ) && cost < 50000 ) return SendError( playerid, "You must specify a player for garages under $50,000." );
 	else if ( cost < 100 ) return SendError( playerid, "The price must be located above 100 dollars." );
-	else if ( !( iVehicle = GetPlayerVehicleID( playerid ) ) ) return SendError( playerid, "You are not in any vehicle." );
 	else
 	{
-		AddAdminLogLineFormatted( "%s(%d) has created a garage", ReturnPlayerName( playerid ), playerid );
+		mysql_format(
+			dbHandle, szBigString, sizeof( szBigString ),
+			"SELECT * FROM `NOTES` WHERE (`NOTE` LIKE '{FFDC2E}V.I.P Garage%%' ) AND USER_ID=%d AND `DELETED` IS NULL LIMIT 0,1",
+			IsPlayerConnected( pID ) ? GetPlayerAccountID( pID ) : 0
+		);
+		mysql_tquery( dbHandle, szBigString, "OnAdminCreateGarage", "ddd", playerid, pID, cost );
+	}
+	return 1;
+}
 
-		if ( GetVehiclePos( iVehicle, X, Y, Z ) && GetVehicleZAngle( iVehicle, Angle ) )
+thread OnAdminCreateGarage( playerid, targetid, cost )
+{
+	new
+		num_rows = cache_get_row_count( );
+
+	// if there is a note or the player is a maintainer
+	if ( IsPlayerServerMaintainer( playerid ) || num_rows || cost >= 50000 )
+	{
+		new
+			noteid = -1; // incase the lead maintainer makes it anyway
+
+		// remove the note if there is one
+		if ( num_rows )
 		{
-		    if ( ( iTmp = CreateGarage( 0, cost, 0, X, Y, Z, Angle ) ) != -1 )
-		    {
-				SaveToAdminLog( playerid, iTmp, "created garage" );
-		    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[GARAGE]"COL_WHITE" You have created a %s garage taking up garage id %d.", cash_format( cost ), iTmp );
-		    }
-			else
-				SendClientMessage( playerid, -1, ""COL_PINK"[GARAGE]"COL_WHITE" Unable to create a garage due to a unexpected error." );
+			// get the first note
+			noteid = cache_get_field_content_int( 0, "ID", dbHandle );
+
+			// remove the note
+			SaveToAdminLog( playerid, noteid, "consumed player's note" );
+			mysql_single_query( sprintf( "UPDATE `NOTES` SET `DELETED`=%d WHERE `ID`=%d", GetPlayerAccountID( playerid ), noteid ) );
 		}
+
+		static
+			Float: X, Float: Y, Float: Z, Float: Angle, iVehicle, iTmp;
+
+		// proceed by creating the garage
+		if ( !( iVehicle = GetPlayerVehicleID( playerid ) ) ) return SendError( playerid, "You are not in any vehicle." );
+		if ( GetVehiclePos( iVehicle, X, Y, Z ) && GetVehicleZAngle( iVehicle, Angle ) && ( iTmp = CreateGarage( 0, cost, 0, X, Y, Z, Angle ) != -1 ) ) {
+			if ( IsPlayerConnected( targetid ) ) {
+				SaveToAdminLogFormatted( playerid, iTmp, "created garage (garage id %d) for %s (acc id %d, note id %d)", iTmp, ReturnPlayerName( targetid  ), p_AccountID[ targetid  ], noteid );
+				SendClientMessageFormatted( playerid, -1, ""COL_PINK"[GARAGE]"COL_WHITE" You have created a garage in the name of %s(%d).", ReturnPlayerName( targetid  ), targetid  );
+				AddAdminLogLineFormatted( "%s(%d) has created a garage for %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( targetid ), targetid );
+			} else {
+				SaveToAdminLogFormatted( playerid, iTmp, "created garage (garage id %d)", iTmp );
+				SendClientMessageFormatted( playerid, -1, ""COL_PINK"[GARAGE]"COL_WHITE" You have created a garage." );
+				AddAdminLogLineFormatted( "%s(%d) has created a house", ReturnPlayerName( playerid ), playerid );
+			}
+		} else {
+			SendClientMessage( playerid, -1, ""COL_PINK"[GARAGE]"COL_WHITE" Unable to create a garage due to a unexpected error." );
+		}
+	}
+	else
+	{
+		SendError( playerid, "This user does not have a V.I.P Garage note." );
 	}
 	return 1;
 }
@@ -597,9 +667,7 @@ CMD:destroybribe( playerid, params[ ] )
 CMD:createcar( playerid, params[ ] )
 {
     new
-		vName[ 24 ], pID,
-		Float: X, Float: Y, Float: Z, Float: Angle
-	;
+		vName[ 24 ], pID, iModel;
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
 	else if ( sscanf( params, "us[24]", pID, vName ) ) return SendUsage( playerid, "/createcar [PLAYER_ID] [VEHICLE_NAME]" );
@@ -607,23 +675,60 @@ CMD:createcar( playerid, params[ ] )
 	else if ( p_OwnedVehicles[ pID ] >= GetPlayerVehicleSlots( pID ) ) return SendError( playerid, "This player has too many vehicles." );
 	else
 	{
-	    new
-	    	iModel, iTmp;
-
 	    if ( ( iModel = GetVehicleModelFromName( vName ) ) != -1 ) {
-
-			AddAdminLogLineFormatted( "%s(%d) has created a vehicle for %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
-			GetPlayerPos( playerid, X, Y, Z );
-			GetPlayerFacingAngle( playerid, Angle );
-
-		    if ( ( iTmp = CreateBuyableVehicle( pID, iModel, 0, 0, X, Y, Z, Angle, 1337 ) ) != -1 ) {
-				SaveToAdminLogFormatted( playerid, iTmp, "created car (model id %d) for %s (acc id %d)", iModel, ReturnPlayerName( pID ), p_AccountID[ pID ] );
-		    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[VEHICLE]"COL_WHITE" You have created a vehicle in the name of %s(%d).", ReturnPlayerName( pID ), pID );
-		    	PutPlayerInVehicle( playerid, g_vehicleData[ pID ] [ iTmp ] [ E_VEHICLE_ID ], 0 );
-		    }
-			else SendClientMessage( playerid, -1, ""COL_PINK"[VEHICLE]"COL_WHITE" Unable to create a vehicle due to a unexpected error." );
+			mysql_format(
+				dbHandle, szBigString, sizeof( szBigString ),
+				"SELECT * FROM `NOTES` WHERE (`NOTE` LIKE '{FFDC2E}V.I.P Vehicle%%' ) AND USER_ID=%d AND `DELETED` IS NULL LIMIT 0,1",
+				GetPlayerAccountID( pID )
+			);
+			mysql_tquery( dbHandle, szBigString, "OnAdminCreateVehicle", "ddd", playerid, pID, iModel );
 	    }
 		else SendError( playerid, "Invalid Vehicle Model." );
+	}
+	return 1;
+}
+
+thread OnAdminCreateVehicle( playerid, targetid, modelid )
+{
+	new
+		num_rows = cache_get_row_count( );
+
+	// if there is a note or the player is a maintainer
+	if ( IsPlayerServerMaintainer( playerid ) || num_rows )
+	{
+		new
+			noteid = -1; // incase the lead maintainer makes it anyway
+
+		// remove the note if there is one
+		if ( num_rows )
+		{
+			// get the first note
+			noteid = cache_get_field_content_int( 0, "ID", dbHandle );
+
+			// remove the note
+			SaveToAdminLog( playerid, noteid, "consumed player's note" );
+			mysql_single_query( sprintf( "UPDATE `NOTES` SET `DELETED`=%d WHERE `ID`=%d", GetPlayerAccountID( playerid ), noteid ) );
+		}
+
+		static
+			Float: X, Float: Y, Float: Z, Float: Angle, iTmp;
+
+		// proceed by creating the vehicle
+		GetPlayerPos( playerid, X, Y, Z );
+		GetPlayerFacingAngle( playerid, Angle );
+
+		if ( ( iTmp = CreateBuyableVehicle( targetid, modelid, 0, 0, X, Y, Z, Angle, 1337 ) ) != -1 ) {
+			SaveToAdminLogFormatted( playerid, iTmp, "created car (model id %d) for %s (acc id %d, note id %d)", modelid, ReturnPlayerName( targetid  ), p_AccountID[ targetid  ], noteid );
+			SendClientMessageFormatted( playerid, -1, ""COL_PINK"[VEHICLE]"COL_WHITE" You have created a vehicle in the name of %s(%d).", ReturnPlayerName( targetid  ), targetid  );
+			AddAdminLogLineFormatted( "%s(%d) has created a vehicle for %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( targetid  ), targetid  );
+			PutPlayerInVehicle( playerid, g_vehicleData[ targetid  ] [ iTmp ] [ E_VEHICLE_ID ], 0 );
+		} else {
+			SendClientMessage( playerid, -1, ""COL_PINK"[VEHICLE]"COL_WHITE" Unable to create a vehicle due to a unexpected error." );
+		}
+	}
+	else
+	{
+		SendError( playerid, "This user does not have a V.I.P Vehicle note." );
 	}
 	return 1;
 }
@@ -680,28 +785,117 @@ CMD:stripcarmods( playerid, params[ ] )
 	return 1;
 }
 
+CMD:replacecar( playerid, params[ ] )
+{
+	new
+		vName[ 24 ], iModel;
+
+	if ( sscanf( params, "s[24]", vName ) ) return SendUsage(playerid, "/replacecar [VEHICLE_NAME]");
+
+	if ( p_AdminLevel[ playerid ] < 5 )
+		return SendError( playerid, ADMIN_COMMAND_REJECT );
+
+	if ( !IsPlayerInAnyVehicle( playerid ) )
+	    return SendError( playerid, "You are not in any vehicle." );
+
+	if ( g_buyableVehicle{ GetPlayerVehicleID( playerid ) } == false )
+		return SendError( playerid, "This vehicle isn't a buyable vehicle." );
+	if ( ( iModel = GetVehicleModelFromName( vName ) ) != -1 ) {
+
+	new
+		oldmodel, ownerid, slotid, vehicleid = GetPlayerVehicleID( playerid ),
+		v = getVehicleSlotFromID( vehicleid, ownerid, slotid ),
+		Float: X, Float: Y, Float: Z, Float: Angle
+	;
+
+	if ( v == -1 ) return SendError( playerid, "This vehicle doesn't look like it can be replaced. (0xAA)" );
+	if ( g_vehicleData[ ownerid ] [ slotid ] [ E_CREATED ] == false ) return SendError( playerid, "This vehicle doesn't look like it can be replaced. (0xAF)" );
+
+	GetVehiclePos( vehicleid, X, Y, Z );
+	GetVehicleZAngle( vehicleid, Angle );
+
+	oldmodel = GetVehicleModel( vehicleid );
+
+	g_vehicleData[ ownerid ] [ slotid ] [ E_MODEL ] = iModel;
+
+	PutPlayerInVehicle( playerid, RespawnBuyableVehicle( vehicleid, playerid ), 0 );
+	SaveVehicleData( ownerid, slotid );
+
+	SendClientMessage( playerid, -1, ""COL_GREY"[VEHICLE]"COL_WHITE" You have replaced model of this vehicle via administration." );
+	SaveToAdminLogFormatted( playerid, slotid, "replaced car on %s (acc id %d, model id %d)", ReturnPlayerName( ownerid ), p_AccountID[ ownerid ], g_vehicleData[ ownerid ] [ slotid ] [ E_MODEL ] );
+	AddAdminLogLineFormatted( "%s(%d) changed %s(%d)'s vehicle from %s to %s", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( ownerid ), ownerid, GetVehicleName( oldmodel ), GetVehicleName( iModel ) );
+	}
+	else
+	{
+		SendError( playerid, "Invalid Vehicle Model." );
+	}
+	return 1;
+}
+
 CMD:createhouse( playerid, params[ ] )
 {
     new
-		cost, iTmp,
-		Float: X, Float: Y, Float: Z
-	;
+		pID, cost;
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "d", cost ) ) return SendUsage( playerid, "/createhouse [COST]" );
+	else if ( sscanf( params, "dU(-1)", cost, pID ) ) return SendUsage( playerid, "/createhouse [COST] [PLAYER_ID (optional)]" );
+	else if ( ! IsPlayerServerMaintainer( playerid ) && ! IsPlayerConnected( pID ) && cost < 50000 ) return SendError( playerid, "You must specify a player for homes under $50,000." );
 	else if ( cost < 100 ) return SendError( playerid, "The price must be located above 100 dollars." );
 	else
 	{
-		AddAdminLogLineFormatted( "%s(%d) has created a house", ReturnPlayerName( playerid ), playerid );
-		if ( GetPlayerPos( playerid, X, Y, Z ) )
+		mysql_format(
+			dbHandle, szBigString, sizeof( szBigString ),
+			"SELECT * FROM `NOTES` WHERE (`NOTE` LIKE '{FFDC2E}V.I.P House%%' ) AND USER_ID=%d AND `DELETED` IS NULL LIMIT 0,1",
+			IsPlayerConnected( pID ) ? GetPlayerAccountID( pID ) : 0
+		);
+		mysql_tquery( dbHandle, szBigString, "OnAdminCreateHouse", "ddd", playerid, pID, cost );
+	}
+	return 1;
+}
+
+thread OnAdminCreateHouse( playerid, targetid, cost )
+{
+	new
+		num_rows = cache_get_row_count( );
+
+	// if there is a note or the player is a maintainer
+	if ( IsPlayerServerMaintainer( playerid ) || num_rows || cost >= 50000 )
+	{
+		new
+			noteid = -1; // incase the lead maintainer makes it anyway
+
+		// remove the note if there is one
+		if ( num_rows )
 		{
-		    if ( ( iTmp = CreateHouse( "Home", cost, X, Y, Z ) ) != -1 )
-		    {
-				SaveToAdminLogFormatted( playerid, iTmp, "created house for %s", cash_format( cost ) );
-		    	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" You have created a %s house taking up house id %d.", cash_format( cost ), iTmp );
-		    }
-			else SendClientMessage( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" Unable to create a house due to a unexpected error." );
+			// get the first note
+			noteid = cache_get_field_content_int( 0, "ID", dbHandle );
+
+			// remove the note
+			SaveToAdminLog( playerid, noteid, "consumed player's note" );
+			mysql_single_query( sprintf( "UPDATE `NOTES` SET `DELETED`=%d WHERE `ID`=%d", GetPlayerAccountID( playerid ), noteid ) );
 		}
+
+		static
+			Float: X, Float: Y, Float: Z, iTmp;
+
+		// proceed by creating the house
+		if ( GetPlayerPos( playerid, X, Y, Z ) && ( iTmp = CreateHouse( "Home", cost, X, Y, Z ) ) != -1 ) {
+			if ( IsPlayerConnected( targetid ) ) {
+				SaveToAdminLogFormatted( playerid, iTmp, "created house (house id %d) for %s (acc id %d, note id %d)", iTmp, ReturnPlayerName( targetid  ), p_AccountID[ targetid  ], noteid );
+				SendClientMessageFormatted( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" You have created a house in the name of %s(%d).", ReturnPlayerName( targetid  ), targetid  );
+				AddAdminLogLineFormatted( "%s(%d) has created a house for %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( targetid ), targetid );
+			} else {
+				SaveToAdminLogFormatted( playerid, iTmp, "created house (house id %d)", iTmp );
+				SendClientMessageFormatted( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" You have created a house." );
+				AddAdminLogLineFormatted( "%s(%d) has created a house", ReturnPlayerName( playerid ), playerid );
+			}
+		} else {
+			SendClientMessage( playerid, -1, ""COL_PINK"[HOUSE]"COL_WHITE" Unable to create a house due to a unexpected error." );
+		}
+	}
+	else
+	{
+		SendError( playerid, "This user does not have a V.I.P House note." );
 	}
 	return 1;
 }
@@ -755,7 +949,7 @@ CMD:unforceac( playerid, params[ ] )
 		Query[ 70 ];
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
-	else if ( sscanf( params, "s[24]", player ) ) SendUsage( playerid, "/unban [NAME]" );
+	else if ( sscanf( params, "s[24]", player ) ) SendUsage( playerid, "/unforceac [PLAYER_NAME]" );
 	else
 	{
 		new pID = GetPlayerIDFromName( player );
@@ -780,7 +974,7 @@ thread OnPlayerUnforceAC( playerid, player[ ], pID, bool:offline )
 		Query[ 70 ], rows = cache_get_row_count( );
 
 	if ( !rows ) return SendError( playerid, "The database does not contain the username you are attempting to remove from forced ac." );
-	
+
 	if ( offline )
 	{
 

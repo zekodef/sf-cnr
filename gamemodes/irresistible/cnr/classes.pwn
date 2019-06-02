@@ -252,38 +252,19 @@ hook OnPlayerSpawn( playerid )
 
 hook OnPlayerRequestClass( playerid, classid )
 {
-	// SetPlayerPos( playerid, 	-1971.1536, 129.4870, 27.6875 );
-	// SetPlayerFacingAngle( playerid,	90.0 );
-	SetPlayerPos( playerid, 229.613998, 87.164001, 1605.039978 );
-	SetPlayerFacingAngle( playerid, -90.000000 );
+	SetPlayerPos( playerid, -1971.1536, 129.4870, 27.6875 );
 	SetPlayerInterior( playerid, 0 );
-	SetPlayerVirtualWorld( playerid, 0 );
-	//SetPlayerCameraPos(		playerid, 	-1974.1431, 133.3700, 29.7107 );
-	//SetPlayerCameraLookAt(	playerid, 	-1970.6431, 129.3700, 28.2107 );
+	SetPlayerFacingAngle( playerid, 90.0 );
 
 	if ( p_ClassSelection{ playerid } == false )
-	{
-		static const Float: START_POS[ 3 ] = { 243.5, 87.23, 1605.9 };
-		static const Float: FINAL_POS[ 3 ] = { 231.9, 87.23, 1605.9 };
-
-		InterpolateCameraPos( playerid, START_POS[ 0 ], START_POS[ 1 ], START_POS[ 2 ], FINAL_POS[ 0 ], FINAL_POS[ 1 ], FINAL_POS[ 2 ], 17500, CAMERA_MOVE );
-		InterpolateCameraLookAt( playerid, FINAL_POS[ 0 ], FINAL_POS[ 1 ], FINAL_POS[ 2 ], FINAL_POS[ 0 ] - 0.4, FINAL_POS[ 1 ], FINAL_POS[ 2 ] - 0.05, 15000, CAMERA_MOVE );
-
-		// InterpolateCameraPos( playerid, -1976.4252, 119.9899, 30.0, -1974.0302, 133.0427, 27.6940, 10000, CAMERA_MOVE );
-		// InterpolateCameraLookAt( playerid, -1974.0302,133.0427,27.6940, -1971.1536,129.4870,27.6875, 10000, CAMERA_MOVE );
-
+    {
+		InterpolateCameraPos( playerid, -1976.4252, 119.9899, 30.0, -1974.0302, 133.0427, 27.6940, 10000, CAMERA_MOVE );
+		InterpolateCameraLookAt( playerid, -1974.0302,133.0427,27.6940, -1971.1536,129.4870,27.6875, 10000, CAMERA_MOVE );
 		p_ClassSelection{ playerid } = true;
 	}
 
-	RemovePlayerAttachedObject( playerid, 1 );
-	SetPlayerAttachedObject( playerid, 1, 19560, 6, 0.084999, 0.060998, -0.164999, 3.8, 81.6001, -19.3, .materialcolor1 = 0xFF000000 );
-	Streamer_Update( playerid, STREAMER_TYPE_OBJECT );
-
-	// ApplyAnimation( playerid, "MISC", "SEAT_TALK_02", 2.0, 1, 0, 0, 0, 0 );
-	if ( GetPlayerSpecialAction( playerid ) != SPECIAL_ACTION_CARRY ) {
-		TogglePlayerControllable( playerid, 0 );
-		SetPlayerSpecialAction( playerid, SPECIAL_ACTION_CARRY );
-	}
+	//ApplyAnimation( playerid, "FOOD", "FF_Sit_Look", 4.0, 1, 0, 0, 0, 0 );
+	ApplyAnimation( playerid, "MISC", "SEAT_TALK_02", 2.0, 1, 0, 0, 0, 0 );
 
 	if ( CLASS_CIVILIAN_RANGE[ 0 ] <= classid <= CLASS_CIVILIAN_RANGE[ 1 ] )
     {
@@ -420,7 +401,6 @@ stock IsPlayerClassApproved( playerid ) {
 		TextDrawHideForPlayer( playerid, g_classTextdrawName[ i ] );
 	}
 	TextDrawHideForPlayer( playerid, g_classBoxTD );
-	RemovePlayerAttachedObject( playerid, 1 );
 	return 1;
 }
 

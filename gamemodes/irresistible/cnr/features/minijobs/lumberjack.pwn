@@ -171,6 +171,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
         //SendServerMessage( playerid, "You've made "COL_GOLD"%s"COL_WHITE" from exporting. Go and pick another box up!"  );
 	    GivePlayerCash( playerid, cash );
 	    GivePlayerScore( playerid, 5 );
+		GivePlayerExperience( playerid, E_ROLEPLAY );
 
 		DestroyDynamicMapIcon( p_LumberjackMapIcon[ playerid ] );
 		p_LumberjackMapIcon[ playerid ] = CreateDynamicMapIconEx( -2330.8535, -113.9084, 34.00, 51, 0, MAPICON_GLOBAL, 6000.0, { -1 }, { -1 }, aPlayer );
