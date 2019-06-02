@@ -164,6 +164,7 @@ static stock
 		{ 5, "/seteventhost",		"Setting event host to player" },
 		{ 5, "/weather",			"Settings world weather" },
 		{ 5, "/viewpolicechat", 	"Viewing the police radio/chat" },
+		{ 5, "/viewpbchat", 		"Viewing all paintball lobbies chats" },
 
 		/* ** Level 6 Commands ** */
 		{ 6, "/reloadeditor",		"Reloads object editer script" },

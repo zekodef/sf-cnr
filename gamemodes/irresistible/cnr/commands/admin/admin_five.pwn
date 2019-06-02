@@ -50,6 +50,18 @@ CMD:viewpolicechat( playerid, params[ ] )
 	return 1;
 }
 
+CMD:viewpbchat( playerid, params[ ] )
+{
+	if ( p_AdminLevel[ playerid ] < 5 && !IsPlayerUnderCover( playerid ) ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	p_TogglePBChat{ playerid } = !p_TogglePBChat{ playerid };
+
+	SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have %s viewing paint-ball chat.", p_TogglePBChat{ playerid } == true ? ("toggled") : ("un-toggled") );
+    if ( !IsPlayerUnderCover( playerid ) ) {
+		AddAdminLogLineFormatted( "%s(%d) has %s viewing paintball chat", ReturnPlayerName( playerid ), playerid, p_TogglePBChat{ playerid } == true ? ("toggled") : ("un-toggled") );
+    }
+	return 1;
+}
+
 CMD:check( playerid, params[ ] )
 {
 	new

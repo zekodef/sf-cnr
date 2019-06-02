@@ -264,6 +264,9 @@ stock JailPlayer( playerid, seconds, admin = 0 )
 	p_DetainedLabel	[ playerid ] = Text3D: INVALID_3DTEXT_ID;
 	p_DetainedBy		[ playerid ] = INVALID_PLAYER_ID;
 
+	#if defined __cloudy_event_system
+	RemovePlayerFromEvent		( playerid, true );
+	#endif
 	CancelEdit 					( playerid );
 	RemovePlayerStolensFromHands( playerid );
 	StopPlayerUsingSlotMachine 	( playerid );
