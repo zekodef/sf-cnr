@@ -845,8 +845,14 @@ public OnPlayerWeaponShot( playerid, weaponid, hittype, hitid, Float: fX, Float:
 			return 1; // fcnpc
 
 		// Cop shoots innocent, they /q - so jail
+		#if defined __cloudy_event_system
+		if ( p_Class[ playerid ] == CLASS_POLICE && p_WantedLevel[ hitid ] > 2 && ! IsPlayerInEvent( playerid ) && ! IsPlayerInEvent( hitid ) )
+		#else
 		if ( p_Class[ playerid ] == CLASS_POLICE && p_WantedLevel[ hitid ] > 2 )
+		#endif
+		{	
 			p_QuitToAvoidTimestamp[ hitid ] = g_iTime + 3;
+		}
 
 		if ( p_Class[ playerid ] == CLASS_POLICE && p_Class[ hitid ] != CLASS_POLICE && !p_WantedLevel[ hitid ] && GetPlayerState( hitid ) != PLAYER_STATE_WASTED && ! IsPlayerInEvent( playerid ) && ! IsPlayerInBattleRoyale( playerid ) )
 		 	return ShowPlayerHelpDialog( playerid, 2000, "You cannot hurt innocent civilians, you're a ~b~cop~w~~h~!" ), 0;
