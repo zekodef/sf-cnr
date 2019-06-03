@@ -11,7 +11,7 @@
 /* ** Definitions ** */
 #define MAX_FIRES					( 10 )
 
-#define FIRE_EXTINGUISH_PAYOUT 		( 4000 )
+#define FIRE_EXTINGUISH_PAYOUT 		( 6000 )
 
 /* ** Variables ** */
 enum E_FIRE_DATA
@@ -91,7 +91,7 @@ hook OnPlayerUpdateEx( playerid )
 								ach_HandleExtinguishedFires( playerid );
 							    SendClientMessageToAllFormatted( -1, "{A83434}[FIREMAN]"COL_WHITE" %s(%d) has earned "COL_GOLD"%s"COL_WHITE" for extinguishing a house fire.", ReturnPlayerName( playerid ), playerid, cash_format( money_earned ) );
 								GivePlayerScore( playerid, 2 );
-								//GivePlayerExperience( playerid, E_FIREMAN );
+								GivePlayerExperience( playerid, E_ROLEPLAY, 0.5 );
 								GivePlayerCash( playerid, money_earned );
 								StockMarket_UpdateEarnings( E_STOCK_GOVERNMENT, money_earned, 0.15 );
 								HouseFire_Remove( i );
