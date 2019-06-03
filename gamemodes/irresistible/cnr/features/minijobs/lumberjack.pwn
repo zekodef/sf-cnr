@@ -243,6 +243,7 @@ CMD:wood( playerid, params[ ] )
 			    g_treeData[ i ] [ E_CHOPPED ] = true;
 			    count++;
 			    GivePlayerCash( playerid, 250 );
+				GivePlayerExperience( playerid, E_ROLEPLAY, 0.2 );
 				SendServerMessage( playerid, "Tree successfully chopped into smaller pieces. Go to the wood chipper and type "COL_ORANGE"/wood chip{FFFFFF}!" );
 				break;
 		  	}
