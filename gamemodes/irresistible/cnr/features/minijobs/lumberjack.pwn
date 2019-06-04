@@ -171,7 +171,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
         //SendServerMessage( playerid, "You've made "COL_GOLD"%s"COL_WHITE" from exporting. Go and pick another box up!"  );
 	    GivePlayerCash( playerid, cash );
 	    GivePlayerScore( playerid, 5 );
-		GivePlayerExperience( playerid, E_ROLEPLAY );
+		GivePlayerExperience( playerid, E_ROLEPLAY, 1.0 + fDistance / 1000.0 );
 
 		DestroyDynamicMapIcon( p_LumberjackMapIcon[ playerid ] );
 		p_LumberjackMapIcon[ playerid ] = CreateDynamicMapIconEx( -2330.8535, -113.9084, 34.00, 51, 0, MAPICON_GLOBAL, 6000.0, { -1 }, { -1 }, aPlayer );
@@ -243,7 +243,7 @@ CMD:wood( playerid, params[ ] )
 			    g_treeData[ i ] [ E_CHOPPED ] = true;
 			    count++;
 			    GivePlayerCash( playerid, 250 );
-				GivePlayerExperience( playerid, E_ROLEPLAY, 0.2 );
+				GivePlayerExperience( playerid, E_ROLEPLAY, 0.4 );
 				SendServerMessage( playerid, "Tree successfully chopped into smaller pieces. Go to the wood chipper and type "COL_ORANGE"/wood chip{FFFFFF}!" );
 				break;
 		  	}
