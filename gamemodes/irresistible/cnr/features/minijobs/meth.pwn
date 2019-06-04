@@ -304,6 +304,7 @@ public OnMethamphetamineCooking( playerid, vehicleid, last_chemical )
 			ShowPlayerHelpDialog( playerid, 5000, "The process is done. Bag it up and do another round if you wish." );
 			SendServerMessage( playerid, "Process is done. Bag it up, and do another round if you wish. Export it for money." );
 			GivePlayerWantedLevel( playerid, 12 );
+			GivePlayerExperience( playerid, E_ROLEPLAY );
 			GivePlayerScore( playerid, 3 );
 			ach_HandleMethYielded( playerid );
 			SetGVarInt( "meth_yield", CreateDynamicObject( 1579, 2083.684082, 1233.945922, 414.875244, 0.000000, 0.000000, 90.000000, GetPlayerVirtualWorld( playerid ) ), vehicleid );
@@ -415,6 +416,7 @@ CMD:meth( playerid, params[ ] )
 			cashEarned = p_Methamphetamine{ playerid } * ( 5000 + random( 1000 ) );
 
 		GivePlayerCash( playerid, cashEarned );
+		GivePlayerExperience( playerid, E_ROLEPLAY, float( p_Methamphetamine{ playerid } ) * 0.2 );
 		StockMarket_UpdateEarnings( E_STOCK_CLUCKIN_BELL, cashEarned, .factor = 0.3 );
 		SendServerMessage( playerid, "You have exported %d bags of meth, earning you "COL_GOLD"%s"COL_WHITE".", p_Methamphetamine{ playerid }, cash_format( cashEarned ) );
 		p_Methamphetamine{ playerid } = 0;
@@ -544,7 +546,7 @@ stock RemovePlayersFromJourney( vehicleID )
 			SetPlayerPos( playerid, x, y, z );
 			SetPlayerInterior( playerid, 0 );
 			SetPlayerVirtualWorld( playerid, 0 );
-			
+
 			SendServerMessage( playerid, "You have been removed from a player-owned Journey as the player who owned it has left the server." );
 		}
 	}
