@@ -24,7 +24,8 @@ enum E_SHOP_ITEMS
 	SHOP_ITEM_DRILL,
 	SHOP_ITEM_METAL_MELTER,
 	SHOP_ITEM_WEED_SEED,
-	SHOP_ITEM_FIREWORKS
+	SHOP_ITEM_FIREWORKS,
+	SHOP_ITEM_BOOMBOX
 }
 
 enum E_SHOP_DATA
@@ -49,7 +50,8 @@ new
  		{ SHOP_ITEM_MONEY_CASE,		false, "Money Case", 		"Increases robbing amount", 	1,		4500 }, // [1250]
  		{ SHOP_ITEM_DRILL,	 		true , "Thermal Drill", 	"Halves safe cracking time",  	1,		5000 },
  		{ SHOP_ITEM_METAL_MELTER,	true , "Metal Melter", 		"/breakout", 				 	4,		7500 },
- 		{ SHOP_ITEM_FIREWORKS,		true , "Firework", 			"/fireworks", 				 	0,		50000 }
+ 		{ SHOP_ITEM_FIREWORKS,		true , "Firework", 			"/fireworks", 				 	0,		50000 },
+		{ SHOP_ITEM_BOOMBOX,		false, "Boombox",			"/boombox",						1,		15000 }
 	},
 	g_playerShopItems 				[ MAX_PLAYERS ] [ E_SHOP_ITEMS ] // gradually move to this
 ;
@@ -102,6 +104,11 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
         		{
         			GivePlayerFireworks( playerid, 1 );
         		}
+				case SHOP_ITEM_BOOMBOX:
+				{
+					if ( p_Boombox{ playerid } == true ) return SendError( playerid, "You have already purchased this item." );
+        			p_Boombox{ playerid } = true;
+				}
         	}
 			GivePlayerCash( playerid, -( g_shopItemData[ listitem ] [ E_PRICE ] ) );
 			SendServerMessage( playerid, "You have bought a "COL_GREY"%s"COL_WHITE" for "COL_GOLD"%s"COL_WHITE".", g_shopItemData[ listitem ] [ E_NAME ], cash_format( g_shopItemData[ listitem ] [ E_PRICE ] ) );
@@ -191,6 +198,7 @@ stock GetShopItemAmount( playerid, id )
 		case SHOP_ITEM_METAL_MELTER: return p_MetalMelter[ playerid ];
 		case SHOP_ITEM_WEED_SEED: return g_playerShopItems[ playerid ] [ SHOP_ITEM_WEED_SEED ];
 		case SHOP_ITEM_FIREWORKS: return p_Fireworks[ playerid ];
+		case SHOP_ITEM_BOOMBOX: return p_Boombox[ playerid ];
 	}
 	return 0;
 }
@@ -213,6 +221,7 @@ stock SetPlayerShopItemAmount( playerid, id, value )
 		case SHOP_ITEM_METAL_MELTER: p_MetalMelter[ playerid ] = value;
 		case SHOP_ITEM_WEED_SEED: g_playerShopItems[ playerid ] [ SHOP_ITEM_WEED_SEED ] = value;
 		case SHOP_ITEM_FIREWORKS: p_Fireworks[ playerid ] = value;
+		case SHOP_ITEM_BOOMBOX: p_Boombox[ playerid ] = !!value;
 	}
 	return 1;
 }
