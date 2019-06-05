@@ -727,19 +727,19 @@ public OnPlayerSpawn( playerid )
 		SpawnToPaintball( playerid, p_PaintBallArena{ playerid } );
 		return 1;
 	}
-	
+
 	#if defined __cloudy_event_system
 	else if ( IsPlayerInEvent( playerid ) )
 	{
-		if( ! EventSettingAllow( 0 ) && g_eventData[ EV_STARTED ] ) 
-		{	
+		if( ! EventSettingAllow( 0 ) && g_eventData[ EV_STARTED ] )
+		{
 			SetPlayerInEvent( playerid ); // respawns player in event.
 			return 1;
 		}
 		else RemovePlayerFromEvent( playerid, true ); // changes the InEvent variable to false.
 	}
 	#endif
-	
+
 	if ( p_Class[ playerid ] == CLASS_CIVILIAN )
 	{
 		if ( !p_JobSet{ playerid } )
@@ -850,7 +850,7 @@ public OnPlayerWeaponShot( playerid, weaponid, hittype, hitid, Float: fX, Float:
 		#else
 		if ( p_Class[ playerid ] == CLASS_POLICE && p_WantedLevel[ hitid ] > 2 )
 		#endif
-		{	
+		{
 			p_QuitToAvoidTimestamp[ hitid ] = g_iTime + 3;
 		}
 
@@ -5295,6 +5295,7 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				strcat( szCMDS, ""COL_GREY"/labelinfo{FFFFFF} - Displays your label text with the 32 character limit.\n"\
 								""COL_GREY"/radio{FFFFFF} - Shows the list of radio stations you can listen to.\n"\
 								""COL_GREY"/stopradio{FFFFFF} - Stops the radio from playing.\n"\
+								""COL_GREY"/boombox{FFFFFF} - Places a boombox at your position which plays music in small area.\n"\
 								""COL_GREY"/moviemode{FFFFFF} - Toggles movie mode so you can record without all the text on the screen." );
 				ShowPlayerDialog( playerid, DIALOG_CMDS_REDIRECT, DIALOG_STYLE_MSGBOX, "{FFFFFF}Miscellaneous Commands", szCMDS, "Okay", "Back" );
 	        }
