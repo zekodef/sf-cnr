@@ -75,12 +75,12 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 		static
 			Float: X, Float: Y, Float: Z, Float: Angle;
 
+		if ( isnull( inputtext ) ) return SendError( playerid, "Looks like you didn't provide any URL.");
 		if ( GetPlayerPos( playerid, X, Y, Z ) && GetPlayerFacingAngle( playerid, Angle ) )
 		{
 			Boombox_Create( playerid, inputtext, X, Y, Z, Angle );
 			p_UsingBoombox{ playerid } = true;
 
-			// PlayAudioStreamForPlayer( playerid, g_boomboxData[ playerid ] [ E_URL ], X, Y, Z, DEFAULT_BOOMBOX_RANGE, 1 );
 	    	SendServerMessage( playerid, "If the stream doesn't respond then it must be offline. Use "COL_GREY"/boombox stop"COL_WHITE" to stop the stream." );
 		}
 	}
@@ -142,8 +142,8 @@ stock Boombox_Create( playerid, szURL[ ], Float: X, Float: Y, Float: Z, Float: A
 	g_boomboxData[ playerid ] [ E_Y ] = Y;
 	g_boomboxData[ playerid ] [ E_Z ] = Z;
 
-	g_boomboxData[ playerid ] [ E_OBJECT ] = CreateDynamicObject( 2226, X, Y, Z - 0.92, 0, 0, 0, GetPlayerVirtualWorld( playerid ), GetPlayerInterior( playerid ), -1, Angle );
-	g_boomboxData[ playerid ] [ E_LABEL ] = CreateDynamic3DTextLabel( sprintf( "%s(%d)'s Boombox", ReturnPlayerName( playerid ), playerid ), COLOR_GOLD, X, Y, Z+0.1, 10, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
+	g_boomboxData[ playerid ] [ E_OBJECT ] = CreateDynamicObject( 2103, X, Y, Z - 0.92, 0, 0, 0, GetPlayerVirtualWorld( playerid ), GetPlayerInterior( playerid ), -1, Angle );
+	g_boomboxData[ playerid ] [ E_LABEL ] = CreateDynamic3DTextLabel( sprintf( "%s(%d)'s Boombox", ReturnPlayerName( playerid ), playerid ), COLOR_GOLD, X, Y, Z, 10, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
 	g_boomboxData[ playerid ] [ E_MUSIC_AREA ] = CreateDynamicSphere( X, Y, Z, fDistance, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
 	return 1;
 }
