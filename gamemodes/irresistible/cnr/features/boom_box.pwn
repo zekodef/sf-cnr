@@ -36,13 +36,13 @@ hook OnPlayerEnterDynArea( playerid, areaid )
 {
 	foreach ( new i : Player )
 	{
-		if ( IsValidDynamicArea( g_boomboxData[ i ][ E_MUSIC_AREA ] ) && ! IsPlayerUsingBoombox( i ) )
+		if ( IsValidDynamicArea( g_boomboxData[ i ][ E_MUSIC_AREA ] ) )
 		{
 			if ( areaid == g_boomboxData[ i ][ E_MUSIC_AREA ] )
 			{
 				// start the music
-				PlayAudioStreamForPlayer( playerid, g_boomboxData[ playerid ][ E_URL ], g_boomboxData[ playerid ][ E_X ], g_boomboxData[ playerid ][ E_Y ], g_boomboxData[ playerid ][ E_Z ] );
-				SendServerMessage( playerid, "You are now listening to a nearby boombox!" );
+				PlayAudioStreamForPlayer( i, g_boomboxData[ playerid ][ E_URL ], g_boomboxData[ playerid ][ E_X ], g_boomboxData[ playerid ][ E_Y ], g_boomboxData[ playerid ][ E_Z ] );
+				SendServerMessage( i, "You are now listening to a nearby boombox!" );
 				return 1;
 			}
 		}
@@ -59,8 +59,8 @@ hook OnPlayerLeaveDynArea( playerid, areaid )
 			if ( areaid == g_boomboxData[ i ][ E_MUSIC_AREA ] )
 			{
 				// stop the music
-				StopAudioStreamForPlayer( playerid );
-				SendServerMessage( playerid, "You stopped listening to a nearby boombox!" );
+				StopAudioStreamForPlayer( i );
+				SendServerMessage( i, "You stopped listening to a nearby boombox!" );
 				return 1;
 			}
 		}
@@ -93,6 +93,8 @@ CMD:boombox( playerid, params[ ] )
 {
 	if ( ! GetPlayerBoombox( playerid ) )
 		return SendError( playerid, "You can buy Boombox at Supa Save or a 24/7 store." );
+	if ( IsPlayerInAnyVehicle(playerid) )
+		return SendError( playerid, "You cannot use Boombox inside of a vehicle.");
 
 	if ( strmatch( params, "play" ) )
 	{
@@ -136,7 +138,7 @@ stock Boombox_Create( playerid, szURL[ ], Float: X, Float: Y, Float: Z, Float: A
 	format( g_boomboxData[ playerid ][ E_URL ], 128, "%s", szURL );
 
 	g_boomboxData[ playerid ] [ E_OBJECT ] = CreateDynamicObject( 2226, X, Y, Z - 0.92, 0, 0, 0, GetPlayerVirtualWorld( playerid ), GetPlayerInterior( playerid ), -1, Angle );
-	g_boomboxData[ playerid ] [ E_LABEL ] = CreateDynamic3DTextLabel( sprintf( "Owner: %s(%d)", ReturnPlayerName( playerid ), playerid ), COLOR_GOLD, X, Y, Z+0.3, 10, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
+	g_boomboxData[ playerid ] [ E_LABEL ] = CreateDynamic3DTextLabel( sprintf( "Owner: %s(%d)", ReturnPlayerName( playerid ), playerid ), COLOR_GOLD, X, Y, Z+0.1, 10, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
 	g_boomboxData[ playerid ] [ E_MUSIC_AREA ] = CreateDynamicSphere( X, Y, Z, fDistance, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
 	return 1;
 }
