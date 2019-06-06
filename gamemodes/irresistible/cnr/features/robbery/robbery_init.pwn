@@ -113,7 +113,7 @@ hook OnScriptInit( )
 	CreateMultipleRobberies( "Church", 				ROBBERY_SAFE_PAY, 2390.926757, 3195.784179, 1016.920837, -90.00000, 39, 40, 41, 62, 24 );
 	CreateRobberyNPC( "Priest",						ROBBERY_BOT_PAY, 2383.1968,3193.2842,1017.7320,1.0113, 68, 39, 40, 41, 62, 24 );
 
-	CreateMultipleRobberies( "Hotel de Solanum", 	ROBBERY_SAFE_PAY, -1967.766357, 1367.773925, 6.879500000, 86.700000, 0 );
+	CreateMultipleRobberies( "Hotel da Novic", 		ROBBERY_SAFE_PAY, -1967.766357, 1367.773925, 6.879500000, 86.700000, 0 );
 	CreateRobberyNPC( "Hotel Bartender",			ROBBERY_BOT_PAY, -1944.5562,1362.2947,7.3546,86.4801, 126, 0 );
 
 	CreateMultipleRobberies( "Vehicle Dealership",	ROBBERY_SAFE_PAY, -1862.799682, -652.836608, 1001.578125, -89.80000, 0 );
