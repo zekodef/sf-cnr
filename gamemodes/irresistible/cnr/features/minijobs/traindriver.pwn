@@ -134,7 +134,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
 
 			GivePlayerScore( playerid, 1 + floatround( p_TrainDistance[ playerid ] / 1000.0 ) );
 			GivePlayerCash( playerid, iCashEarned );
-			GivePlayerExperience( playerid, E_ROLEPLAY );
+			GivePlayerExperience( playerid, E_ROLEPLAY, 1.0 + p_TrainDistance[ playerid ] / 1000.0 );
 
 			ach_HandleTrainMissions( playerid );
 
