@@ -32,6 +32,24 @@ hook OnPlayerDisconnect( playerid, reason )
 	return 1;
 }
 
+#if defined AC_INCLUDED
+hook OnPlayerDeathEx( playerid, killerid, reason, Float: damage, bodypart )
+#else
+hook OnPlayerDeath( playerid, killerid, reason )
+#endif
+{
+	p_UsingBoombox{ playerid } = false;
+	Boombox_Destroy( playerid );
+	return 1;
+}
+
+hook OnPlayerJailed( playerid )
+{
+	p_UsingBoombox{ playerid } = false;
+	Boombox_Destroy( playerid );
+	return 1;
+}
+
 hook OnPlayerEnterDynArea( playerid, areaid )
 {
 	foreach ( new i : Player )
@@ -143,7 +161,7 @@ stock Boombox_Create( playerid, szURL[ ], Float: X, Float: Y, Float: Z, Float: A
 	g_boomboxData[ playerid ] [ E_Z ] = Z;
 
 	g_boomboxData[ playerid ] [ E_OBJECT ] = CreateDynamicObject( 2103, X, Y, Z - 0.92, 0, 0, 0, GetPlayerVirtualWorld( playerid ), GetPlayerInterior( playerid ), -1, Angle );
-	g_boomboxData[ playerid ] [ E_LABEL ] = CreateDynamic3DTextLabel( sprintf( "%s(%d)'s Boombox", ReturnPlayerName( playerid ), playerid ), COLOR_GOLD, X, Y, Z, 10, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
+	g_boomboxData[ playerid ] [ E_LABEL ] = CreateDynamic3DTextLabel( sprintf( "%s(%d)'s Boombox", ReturnPlayerName( playerid ), playerid ), COLOR_GOLD, X, Y, Z, 20, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
 	g_boomboxData[ playerid ] [ E_MUSIC_AREA ] = CreateDynamicSphere( X, Y, Z, fDistance, .worldid = GetPlayerVirtualWorld( playerid ), .interiorid = GetPlayerInterior( playerid ) );
 	return 1;
 }
