@@ -566,6 +566,7 @@ CMD:v( playerid, params[ ] )
 	return 1;
 }
 
+CMD:colors( playerid, params[ ] ) return cmd_colours( playerid, params );
 CMD:colours( playerid, params[ ] )
 {
 	const
