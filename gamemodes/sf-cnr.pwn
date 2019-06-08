@@ -1291,7 +1291,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 
 		//DCC_SendChannelMessageFormatted( discordGeneralChan, "*%s(%d) has killed %s(%d) - %s!*", ReturnPlayerName( killerid ), killerid,  ReturnPlayerName( playerid ), playerid, ReturnWeaponName( reason ) );
 
-		if ( !IsPlayerAdminOnDuty( killerid ) )
+		if ( !IsPlayerAdminOnDuty( killerid ) && ! IsPlayerInEvent( killerid ) )
 		{
 			new
 				killerGangId = p_GangID[ killerid ];
@@ -1439,7 +1439,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 	    DeletePVar( playerid, "used_cmd_kill" );
 	}
 
-	if ( ! IsPlayerInPaintBall( playerid ) && !p_LeftPaintball{ playerid } && !IsPlayerAdminOnDuty( playerid ) )
+	if ( ! IsPlayerInPaintBall( playerid ) && !p_LeftPaintball{ playerid } && ! IsPlayerAdminOnDuty( playerid ) && ! IsPlayerInEvent( playerid ) )
 	{
 		if ( playerGangId != INVALID_GANG_ID )
 			SaveGangData( playerGangId ), g_gangData[ playerGangId ] [ E_DEATHS ]++;
