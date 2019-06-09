@@ -1001,3 +1001,43 @@ thread OnPlayerUnforceAC( playerid, player[ ], pID, bool:offline )
 	}
 	return 1;
 }
+
+CMD:giveboombox( playerid, params[ ] )
+{
+	new
+		pID;
+
+	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/giveboombox [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( p_Boombox{ pID } == true ) return SendError( playerid, "Player already has boombox in his inventory." );
+	else
+	{
+		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) gave you boombox.", ReturnPlayerName( playerid ), playerid );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have given boombox to %s(%d).", ReturnPlayerName( pID ), pID );
+		AddAdminLogLineFormatted( "%s(%d) has given boombox to %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+		p_Boombox{ pID } = true;
+	}
+	return 1;
+}
+
+CMD:removeboombox( playerid, params[ ] )
+{
+	new
+		pID;
+
+	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/removeboombox [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( p_Boombox{ pID } == false ) return SendError( playerid, "Player doesn't have boombox in his inventory." );
+	else
+	{
+		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) has removed your boombox.", ReturnPlayerName( playerid ), playerid );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have removed boombox from %s(%d).", ReturnPlayerName( pID ), pID );
+		AddAdminLogLineFormatted( "%s(%d) has removed boombox from %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+		p_UsingBoombox{ pID } = false;
+		p_Boombox{ pID } = false;
+		Boombox_Destroy( pID );
+	}
+	return 1;
+}
