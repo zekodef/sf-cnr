@@ -538,6 +538,7 @@ public OnPlayerDisconnect( playerid, reason )
 	p_OwnedHouses	[ playerid ] = 0;
 	p_OwnedVehicles [ playerid ] = 0;
 	p_ToggledViewPM	{ playerid } = false;
+	p_TogglePBChat	{ playerid } = false;
 	p_VIPExpiretime [ playerid ] = 0;
  	p_Kills			[ playerid ] = 0;
 	p_Deaths		[ playerid ] = 0;
