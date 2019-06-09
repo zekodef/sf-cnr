@@ -649,6 +649,7 @@ thread OnPlayerGangLoaded( playerid )
 thread OnGangAdded( gangid )
 {
 	g_gangData[ gangid ] [ E_SQL_ID ] = cache_insert_id( );
+	mysql_single_query( sprintf( "UPDATE `USERS` SET `GANG_ID`=%d WHERE `ID`=%d", g_gangData[ gangid ] [ E_SQL_ID ], g_gangData[ gangid ][ E_LEADER ] ) );
 	return 1;
 }
 
