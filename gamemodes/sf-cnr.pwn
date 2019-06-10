@@ -5198,7 +5198,8 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 								""COL_GREY"/robstore{FFFFFF} - Displays the key to press in-order to rob a store.\n"\
 								""COL_GREY"/pdjail{FFFFFF} - Displays the time until jail cells are available for raiding.\n"\
 								""COL_GREY"/banks{FFFFFF} - Displays the time until certain banks are available for robbing.\n" );
-				strcat( szCMDS, ""COL_GREY"/stoprob{FFFFFF} - Stops your current robbery.\n"\
+				strcat( szCMDS, ""COL_GREY"/jackpots{FFFFFF} - Displays current jackpots in all casinos.\n"\
+								""COL_GREY"/stoprob{FFFFFF} - Stops your current robbery.\n"\
 								""COL_GREY"/job{FFFFFF} - Shows your job.\n"\
 								""COL_GREY"/911{FFFFFF} - Calls the emergency services.\n"\
 								""COL_GREY"/placehit{FFFFFF} - Places a hit on a specified player.\n"\

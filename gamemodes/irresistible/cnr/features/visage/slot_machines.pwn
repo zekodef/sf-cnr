@@ -248,6 +248,21 @@ hook OnPlayerDeath( playerid, killerid, reason )
 	return 1;
 }
 
+/* ** Commands ** */
+CMD:jackpots( playerid, params[ ] )
+{
+	format( szBigString, sizeof( szBigString ), "The Visage Casino\t"COL_GREEN"%s\n\
+												4 Dragons Casino\t"COL_GREEN"%s\n\
+												Caligulas Casino\t"COL_GREEN"%s",
+												cash_format( g_casinoPoolData[ 2 ] [ E_POOL ] ),
+												cash_format( g_casinoPoolData[ 1 ] [ E_POOL ] ),
+												cash_format( g_casinoPoolData[ 0 ] [ E_POOL ] )
+											);
+
+	ShowPlayerDialog( playerid, DIALOG_NULL, DIALOG_STYLE_TABLIST, ""COL_GOLD"Jackpots", szBigString, "Okay", "" );
+	return 1;
+}
+
 /* ** Callbacks ** */
 public OnPlayerUseSlotMachine( playerid, slotid, first_combo, second_combo, third_combo )
 {
