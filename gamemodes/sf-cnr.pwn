@@ -538,6 +538,7 @@ public OnPlayerDisconnect( playerid, reason )
 	p_OwnedHouses	[ playerid ] = 0;
 	p_OwnedVehicles [ playerid ] = 0;
 	p_ToggledViewPM	{ playerid } = false;
+	p_TogglePBChat	{ playerid } = false;
 	p_VIPExpiretime [ playerid ] = 0;
  	p_Kills			[ playerid ] = 0;
 	p_Deaths		[ playerid ] = 0;
@@ -1291,7 +1292,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 
 		//DCC_SendChannelMessageFormatted( discordGeneralChan, "*%s(%d) has killed %s(%d) - %s!*", ReturnPlayerName( killerid ), killerid,  ReturnPlayerName( playerid ), playerid, ReturnWeaponName( reason ) );
 
-		if ( !IsPlayerAdminOnDuty( killerid ) )
+		if ( !IsPlayerAdminOnDuty( killerid ) && ! IsPlayerInEvent( killerid ) )
 		{
 			new
 				killerGangId = p_GangID[ killerid ];
@@ -1439,7 +1440,7 @@ public OnPlayerDeath( playerid, killerid, reason )
 	    DeletePVar( playerid, "used_cmd_kill" );
 	}
 
-	if ( ! IsPlayerInPaintBall( playerid ) && !p_LeftPaintball{ playerid } && !IsPlayerAdminOnDuty( playerid ) )
+	if ( ! IsPlayerInPaintBall( playerid ) && !p_LeftPaintball{ playerid } && ! IsPlayerAdminOnDuty( playerid ) && ! IsPlayerInEvent( playerid ) )
 	{
 		if ( playerGangId != INVALID_GANG_ID )
 			SaveGangData( playerGangId ), g_gangData[ playerGangId ] [ E_DEATHS ]++;
@@ -5416,8 +5417,9 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 				format( szLargeString, 750, "%s"COL_GREY"Weed Seeds:"COL_WHITE" %d\n"\
 											""COL_GREY"Fireworks:{FFFFFF} %d\n"\
-											""COL_GREY"Explosive Bullets:{FFFFFF} %d\n",
-											szLargeString, GetPlayerShopItemAmount( playerid, SHOP_ITEM_WEED_SEED ), p_Fireworks[ pID ], p_ExplosiveBullets[ pID ] );
+											""COL_GREY"Explosive Bullets:{FFFFFF} %d\n"\
+											""COL_GREY"Boombox:{FFFFFF} %s\n",
+											szLargeString, GetPlayerShopItemAmount( playerid, SHOP_ITEM_WEED_SEED ), p_Fireworks[ pID ], p_ExplosiveBullets[ pID ], p_Boombox{ pID } == true ? ( "Yes" ) : ( "No" ) );
 
 				ShowPlayerDialog( playerid, DIALOG_STATS_REDIRECT, DIALOG_STYLE_MSGBOX, "{FFFFFF}Item Statistics", szLargeString, "Okay", "Back" );
 			}

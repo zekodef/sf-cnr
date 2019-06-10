@@ -213,7 +213,7 @@
 #define DIALOG_VIP_MAIN						1204
 #define DIALOG_XPMARKET_SELL				1205
 #define DIALOG_BUY_VIP_MAIN					1206
-#define DIALOG_BOOMBOX_PLAY					1207
+#define DIALOG_VEH_COLORS					1207
 
 /* ** Hooks ** */
 hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
