@@ -276,6 +276,23 @@ CMD:safeisbugged( playerid, params[ ] )
 	return 1;
 }
 
+CMD:replenishsafe( playerid, params[ ] )
+{
+	new
+		rID;
+
+	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "d", rID ) ) return SendUsage( playerid, "/replenishsafe [SAFE_ID]" );
+	else if (!Iter_Contains(RobberyCount, rID)) return SendError( playerid, "This is an invalid Safe ID." );
+	else
+	{
+		printf( "[GM:ADMIN] %s has replenished %d! (Success: %d)", ReturnPlayerName( playerid ), rID, setSafeReplenished( rID ) );
+
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You've replenished Safe ID %d: "COL_GREY"%s"COL_WHITE".", rID, g_robberyData[ rID ] [ E_NAME ] );
+	}
+	return 1;
+}
+
 CMD:autovehrespawn( playerid, params[ ] )
 {
 	#if defined _vsync_included
