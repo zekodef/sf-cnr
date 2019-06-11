@@ -20,7 +20,9 @@ enum E_BOOMBOX_DATA
 };
 
 static stock
-	g_boomboxData					[ MAX_PLAYERS ] [ E_BOOMBOX_DATA ]
+	g_boomboxData					[ MAX_PLAYERS ] [ E_BOOMBOX_DATA ],
+	bool: p_Boombox					[ MAX_PLAYERS char ],
+	bool: p_UsingBoombox			[ MAX_PLAYERS char ]
 ;
 
 /* ** Hooks ** */
@@ -134,8 +136,17 @@ stock IsPlayerUsingBoombox( playerid ) return p_UsingBoombox{ playerid };
 
 stock GetPlayerBoombox( playerid ) return p_Boombox{ playerid };
 
+stock SetPlayerBoombox( playerid, bool: toggle )
+{
+	if ( ( p_Boombox{ playerid } = toggle ) == false ) {
+		Boombox_Destroy( playerid );
+	}
+}
+
 stock Boombox_Destroy( playerid )
 {
+	p_UsingBoombox{ playerid } = false;
+
 	g_boomboxData[ playerid ] [ E_X ] = 0.0;
 	g_boomboxData[ playerid ] [ E_Y ] = 0.0;
 	g_boomboxData[ playerid ] [ E_Z ] = 0.0;
