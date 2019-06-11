@@ -106,8 +106,8 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
         		}
 				case SHOP_ITEM_BOOMBOX:
 				{
-					if ( p_Boombox{ playerid } == true ) return SendError( playerid, "You have already purchased this item." );
-        			p_Boombox{ playerid } = true;
+					if ( GetPlayerBoombox( playerid ) ) return SendError( playerid, "You have already purchased this item." );
+					SetPlayerBoombox( playerid, true );
 				}
         	}
 			GivePlayerCash( playerid, -( g_shopItemData[ listitem ] [ E_PRICE ] ) );
@@ -198,7 +198,7 @@ stock GetShopItemAmount( playerid, id )
 		case SHOP_ITEM_METAL_MELTER: return p_MetalMelter[ playerid ];
 		case SHOP_ITEM_WEED_SEED: return g_playerShopItems[ playerid ] [ SHOP_ITEM_WEED_SEED ];
 		case SHOP_ITEM_FIREWORKS: return p_Fireworks[ playerid ];
-		case SHOP_ITEM_BOOMBOX: return p_Boombox[ playerid ];
+		case SHOP_ITEM_BOOMBOX: return GetPlayerBoombox( playerid );
 	}
 	return 0;
 }
@@ -221,7 +221,7 @@ stock SetPlayerShopItemAmount( playerid, id, value )
 		case SHOP_ITEM_METAL_MELTER: p_MetalMelter[ playerid ] = value;
 		case SHOP_ITEM_WEED_SEED: g_playerShopItems[ playerid ] [ SHOP_ITEM_WEED_SEED ] = value;
 		case SHOP_ITEM_FIREWORKS: p_Fireworks[ playerid ] = value;
-		case SHOP_ITEM_BOOMBOX: p_Boombox[ playerid ] = !!value;
+		case SHOP_ITEM_BOOMBOX: SetPlayerBoombox( playerid, !!value );
 	}
 	return 1;
 }

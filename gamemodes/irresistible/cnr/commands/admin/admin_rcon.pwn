@@ -255,23 +255,6 @@ CMD:addcomponent( playerid, params[ ] )
 	return 1;
 }
 
-CMD:replenishsafe( playerid, params[ ] )
-{
-	new
-		rID;
-
-	if ( !IsPlayerAdmin( playerid ) ) return 0;
-	else if ( sscanf( params, "d", rID ) ) return SendUsage( playerid, "/replenishsafe [SAFE_ID]" );
-	else if (!Iter_Contains(RobberyCount, rID)) return SendError( playerid, "This is an invalid Safe ID." );
-	else
-	{
-		printf( "[GM:ADMIN] %s has replenished %d! (Success: %d)", ReturnPlayerName( playerid ), rID, setSafeReplenished( rID ) );
-
-		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You've replenished Safe ID %d: "COL_GREY"%s"COL_WHITE".", rID, g_robberyData[ rID ] [ E_NAME ] );
-	}
-	return 1;
-}
-
 CMD:driveby( playerid, params[ ] )
 {
 	if ( !IsPlayerAdmin( playerid ) ) return 0;

@@ -346,6 +346,23 @@ CMD:safeisbugged( playerid, params[ ] )
 	return 1;
 }
 
+CMD:replenishsafe( playerid, params[ ] )
+{
+	new
+		rID;
+
+	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "d", rID ) ) return SendUsage( playerid, "/replenishsafe [SAFE_ID]" );
+	else if (!Iter_Contains(RobberyCount, rID)) return SendError( playerid, "This is an invalid Safe ID." );
+	else
+	{
+		printf( "[GM:ADMIN] %s has replenished %d! (Success: %d)", ReturnPlayerName( playerid ), rID, setSafeReplenished( rID ) );
+
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You've replenished Safe ID %d: "COL_GREY"%s"COL_WHITE".", rID, g_robberyData[ rID ] [ E_NAME ] );
+	}
+	return 1;
+}
+
 CMD:autovehrespawn( playerid, params[ ] )
 {
 	#if defined _vsync_included
@@ -998,6 +1015,44 @@ thread OnPlayerUnforceAC( playerid, player[ ], pID, bool:offline )
 		SendClientMessageToAllFormatted( -1, ""COL_PINK"[ADMIN]{FFFFFF} \"%s\" has been unforced to use the AC on the server.", player );
 		p_forcedAnticheat[ pID ] = 0;
 
+	}
+	return 1;
+}
+
+CMD:giveboombox( playerid, params[ ] )
+{
+	new
+		pID;
+
+	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/giveboombox [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( GetPlayerBoombox( pID ) ) return SendError( playerid, "Player already has boombox in his inventory." );
+	else
+	{
+		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) gave you boombox.", ReturnPlayerName( playerid ), playerid );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have given boombox to %s(%d).", ReturnPlayerName( pID ), pID );
+		AddAdminLogLineFormatted( "%s(%d) has given boombox to %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+		SetPlayerBoombox( pID, true );
+	}
+	return 1;
+}
+
+CMD:removeboombox( playerid, params[ ] )
+{
+	new
+		pID;
+
+	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
+	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/removeboombox [PLAYER_ID]" );
+	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( GetPlayerBoombox( pID ) ) return SendError( playerid, "Player doesn't have boombox in his inventory." );
+	else
+	{
+		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) has removed your boombox.", ReturnPlayerName( playerid ), playerid );
+		SendClientMessageFormatted( playerid, -1, ""COL_PINK"[ADMIN]"COL_WHITE" You have removed boombox from %s(%d).", ReturnPlayerName( pID ), pID );
+		AddAdminLogLineFormatted( "%s(%d) has removed boombox from %s(%d)", ReturnPlayerName( playerid ), playerid, ReturnPlayerName( pID ), pID );
+		SetPlayerBoombox( pID, false );
 	}
 	return 1;
 }

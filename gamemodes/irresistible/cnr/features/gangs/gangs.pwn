@@ -649,6 +649,7 @@ thread OnPlayerGangLoaded( playerid )
 thread OnGangAdded( gangid )
 {
 	g_gangData[ gangid ] [ E_SQL_ID ] = cache_insert_id( );
+	mysql_single_query( sprintf( "UPDATE `USERS` SET `GANG_ID`=%d WHERE `ID`=%d", g_gangData[ gangid ] [ E_SQL_ID ], g_gangData[ gangid ][ E_LEADER ] ) );
 	return 1;
 }
 
@@ -769,6 +770,10 @@ thread OnGangKickOffline( playerid, gangid )
 		// remove as coleader
 		mysql_single_query( sprintf( "DELETE FROM `GANG_COLEADERS` WHERE `USER_ID`=%d", player_accid ) );
  		mysql_single_query( sprintf( "UPDATE `USERS` SET `GANG_ID`=-1 WHERE `ID`=%d", player_accid ) );
+
+		for ( new i = 0; i < MAX_COLEADERS; i++ ) if ( g_gangData[ gangid ] [ E_COLEADER ] [ i ] == player_accid ) {
+ 			g_gangData[ gangid ] [ E_COLEADER ] [ i ] = 0;
+		}
 
 		SendClientMessageToGang( static_gangid, g_gangData[ static_gangid ] [ E_COLOR ], "[GANG]{FFFFFF} %s has left the gang (KICKED)", player_name );
 	}

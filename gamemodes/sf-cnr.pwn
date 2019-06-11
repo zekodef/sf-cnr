@@ -5198,7 +5198,8 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 								""COL_GREY"/robstore{FFFFFF} - Displays the key to press in-order to rob a store.\n"\
 								""COL_GREY"/pdjail{FFFFFF} - Displays the time until jail cells are available for raiding.\n"\
 								""COL_GREY"/banks{FFFFFF} - Displays the time until certain banks are available for robbing.\n" );
-				strcat( szCMDS, ""COL_GREY"/stoprob{FFFFFF} - Stops your current robbery.\n"\
+				strcat( szCMDS, ""COL_GREY"/jackpots{FFFFFF} - Displays current jackpots in all casinos.\n"\
+								""COL_GREY"/stoprob{FFFFFF} - Stops your current robbery.\n"\
 								""COL_GREY"/job{FFFFFF} - Shows your job.\n"\
 								""COL_GREY"/911{FFFFFF} - Calls the emergency services.\n"\
 								""COL_GREY"/placehit{FFFFFF} - Places a hit on a specified player.\n"\
@@ -5297,6 +5298,7 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 								""COL_GREY"/radio{FFFFFF} - Shows the list of radio stations you can listen to.\n"\
 								""COL_GREY"/stopradio{FFFFFF} - Stops the radio from playing.\n"\
 								""COL_GREY"/boombox{FFFFFF} - Places a boombox at your position which plays music in small area.\n"\
+								""COL_GREY"/colors(/colours){FFFFFF} - Shows the list of all available colours in-game.\n"\
 								""COL_GREY"/moviemode{FFFFFF} - Toggles movie mode so you can record without all the text on the screen." );
 				ShowPlayerDialog( playerid, DIALOG_CMDS_REDIRECT, DIALOG_STYLE_MSGBOX, "{FFFFFF}Miscellaneous Commands", szCMDS, "Okay", "Back" );
 	        }
@@ -5419,7 +5421,7 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 											""COL_GREY"Fireworks:{FFFFFF} %d\n"\
 											""COL_GREY"Explosive Bullets:{FFFFFF} %d\n"\
 											""COL_GREY"Boombox:{FFFFFF} %s\n",
-											szLargeString, GetPlayerShopItemAmount( playerid, SHOP_ITEM_WEED_SEED ), p_Fireworks[ pID ], p_ExplosiveBullets[ pID ], p_Boombox{ pID } == true ? ( "Yes" ) : ( "No" ) );
+											szLargeString, GetPlayerShopItemAmount( playerid, SHOP_ITEM_WEED_SEED ), p_Fireworks[ pID ], p_ExplosiveBullets[ pID ], GetPlayerBoombox( pID ) ? ( "Yes" ) : ( "No" ) );
 
 				ShowPlayerDialog( playerid, DIALOG_STATS_REDIRECT, DIALOG_STYLE_MSGBOX, "{FFFFFF}Item Statistics", szLargeString, "Okay", "Back" );
 			}

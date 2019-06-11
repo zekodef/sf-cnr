@@ -209,9 +209,7 @@ new
 	p_TazingImmunity 				[ MAX_PLAYERS ],
 	p_PlayerAltBind 				[ MAX_PLAYERS ] = { -1, ... },
 	p_PlayerAltBindTick 			[ MAX_PLAYERS ],
-	p_AimedAtPolice 				[ MAX_PLAYERS ],
-	bool: p_UsingBoombox			[ MAX_PLAYERS char ],
-	bool: p_Boombox					[ MAX_PLAYERS char ]
+	p_AimedAtPolice 				[ MAX_PLAYERS ]
 ;
 
 /* ** Getters And Setters** */
