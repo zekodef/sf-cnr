@@ -1,6 +1,6 @@
 /*
  * Irresistible Gaming (c) 2018
- * Developed by Lorenc
+ * Developed by Lorenc, Cloudy
  * Module: cnr\features\vehicles\vehicle_modifications.pwn
  * Purpose: custom vehicle components (objects) for player vehicles
  */
@@ -38,6 +38,7 @@
 #define COMPONENT_EDIT_TYPE_RZ		5
 
 #define TIMER_UPDATE_RATE			50
+#define MAX_COMPONENT_OFFSET 		2.0
 
 enum E_CAR_MODS
 {
@@ -432,9 +433,9 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 			}
 			case 1: // Edit
 			{
-				if( g_vehiclePimpData[ ownerid ] [ vehicleid ] [ E_DISABLED ] [ i ] )
+				if ( g_vehiclePimpData[ ownerid ] [ vehicleid ] [ E_DISABLED ] [ i ] )
 				{
-					SendError( playerid, "This component is disabled, enable it first." ); 
+					SendError( playerid, "This component is disabled, enable it first." );
 					return ShowPlayerVehicleComponentMenu( playerid, ownerid, vehicleid, i );
 				}
 
@@ -445,15 +446,19 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				SetPVarFloat( playerid, "component_rot_y", g_vehiclePimpData[ ownerid ] [ vehicleid ] [ E_RY ] [ i ] );
 				SetPVarFloat( playerid, "component_rot_z", g_vehiclePimpData[ ownerid ] [ vehicleid ] [ E_RZ ] [ i ] );
 
-				ShowPlayerHelpDialog( playerid, 0, "~g~/px - ~w~X axis~n~\
-										~g~/py - ~w~Y axis~n~\
-										~g~/pz - ~w~Z axis~n~\
-										~g~/rx - ~w~X rotation~n~\
-										~g~/ry - ~w~Y rotation~n~\
-										~g~/rz - ~w~Z rotation~n~\
-										~g~Press Y - ~w~Save~n~\
-										~g~Press N - ~w~Cancel~n~\
-										~g~Hold SPACE - ~w~Faster edit" );
+				ShowPlayerHelpDialog(
+					playerid, 0,
+					"~g~A or D -~w~ Move object~n~"\
+					"~g~/px - ~w~X axis~n~\
+					~g~/py - ~w~Y axis~n~\
+					~g~/pz - ~w~Z axis~n~\
+					~g~/rx - ~w~X rotation~n~\
+					~g~/ry - ~w~Y rotation~n~\
+					~g~/rz - ~w~Z rotation~n~\
+					~g~Press Y - ~w~Save~n~\
+					~g~Press N - ~w~Cancel~n~\
+					~g~Hold SPACE - ~w~Faster edit"
+				);
 
 				SendClientMessage( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You have started editing the component." );
 				SetTimerEx( "OnUpdateVehicleComponents", TIMER_UPDATE_RATE, false, "d", playerid );
@@ -589,9 +594,9 @@ thread OnPlayerCreateVehicleComponent( playerid, vehicleid, slotid )
 public OnUpdateVehicleComponents( playerid )
 {
 	// just incase, to avoid bugs
-	if( ! GetPVarType( playerid, "components_editing" ) )
+	if ( ! IsPlayerEditingVehicle( playerid ) || ! IsPlayerInGarage( playerid ) )
 		return EndPlayerEditComponent( playerid );
-		
+
 	new
 		ownerid = INVALID_PLAYER_ID,
 		vehicleid = GetPlayerVehicleID( playerid ),
@@ -601,19 +606,17 @@ public OnUpdateVehicleComponents( playerid )
 	if ( v == -1 || playerid != ownerid || ! g_vehiclePimpData[ ownerid ] [ v ] [ E_CREATED ] [ slotid ] || g_vehiclePimpData[ ownerid ] [ v ] [ E_DISABLED ] [ slotid ] )
 		return SendServerMessage( playerid, "Vehicle component editing was cancelled." ), EndPlayerEditComponent( playerid );
 
-	new 
-		LR,
-		KEYS,
-		Float: VALUE = -1.0
-	;
+	new
+		LR, KEYS, Float: VALUE = -1.0;
+
 	GetPlayerKeys( playerid, KEYS, tmpVariable, LR );
 
-	if( KEYS & KEY_YES )
+	if ( KEYS & KEY_YES )
 	{
 		SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You have saved the component you were editing." );
 		return EndPlayerEditComponent( ownerid, v, slotid, true );
 	}
-	else if ( KEYS & KEY_NO ) 
+	else if ( KEYS & KEY_NO )
 	{
 		SendClientMessage( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You have cancelled editing the component." );
 		return EndPlayerEditComponent( ownerid, v, slotid );
@@ -623,49 +626,61 @@ public OnUpdateVehicleComponents( playerid )
 		VALUE = 0.01;
 
 	else if ( LR < 0 )
-		VALUE = - 0.01 ;
+		VALUE = -0.01;
 
 	if ( VALUE != -1.0 )
 	{
 		// hold space to edit components faster
 		if ( KEYS & KEY_HANDBRAKE )
 			VALUE *= 3;
-		
+
+		new Float: tmpPosX = GetPVarFloat( playerid, "component_pos_x" );
+		new Float: tmpPosY = GetPVarFloat( playerid, "component_pos_y" );
+		new Float: tmpPosZ = GetPVarFloat( playerid, "component_pos_z" );
+		new Float: tmpRotX = GetPVarFloat( playerid, "component_rot_x" );
+		new Float: tmpRotY = GetPVarFloat( playerid, "component_rot_y" );
+		new Float: tmpRotZ = GetPVarFloat( playerid, "component_rot_z" );
+
 		switch( GetPVarInt( playerid, "component_edit_type" ) )
 		{
 			case COMPONENT_EDIT_TYPE_X:
-					SetPVarFloat( playerid, "component_pos_x", GetPVarFloat( playerid, "component_pos_x" ) + VALUE );
+				SetPVarFloat( playerid, "component_pos_x", ( tmpPosX += VALUE ) );
 
 			case COMPONENT_EDIT_TYPE_Y:
-					SetPVarFloat( playerid, "component_pos_y", GetPVarFloat( playerid, "component_pos_y" ) + VALUE );
+				SetPVarFloat( playerid, "component_pos_y", ( tmpPosY += VALUE ) );
 
 			case COMPONENT_EDIT_TYPE_Z:
-					SetPVarFloat( playerid, "component_pos_z", GetPVarFloat( playerid, "component_pos_z" ) + VALUE );
+				SetPVarFloat( playerid, "component_pos_z", ( tmpPosZ += VALUE ) );
 
 			case COMPONENT_EDIT_TYPE_RX:
-					SetPVarFloat( playerid, "component_rot_x", GetPVarFloat( playerid, "component_rot_x" ) + ( ( VALUE * 360 ) / 100 ) * 10 );
+				SetPVarFloat( playerid, "component_rot_x", ( tmpRotX += ( ( VALUE * 360 ) / 100 ) * 10 ) );
 
 			case COMPONENT_EDIT_TYPE_RY:
-					SetPVarFloat( playerid, "component_rot_y", GetPVarFloat( playerid, "component_rot_y" ) + ( ( VALUE * 360 ) / 100 ) * 10 );
-	
-			case COMPONENT_EDIT_TYPE_RZ:
-					SetPVarFloat( playerid, "component_rot_z", GetPVarFloat( playerid, "component_rot_z" ) + ( ( VALUE * 360 ) / 100 ) * 10 );
+				SetPVarFloat( playerid, "component_rot_y", ( tmpRotY += ( ( VALUE * 360 ) / 100 ) * 10 ) );
 
-			default: 
+			case COMPONENT_EDIT_TYPE_RZ:
+				SetPVarFloat( playerid, "component_rot_z", ( tmpRotZ += ( ( VALUE * 360 ) / 100 ) * 10 ) );
+
+			default:
 				return EndPlayerEditComponent( playerid, v, slotid );
 		}
 
-		new
-			Float: tmpPosX = GetPVarFloat( playerid, "component_pos_x" ),
-			Float: tmpPosY = GetPVarFloat( playerid, "component_pos_y" ),
-			Float: tmpPosZ = GetPVarFloat( playerid, "component_pos_z" ),
-			Float: tmpRotX = GetPVarFloat( playerid, "component_rot_x" ),
-			Float: tmpRotY = GetPVarFloat( playerid, "component_rot_y" ),
-			Float: tmpRotZ = GetPVarFloat( playerid, "component_rot_z" )
-		;
-		AttachDynamicObjectToVehicle( g_vehiclePimpData[ ownerid ] [ v ] [ E_OBJECT ] [ slotid ], g_vehicleData[ ownerid ] [ v ] [ E_VEHICLE_ID ],
+		// add movement limit of MAX_COMPONENT_OFFSET units
+		if ( tmpPosX > MAX_COMPONENT_OFFSET ) tmpPosX = MAX_COMPONENT_OFFSET;
+		else if ( tmpPosX < -MAX_COMPONENT_OFFSET ) tmpPosX = -MAX_COMPONENT_OFFSET;
+
+		if ( tmpPosY > MAX_COMPONENT_OFFSET ) tmpPosY = MAX_COMPONENT_OFFSET;
+		else if ( tmpPosY < -MAX_COMPONENT_OFFSET ) tmpPosY = -MAX_COMPONENT_OFFSET;
+
+		if ( tmpPosZ > MAX_COMPONENT_OFFSET ) tmpPosZ = MAX_COMPONENT_OFFSET;
+		else if ( tmpPosZ < -MAX_COMPONENT_OFFSET ) tmpPosZ = -MAX_COMPONENT_OFFSET;
+
+		// attach object to vehicle
+		AttachDynamicObjectToVehicle(
+			g_vehiclePimpData[ ownerid ] [ v ] [ E_OBJECT ] [ slotid ], g_vehicleData[ ownerid ] [ v ] [ E_VEHICLE_ID ],
 			tmpPosX, tmpPosY, tmpPosZ,
-			tmpRotX, tmpRotY, tmpRotZ );
+			tmpRotX, tmpRotY, tmpRotZ
+		);
 	}
 	return SetTimerEx( "OnUpdateVehicleComponents", TIMER_UPDATE_RATE, false, "d", playerid );
 }
@@ -675,37 +690,24 @@ stock EndPlayerEditComponent( playerid, vehicleid = -1, slotid = -1, bool: save 
 {
 	if ( save )
 	{
-		new 
-			Float: tmpPosX = GetPVarFloat( playerid, "component_pos_x" ),
-			Float: tmpPosY = GetPVarFloat( playerid, "component_pos_y" ),
-			Float: tmpPosZ = GetPVarFloat( playerid, "component_pos_z" )
-		;
 		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RX ] [ slotid ] = GetPVarFloat( playerid, "component_rot_x" );
 		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RY ] [ slotid ] = GetPVarFloat( playerid, "component_rot_y" );
 		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RZ ] [ slotid ] = GetPVarFloat( playerid, "component_rot_z" );
 
-		// the X is the distance from 0.0
-		if ( floatabs( tmpPosX ) / 2 > 2.5 ) {
-			SendServerMessage( playerid, "The object breaches the X axis limit for this vehicle. It has been moved." ), tmpPosX = 0.0;
-		}
+		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_X ] [ slotid ] = GetPVarFloat( playerid, "component_pos_x" );
+		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Y ] [ slotid ] = GetPVarFloat( playerid, "component_pos_y" );
+		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Z ] [ slotid ] = GetPVarFloat( playerid, "component_pos_z" );
 
-		if ( floatabs( tmpPosY ) / 2 > 2.5 ) {
-			SendServerMessage( playerid, "The object breaches the Y axis limit for this vehicle. It has been moved." ), tmpPosY = 0.0;
-		}
-
-		if ( floatabs( tmpPosZ ) / 2 > 2.5 ) {
-			SendServerMessage( playerid, "The object breaches the Z axis limit for this vehicle. It has been moved." ), tmpPosZ = 0.0;
-		}
-
-		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_X ] [ slotid ] = tmpPosX;
-		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Y ] [ slotid ] = tmpPosY;
-		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Z ] [ slotid ] = tmpPosZ;
-
-		format( szNormalString, sizeof( szNormalString ), "UPDATE `COMPONENTS` SET `X`=%f,`Y`=%f,`Z`=%f,`RX`=%f,`RY`=%f,`RZ`=%f WHERE `ID`=%d", 
-		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_X ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Y ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Z ] [ slotid ], 
-		g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RX ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RY ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RZ ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_SQL_ID ] [ slotid ] );
+		format(
+			szNormalString, sizeof( szNormalString ),
+			"UPDATE `COMPONENTS` SET `X`=%f,`Y`=%f,`Z`=%f,`RX`=%f,`RY`=%f,`RZ`=%f WHERE `ID`=%d",
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_X ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Y ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Z ] [ slotid ],
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RX ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RY ] [ slotid ], g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RZ ] [ slotid ],
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_SQL_ID ] [ slotid ]
+		);
 		mysql_single_query( szNormalString );
 	}
+
 	DeletePVar( playerid, "components_editing" );
 	DeletePVar( playerid, "component_edit_type" );
 	DeletePVar( playerid, "component_pos_x" );
@@ -717,14 +719,16 @@ stock EndPlayerEditComponent( playerid, vehicleid = -1, slotid = -1, bool: save 
 
 	if ( vehicleid != -1 && slotid != -1 )
 	{
-		AttachDynamicObjectToVehicle( g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_OBJECT ] [ slotid ], 
+		AttachDynamicObjectToVehicle(
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_OBJECT ] [ slotid ],
 			g_vehicleData[ playerid ] [ vehicleid ] [ E_VEHICLE_ID ],
-			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_X ] [ slotid ], 
-			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Y ] [ slotid ], 
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_X ] [ slotid ],
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Y ] [ slotid ],
 			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_Z ] [ slotid ],
-			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RX ] [ slotid ], 
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RX ] [ slotid ],
 			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RY ] [ slotid ],
-			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RZ ] [ slotid ] );
+			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RZ ] [ slotid ]
+		);
 	}
 
 	HidePlayerHelpDialog( playerid );
@@ -841,7 +845,7 @@ hook OnPlayerEndModelPreview( playerid, handleid )
 /* ** Commands ** */
 CMD:px( playerid, params[ ] )
 {
-	if ( GetPVarType( playerid, "components_editing" ) == 0 ) return SendError( playerid, "You're not editing a vehicle." );
+	if ( ! IsPlayerEditingVehicle( playerid ) ) return SendError( playerid, "You're not editing a vehicle." );
 
 	SetPVarInt( playerid, "component_edit_type", COMPONENT_EDIT_TYPE_X );
 	return SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You're now editing the X axis of the component." );
@@ -849,7 +853,7 @@ CMD:px( playerid, params[ ] )
 
 CMD:py( playerid, params[ ] )
 {
-	if ( GetPVarType( playerid, "components_editing" ) == 0 ) return SendError( playerid, "You're not editing a vehicle." );
+	if ( ! IsPlayerEditingVehicle( playerid ) ) return SendError( playerid, "You're not editing a vehicle." );
 
 	SetPVarInt( playerid, "component_edit_type", COMPONENT_EDIT_TYPE_Y );
 	return SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You're now editing the Y axis of the component." );
@@ -857,7 +861,7 @@ CMD:py( playerid, params[ ] )
 
 CMD:pz( playerid, params[ ] )
 {
-	if ( GetPVarType( playerid, "components_editing" ) == 0 ) return SendError( playerid, "You're not editing a vehicle." );
+	if ( ! IsPlayerEditingVehicle( playerid ) ) return SendError( playerid, "You're not editing a vehicle." );
 
 	SetPVarInt( playerid, "component_edit_type", COMPONENT_EDIT_TYPE_Z );
 	return SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You're now editing the Z axis of the component." );
@@ -865,7 +869,7 @@ CMD:pz( playerid, params[ ] )
 
 CMD:rx( playerid, params[ ] )
 {
-	if ( GetPVarType( playerid, "components_editing" ) == 0 ) return SendError( playerid, "You're not editing a vehicle." );
+	if ( ! IsPlayerEditingVehicle( playerid ) ) return SendError( playerid, "You're not editing a vehicle." );
 
 	SetPVarInt( playerid, "component_edit_type", COMPONENT_EDIT_TYPE_RX );
 	return SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You're now editing the X rotation of the component." );
@@ -873,7 +877,7 @@ CMD:rx( playerid, params[ ] )
 
 CMD:ry( playerid, params[ ] )
 {
-	if ( GetPVarType( playerid, "components_editing" ) == 0 ) return SendError( playerid, "You're not editing a vehicle." );
+	if ( ! IsPlayerEditingVehicle( playerid ) ) return SendError( playerid, "You're not editing a vehicle." );
 
 	SetPVarInt( playerid, "component_edit_type", COMPONENT_EDIT_TYPE_RY );
 	return SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You're now editing the Y rotation of the component." );
@@ -881,8 +885,12 @@ CMD:ry( playerid, params[ ] )
 
 CMD:rz( playerid, params[ ] )
 {
-	if ( GetPVarType( playerid, "components_editing" ) == 0 ) return SendError( playerid, "You're not editing a vehicle." );
+	if ( ! IsPlayerEditingVehicle( playerid ) ) return SendError( playerid, "You're not editing a vehicle." );
 
 	SetPVarInt( playerid, "component_edit_type", COMPONENT_EDIT_TYPE_RZ );
 	return SendClientMessageFormatted( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You're now editing the Z rotation of the component." );
+}
+
+stock IsPlayerEditingVehicle( playerid ) {
+	return GetPVarType( playerid, "components_editing" ) != 0;
 }
