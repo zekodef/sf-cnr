@@ -643,13 +643,13 @@ public OnUpdateVehicleComponents( playerid )
 					SetPVarFloat( playerid, "component_pos_z", GetPVarFloat( playerid, "component_pos_z" ) + VALUE );
 
 			case COMPONENT_EDIT_TYPE_RX:
-					SetPVarFloat( playerid, "component_rot_x", GetPVarFloat( playerid, "component_rot_x" ) + ( ( VALUE * 360) / 100 ) * 10 );
+					SetPVarFloat( playerid, "component_rot_x", GetPVarFloat( playerid, "component_rot_x" ) + ( ( VALUE * 360 ) / 100 ) * 10 );
 
 			case COMPONENT_EDIT_TYPE_RY:
-					SetPVarFloat( playerid, "component_rot_y", GetPVarFloat( playerid, "component_rot_y" ) + ( ( VALUE * 360) / 100 ) * 10 );
+					SetPVarFloat( playerid, "component_rot_y", GetPVarFloat( playerid, "component_rot_y" ) + ( ( VALUE * 360 ) / 100 ) * 10 );
 	
 			case COMPONENT_EDIT_TYPE_RZ:
-					SetPVarFloat( playerid, "component_rot_z", GetPVarFloat( playerid, "component_rot_z" ) + ( ( VALUE * 360) / 100 ) * 10 );
+					SetPVarFloat( playerid, "component_rot_z", GetPVarFloat( playerid, "component_rot_z" ) + ( ( VALUE * 360 ) / 100 ) * 10 );
 
 			default: 
 				return EndPlayerEditComponent( playerid, v, slotid );
