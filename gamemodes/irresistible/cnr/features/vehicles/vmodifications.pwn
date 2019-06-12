@@ -445,6 +445,16 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				SetPVarFloat( playerid, "component_rot_y", g_vehiclePimpData[ ownerid ] [ vehicleid ] [ E_RY ] [ i ] );
 				SetPVarFloat( playerid, "component_rot_z", g_vehiclePimpData[ ownerid ] [ vehicleid ] [ E_RZ ] [ i ] );
 
+				ShowPlayerHelpDialog( playerid, 0, "~g~/px - ~w~X axis~n~\
+										~g~/py - ~w~Y axis~n~\
+										~g~/pz - ~w~Z axis~n~\
+										~g~/rx - ~w~X rotation~n~\
+										~g~/ry - ~w~Y rotation~n~\
+										~g~/rz - ~w~Z rotation~n~\
+										~g~Press Y - ~w~Save~n~\
+										~g~Press N - ~w~Cancel~n~\
+										~g~Hold SPACE - ~w~Faster edit" );
+
 				SendClientMessage( playerid, -1, ""COL_GREY"[GARAGE]"COL_WHITE" You have started editing the component." );
 				SetTimerEx( "OnUpdateVehicleComponents", TIMER_UPDATE_RATE, false, "d", playerid );
 			}
@@ -591,16 +601,6 @@ public OnUpdateVehicleComponents( playerid )
 	if ( v == -1 || playerid != ownerid || ! g_vehiclePimpData[ ownerid ] [ v ] [ E_CREATED ] [ slotid ] || g_vehiclePimpData[ ownerid ] [ v ] [ E_DISABLED ] [ slotid ] )
 		return SendServerMessage( playerid, "Vehicle component editing was cancelled." ), EndPlayerEditComponent( playerid );
 
-	ShowPlayerHelpDialog( playerid, 60, "~g~/px - ~w~X axis~n~\
-										~g~/py - ~w~Y axis~n~\
-										~g~/pz - ~w~Z axis~n~\
-										~g~/rx - ~w~X rotation~n~\
-										~g~/ry - ~w~Y rotation~n~\
-										~g~/rz - ~w~Z rotation~n~\
-										~g~Press Y - ~w~Save~n~\
-										~g~Press N - ~w~Cancel~n~\
-										~g~Hold SPACE - ~w~Faster edit" );
-
 	new 
 		LR,
 		KEYS,
@@ -726,6 +726,8 @@ stock EndPlayerEditComponent( playerid, vehicleid = -1, slotid = -1, bool: save 
 			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RY ] [ slotid ],
 			g_vehiclePimpData[ playerid ] [ vehicleid ] [ E_RZ ] [ slotid ] );
 	}
+
+	HidePlayerHelpDialog( playerid );
 	return 1;
 }
 
