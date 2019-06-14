@@ -122,7 +122,7 @@ CMD:taze( playerid, params[ ] )
 
 		// event check
 		#if defined __cloudy_event_system
-		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_KIDNAP ) )
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_ARREST ) )
 		#else
 		if ( IsPlayerInEvent( playerid ) )
 		#endif
