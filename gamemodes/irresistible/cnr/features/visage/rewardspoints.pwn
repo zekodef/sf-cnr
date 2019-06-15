@@ -12,7 +12,9 @@
 #define CASINO_REWARDS_PAYOUT_PERCENT	20.0
 #define CASINO_REWARDS_DIVISOR 			10.0 	// 1000 points becomes 1 point
 #define CASINO_REWARDS_COST_MP 			1.0 	// half of the price (since it costs (1/payout_percent) times more)
-#define CASINO_POINTS_SELL_VALUE		1.0
+
+#define CASINO_POINTS_SELL_MINIMUM 		10000
+#define CASINO_POINTS_SELL_VALUE		10.0
 
 /* ** Variables ** */
 enum E_REWARDS_DATA
@@ -54,6 +56,11 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	    if ( listitem >= sizeof( g_casinoRewardsShopItems ) )
 	    {
 	    	new rewards_item = listitem - sizeof( g_casinoRewardsShopItems );
+
+			if ( rewards_item >= sizeof( g_casinoRewardsItems ) ) {
+				return ShowPlayerSellMenu( playerid );
+			}
+
 	    	new Float: rewards_points = g_casinoRewardsItems[ rewards_item ] [ E_POINTS ];
 
     		if ( p_CasinoRewardsPoints[ playerid ] < rewards_points )
@@ -146,15 +153,15 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 	else if ( dialogid == DIALOG_CASINO_POINTS_MARKET )
 	{
 		if ( ! response ) {
-			return 1;
+			return ShowPlayerRewardsMenu( playerid );
 		}
 
 		new total_points = floatround( p_CasinoRewardsPoints[ playerid ], floatround_floor );
 		new sell_amount = strval( inputtext );
 
-		if ( ! ( sell_amount >= 100000 ) )
+		if ( sell_amount < CASINO_POINTS_SELL_MINIMUM )
 		{
-			SendError( playerid, "Minimum amount of Casino Points that you can sell is 100,000." );
+			SendError( playerid, "Minimum amount of Casino Points that you can sell is %s.", number_format( CASINO_POINTS_SELL_MINIMUM ) );
 			return ShowPlayerSellMenu( playerid );
 		}
 		else if ( sell_amount > total_points )
@@ -239,11 +246,8 @@ CMD:casino( playerid, params[ ] )
 		return ShowPlayerRewardsMenu( playerid );
 	} else if ( strmatch( params, "points" ) ) {
 		return SendServerMessage( playerid, "You currently have "COL_GOLD"%s"COL_WHITE" casino rewards points.", points_format( p_CasinoRewardsPoints[ playerid ] ) );
-	} else if ( strmatch( params, "market" ) ) {
-		//if ( ! IsPlayerInCasino( playerid ) ) return SendError( playerid, "You need to be in a casino to use this feature." );
-		return ShowPlayerSellMenu( playerid );
 	}
-	return SendUsage( playerid, "/casino [REWARDS/POINTS/MARKET]" );
+	return SendUsage( playerid, "/casino [REWARDS/POINTS]" );
 }
 
 /* ** Functions ** */
@@ -270,6 +274,7 @@ stock ShowPlayerRewardsMenu( playerid )
 		for ( new i = 0; i < sizeof( g_casinoRewardsItems ); i ++ ) {
 	 		format( szString, sizeof( szString ), "%s%s\t \t"COL_GOLD"%s points\n", szString, g_casinoRewardsItems[ i ] [ E_NAME ], points_format( g_casinoRewardsItems[ i ] [ E_POINTS ] ) );
 		}
+		strcat( szString, ""COL_GREEN"Sell Your Points\t \t"COL_GREEN">>>" );
 	}
 	return ShowPlayerDialog( playerid, DIALOG_CASINO_REWARDS, DIALOG_STYLE_TABLIST_HEADERS, "{FFFFFF}Casino Rewards Items", szString, "Buy", "Cancel" );
 }
@@ -287,7 +292,7 @@ stock ShowPlayerSellMenu( playerid )
 		cash_format( value, .decimals = 0 )
 	);
 
-	return ShowPlayerDialog( playerid, DIALOG_CASINO_POINTS_MARKET, DIALOG_STYLE_INPUT, "{FFFFFF}Casino Points Market", szBigString, "Sell", "Cancel");
+	return ShowPlayerDialog( playerid, DIALOG_CASINO_POINTS_MARKET, DIALOG_STYLE_INPUT, "{FFFFFF}Casino Points Market", szBigString, "Sell", "Back" );
 }
 
 stock IsCasinoRewardsShopItem( E_SHOP_ITEMS: itemid ) {
