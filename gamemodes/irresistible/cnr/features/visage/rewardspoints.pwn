@@ -176,7 +176,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 
 			GivePlayerCash( playerid, credit );
 			p_CasinoRewardsPoints[ playerid ] -= float( sell_amount );
-			SendServerMessage( playerid, "You have sold "COL_GOLD"%s "COL_WHITE"Casino Points for "COL_GOLD"%s"COL_WHITE".", points_format( sell_amount ), cash_format( credit ) );
+			SendGlobalMessage( -1, ""COL_GREY"[CASINO]{FFFFFF} %s(%d) has sold %s casino points for "COL_GOLD"%s"COL_WHITE"!", ReturnPlayerName( playerid ), playerid, points_format( sell_amount ), cash_format( credit ) );
 			mysql_single_query( sprintf( "UPDATE `USERS` SET `CASINO_REWARDS` = %f WHERE `ID`=%d", p_CasinoRewardsPoints[ playerid ], p_AccountID[ playerid ] ) );
 		}
 		return 1;
