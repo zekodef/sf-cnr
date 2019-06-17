@@ -94,7 +94,7 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				p_Uptime[ playerid ] = 0;
 				ShowAchievement( playerid, "Registering to SF-CnR!", 1 );
                 p_PlayerLogged{ playerid } = true;
-                SetPlayerCash( playerid, 0 );
+                SetPlayerCash( playerid, 5000 );
                 SetPlayerScore( playerid, 0 );
 				p_Kills[ playerid ] = 1;
 				p_Deaths[ playerid ] = 1;
@@ -375,7 +375,7 @@ stock SavePlayerData( playerid, bool: logout = false )
 
 		if ( IsPlayerCuffed( playerid ) || IsPlayerTazed( playerid ) || IsPlayerTied( playerid ) || p_LeftCuffed{ playerid } || p_QuitToAvoidTimestamp[ playerid ] > g_iTime )
 			bQuitToAvoid = true;
-			
+
 		#if defined __cloudy_event_system
 		if ( IsPlayerInEvent( playerid ) )
 			bQuitToAvoid = false;
