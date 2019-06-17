@@ -571,3 +571,7 @@ stock GetGaragePos( garageid, &Float: X, &Float: Y, &Float: Z ) {
 	Y = g_garageData[ garageid ] [ E_Y ];
 	Z = g_garageData[ garageid ] [ E_Z ];
 }
+
+stock IsPlayerInGarage( playerid ) {
+	return p_InGarage[ playerid ] != -1;
+}

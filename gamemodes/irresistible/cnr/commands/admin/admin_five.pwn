@@ -1026,7 +1026,7 @@ CMD:giveboombox( playerid, params[ ] )
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
 	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/giveboombox [PLAYER_ID]" );
-	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( ! IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
 	else if ( GetPlayerBoombox( pID ) ) return SendError( playerid, "Player already has boombox in his inventory." );
 	else
 	{
@@ -1045,8 +1045,8 @@ CMD:removeboombox( playerid, params[ ] )
 
 	if ( p_AdminLevel[ playerid ] < 5 ) return SendError( playerid, ADMIN_COMMAND_REJECT );
 	else if ( sscanf( params, "u", pID ) ) return SendUsage( playerid, "/removeboombox [PLAYER_ID]" );
-	else if ( !IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
-	else if ( GetPlayerBoombox( pID ) ) return SendError( playerid, "Player doesn't have boombox in his inventory." );
+	else if ( ! IsPlayerConnected( pID ) || IsPlayerNPC( pID ) ) return SendError( playerid, "Invalid Player ID." );
+	else if ( ! GetPlayerBoombox( pID ) ) return SendError( playerid, "Player doesn't have boombox in his inventory." );
 	else
 	{
 		SendClientMessageFormatted( pID, -1, ""COL_PINK"[ADMIN]"COL_WHITE" %s(%d) has removed your boombox.", ReturnPlayerName( playerid ), playerid );
