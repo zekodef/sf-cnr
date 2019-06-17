@@ -11,7 +11,7 @@
 /* ** Definitions ** */
 #define MAX_FIRES					( 10 )
 
-#define FIRE_EXTINGUISH_PAYOUT 		( 6000 )
+#define FIRE_EXTINGUISH_PAYOUT 		( 5000 )
 
 /* ** Variables ** */
 enum E_FIRE_DATA
@@ -85,8 +85,8 @@ hook OnPlayerUpdateEx( playerid )
 
 						    if ( g_fireData[ i ] [ E_HEALTH ] <= 0.0 )
 						    {
-								new
-									money_earned = RandomEx( FIRE_EXTINGUISH_PAYOUT / 2, FIRE_EXTINGUISH_PAYOUT );
+								new min_money_earned = floatround( float( FIRE_EXTINGUISH_PAYOUT ) * 0.75 );
+								new money_earned = RandomEx( min_money_earned, FIRE_EXTINGUISH_PAYOUT );
 
 								ach_HandleExtinguishedFires( playerid );
 							    SendClientMessageToAllFormatted( -1, "{A83434}[FIREMAN]"COL_WHITE" %s(%d) has earned "COL_GOLD"%s"COL_WHITE" for extinguishing a house fire.", ReturnPlayerName( playerid ), playerid, cash_format( money_earned ) );
