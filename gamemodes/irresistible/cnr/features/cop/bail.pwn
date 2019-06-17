@@ -46,7 +46,7 @@ CMD:bail( playerid, params[ ] )
 CMD:acceptbail( playerid, params[ ] )
 {
 	new
-		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ pID ] ) * ( GetPlayerLevel( pID, E_POLICE ) / 100.0 + 1.0 ) );
+		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ playerid ] ) * ( GetPlayerLevel( playerid, E_POLICE ) / 100.0 + 1.0 ) );
 
 	if ( p_JailTime[ playerid ] >= ALCATRAZ_TIME_WANTED )
 		equa *= 2;
