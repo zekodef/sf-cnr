@@ -180,6 +180,9 @@ CMD:arrest( playerid, params[ ] )
 		if ( GetPlayerState( playerid ) == PLAYER_STATE_WASTED ) return SendError( playerid, "You cannot use this command since you are dead." );
 		new totalCash = ( p_WantedLevel[ victimid ] < MAX_WANTED_LVL ? p_WantedLevel[ victimid ] : MAX_WANTED_LVL ) * ( COP_ARREST_PAY_PER_WANTED );
 		new totalSeconds = p_WantedLevel[ victimid ] * ( JAIL_SECONDS_MULTIPLIER );
+		if ( GetPlayerLevel( victimid, E_POLICE ) >= 75.0 ) {
+			totalSeconds = floatround( float( totalSeconds ) * 0.5 );
+		}
 		GivePlayerScore( playerid, 2 );
 		GivePlayerExperience( playerid, E_POLICE );
 		GivePlayerCash( playerid, totalCash );
@@ -396,9 +399,13 @@ stock BreakPlayerCuffs( playerid )
 	}
 	else p_BobbyPins[ playerid ] --;
 
-	new probability = 50; // success rate probability
+	new Float: probability = fRandomEx( 0.0, 100.0 );
 
-	if ( random( 101 ) <= probability )
+	// multiply success rate every 25 levels (only 1, 2, 3, 4x)
+	probability *= GetPlayerLevel( playerid, E_POLICE ) / 25.0 + 1.0;
+
+	// if probability >= n% after multiplying as well then uncuff
+	if ( probability >= 75.0 )
 	{
 		if ( ! IsPlayerCuffed( playerid ) )
 		{
@@ -439,12 +446,12 @@ stock AwardNearestLEO( playerid, reason )
 {
 	if ( ! IsPlayerConnected( playerid ) || playerid == INVALID_PLAYER_ID || GetPlayerWantedLevel( playerid ) < 2 || IsPlayerDead( playerid ) )
 		return false;
-	
+
 	#if defined __cloudy_event_system
 	if ( IsPlayerInEvent( playerid ) )
 		return false;
 	#endif
-	
+
 	new Float: radius = ( IsPlayerInAnyVehicle( playerid ) ? 150.0 : 75.0 ); // If player is in a vehicle, increase radius due to ability to get farther quicker.
 
 	new closestLEO = GetClosestPlayerEx( playerid, CLASS_POLICE, radius );
