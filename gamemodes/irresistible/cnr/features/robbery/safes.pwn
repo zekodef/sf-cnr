@@ -538,7 +538,7 @@ stock createRobberyLootInstance( playerid, robberyid, type )
 		random_chance = 100.0;
 	}
 
-	if ( GetPlayerLevel( playerid, E_POLICE ) >= 50 ) {
+	if ( GetPlayerLevel( playerid, E_POLICE ) >= 50.0 ) {
 		random_chance = 100.0;
 	}
 
@@ -607,20 +607,14 @@ stock createRobberyLootInstance( playerid, robberyid, type )
 			else if ( business_id != -1 )
 				GetZoneFromCoordinates( szLocation, g_businessData[ business_id ] [ E_X ], g_businessData[ business_id ] [ E_Y ], g_businessData[ business_id ] [ E_Z ] );
 
-			if ( GetPlayerLevel( playerid, E_POLICE ) < 50 )
-			{
-				if ( GetPlayerInterior( playerid ) != 0 ) {
-					SendClientMessageToCops( -1, ""COL_BLUE"[ROBBERY]"COL_WHITE" %s has failed robbing %s"COL_WHITE" near %s.", ReturnPlayerName( playerid ), g_robberyData[ robberyid ] [ E_NAME ], szLocation );
-				} else {
-					SendClientMessageToCops( -1, ""COL_BLUE"[ROBBERY]"COL_WHITE" %s has failed robbing %s"COL_WHITE".", ReturnPlayerName( playerid ), g_robberyData[ robberyid ] [ E_NAME ] );
-				}
+			if ( GetPlayerInterior( playerid ) != 0 )
+		    	SendClientMessageToCops( -1, ""COL_BLUE"[ROBBERY]"COL_WHITE" %s has failed robbing %s"COL_WHITE" near %s.", ReturnPlayerName( playerid ), g_robberyData[ robberyid ] [ E_NAME ], szLocation );
+			else
+				SendClientMessageToCops( -1, ""COL_BLUE"[ROBBERY]"COL_WHITE" %s has failed robbing %s"COL_WHITE".", ReturnPlayerName( playerid ), g_robberyData[ robberyid ] [ E_NAME ] );
 
-				SendClientMessage( playerid, -1, ""COL_GREY"[SERVER]"COL_WHITE" No loot, and the alarm went off. Cops have been alerted." );
-				GivePlayerWantedLevel( playerid, 6 );
-				CreateCrimeReport( playerid );
-			} else {
-				SendClientMessage( playerid, -1, ""COL_GREY"[SERVER]"COL_WHITE" No loot could be found. Cops have not been alerted as your police level is high." );
-			}
+			SendClientMessage( playerid, -1, ""COL_GREY"[SERVER]"COL_WHITE" No loot, and the alarm went off. Cops have been alerted." );
+			GivePlayerWantedLevel( playerid, 6 );
+			CreateCrimeReport( playerid );
 		}
 		g_robberyData[ robberyid ] [ E_ROB_TIME ] = g_iTime + MAX_ROBBERY_WAIT;
 		g_robberyData[ robberyid ] [ E_ROBBED ] = true;

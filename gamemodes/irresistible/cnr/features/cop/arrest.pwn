@@ -180,7 +180,7 @@ CMD:arrest( playerid, params[ ] )
 		if ( GetPlayerState( playerid ) == PLAYER_STATE_WASTED ) return SendError( playerid, "You cannot use this command since you are dead." );
 		new totalCash = ( p_WantedLevel[ victimid ] < MAX_WANTED_LVL ? p_WantedLevel[ victimid ] : MAX_WANTED_LVL ) * ( COP_ARREST_PAY_PER_WANTED );
 		new totalSeconds = p_WantedLevel[ victimid ] * ( JAIL_SECONDS_MULTIPLIER );
-		if ( GetPlayerLevel( victimid, E_POLICE ) >= 75 ) {
+		if ( GetPlayerLevel( victimid, E_POLICE ) >= 75.0 ) {
 			totalSeconds = floatround( float( totalSeconds ) * 0.5 );
 		}
 		GivePlayerScore( playerid, 2 );
@@ -399,7 +399,7 @@ stock BreakPlayerCuffs( playerid )
 	}
 	else p_BobbyPins[ playerid ] --;
 
-	new Float: probability = fRandomEx( 0, 100 );
+	new Float: probability = fRandomEx( 0.0, 100.0 );
 
 	// multiply success rate every 25 levels (only 1, 2, 3, 4x)
 	probability *= GetPlayerLevel( playerid, E_POLICE ) / 25.0 + 1.0;

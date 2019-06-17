@@ -32,7 +32,7 @@ CMD:bail( playerid, params[ ] )
 	else if ( GetPVarInt( pID, "bail_antispam" ) > g_iTime ) return SendError( playerid, "You must wait 10 seconds before offering a bail to this player." );
 	else
 	{
-		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ pID ] ) * GetPlayerLevel( playerid, E_POLICE ) / 100 + 1.0 );
+		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ pID ] ) * ( GetPlayerLevel( pID, E_POLICE ) / 100.0 + 1.0 ) );
 	    if ( p_JailTime[ pID ] >= ALCATRAZ_TIME_WANTED ) equa *= 2;
 	    p_BailOfferer[ pID ] = playerid;
 	    p_BailTimestamp[ pID ] = g_iTime + 120;
@@ -46,7 +46,7 @@ CMD:bail( playerid, params[ ] )
 CMD:acceptbail( playerid, params[ ] )
 {
 	new
-		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ playerid ] ) * GetPlayerLevel( playerid, E_POLICE ) / 100 + 1.0 );
+		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ pID ] ) * ( GetPlayerLevel( pID, E_POLICE ) / 100.0 + 1.0 ) );
 
 	if ( p_JailTime[ playerid ] >= ALCATRAZ_TIME_WANTED )
 		equa *= 2;
