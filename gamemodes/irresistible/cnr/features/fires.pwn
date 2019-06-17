@@ -117,6 +117,10 @@ hook OnServerUpdate( )
 
 hook OnServerGameDayEnd( )
 {
+	for ( new fireid = 0; fireid < MAX_FIRES; fireid ++ )
+	{
+		HouseFire_Remove( fireid );
+	}
 	HouseFire_Create( );
 	return 1;
 }
