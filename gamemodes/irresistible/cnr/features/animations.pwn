@@ -366,7 +366,7 @@ stock CreateLoopingAnimation( playerid, animlib[ ], animname[ ], Float:Speed, lo
 	{
 		// event check
 		#if defined __cloudy_event_system
-		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_KIDNAP ) )
+		if ( IsPlayerInEvent( playerid ) && ! EventSettingAllow( EVENT_SETTING_ANIM ) )
 		#else
 		if ( IsPlayerInEvent( playerid ) )
 		#endif

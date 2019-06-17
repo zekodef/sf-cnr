@@ -181,7 +181,7 @@ hook OnPlayerEnterDynRaceCP( playerid, checkpointid )
 			GivePlayerScore( playerid, 1 + floatround( p_TruckingDistance[ playerid ] / 1000.0 ) );
 			StockMarket_UpdateEarnings( E_STOCK_TRUCKING_COMPANY, iCashEarned, .factor = 1.0 );
 			GivePlayerCash( playerid, iCashEarned );
-			GivePlayerExperience( playerid, E_ROLEPLAY );
+			GivePlayerExperience( playerid, E_ROLEPLAY, 1.0 + p_TruckingDistance[ playerid ] / 1000.0 );
 
 			p_TruckingDistance		[ playerid ] = 0.0;
 			p_hasTruckingJob		{ playerid } = false;

@@ -3672,9 +3672,9 @@ hook OnScriptInit( )
 	CreateDynamicObject( 19353, -1971.630371, 1345.444091, 4.487493, 0.000000, 0.000000, 132.000106 );
 	CreateDynamicObject( 19353, -1972.768188, 1342.837890, 4.487494, 0.000000, 0.000000, 0.300101 );
 	CreateDynamicObject( 19353, -1972.757202, 1340.717895, 4.487494, 0.000000, 0.000000, 0.300101 );
-	SetDynamicObjectMaterialText( CreateDynamicObject( 3074, -1966.0687, 1345.0089, 3.1941, 0.0000, 0.0000, -78.5715 ), 0, "Solanum", 130, "Times New Roman", 18, 1, -1, 0, 1);
+	SetDynamicObjectMaterialText( CreateDynamicObject( 3074, -1966.0687, 1345.0089, 3.1941, 0.0000, 0.0000, -78.5715 ), 0, "Novic", 130, "Times New Roman", 18, 1, -1, 0, 1);
 	SetDynamicObjectMaterialText( CreateDynamicObject( 3074, -1969.9720, 1341.4737, 3.1941, 0.0000, 0.0000, -16.3579 ), 0, "Hotel", 130, "Times New Roman", 18, 1, -1, 0, 1);
-	SetDynamicObjectMaterialText( CreateDynamicObject( 3074, -1968.2480, 1343.4796, 3.5041, 0.0000, 0.0000, -47.5979 ), 0, "de", 130, "Times New Roman", 24, 1, -1, 0, 1);
+	SetDynamicObjectMaterialText( CreateDynamicObject( 3074, -1968.2480, 1343.4796, 3.5041, 0.0000, 0.0000, -47.5979 ), 0, "da", 130, "Times New Roman", 24, 1, -1, 0, 1);
 
 	// Freefall
 	SetDynamicObjectMaterial( CreateDynamicObject( 19355, -1758.228759, 860.904357, 31.404382, 0.000000, 0.000000, 90.000000 ), 0, 9900, "pointysfe", "pointy_sfe", 0 );

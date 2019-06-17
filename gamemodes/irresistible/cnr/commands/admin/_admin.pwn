@@ -140,6 +140,7 @@ static stock
 		{ 5, "/editgate", 			"Editing a gate" },
 		{ 5, "/acunban", 			"Unbanning a player from AC" },
 		{ 5, "/safeisbugged", 		"Debug command for robbery safes" },
+		{ 5, "/replenishsafe", 		"Fixes bugged robbery safes" },
 		{ 5, "/autovehrespawn", 	"Setting auto respawn for vehicles" },
 		{ 5, "/megaban", 			"The Mega Ban" },
 		{ 5, "/achangename", 		"Change a players name" },
