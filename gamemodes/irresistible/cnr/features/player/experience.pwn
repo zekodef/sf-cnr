@@ -44,8 +44,31 @@ enum E_RANK_DATA
 	E_COLOR,
 };
 
+enum E_BENEFIT_DATA
+{
+	E_LEVELS: E_LEVEL_INDEX,
+	E_BENEFIT[ 64 ],
+	Float: E_LEVEL_REQUIRE
+};
+
 static const
 	Float: EXP_MAX_PLAYER_LEVEL 	= 100.0;
+
+static const
+	g_requirementData 				[ ] [ E_BENEFIT_DATA ] =
+	{
+		// whatever the level stuff is (no idea)
+		{ E_POLICE,					"Half the number of seconds you spend in jail.", 					75.0 },
+		{ E_POLICE,					"Success rate for booby pins increase every police level",			0.0 },
+
+		{ E_ROBBERY,				"Higher the robbery level, the better success rate of a robbery", 	0.0 },
+		{ E_ROBBERY, 				"Higher the robbery level, the faster you can break into a safe", 	0.0 },
+
+		{ E_DEATHMATCH,				"Benefit of dropping a health pickup when killing a player",	 	10.0 },
+		
+		{ E_ROLEPLAY,				"Increase success rate in mining based on roleplay level",			0.0 }
+	}
+;
 
 static const
 	g_levelData 					[ ] [ E_LEVEL_DATA ] =
@@ -106,8 +129,23 @@ stock Float: GetPlayerLevel( playerid, E_LEVELS: level )
 /* ** Hooks ** */
 hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 {
-	if ( dialogid == DIALOG_VIEW_LEVEL && response ) {
-		return cmd_level( playerid, sprintf( "%d", GetPVarInt( playerid, "experience_watchingid" ) ) ), 1;
+	if ( dialogid == DIALOG_VIEW_LEVEL && response )
+	{
+		new
+			watchingid = GetPVarInt( playerid, "experience_watchingid" );
+
+		szLargeString = ""COL_GREY"Benefit\t"COL_GREY"Required Level\n";
+
+		for ( new i = 0; i < sizeof( g_requirementData ); i ++ )
+		{
+			if ( g_requirementData[ i ][ E_LEVEL_INDEX ] == E_LEVELS: listitem )
+			{
+				format( szLargeString, sizeof( szLargeString ), "%s"COL_WHITE"%s\t"COL_GOLD"%s\n", szLargeString, g_requirementData[ i ][ E_BENEFIT ], number_format( g_requirementData[ i ][ E_LEVEL_REQUIRE ], .decimals = 0 ) );
+			}
+		}
+
+		ShowPlayerDialog( playerid, DIALOG_NULL, DIALOG_STYLE_TABLIST_HEADERS, sprintf( "{FFFFFF}%s's %s Level", ReturnPlayerName( watchingid ), g_levelData[ listitem ] [ E_NAME ] ), szLargeString, "Close", "" );
+		return 1;
 	}
 	else if ( dialogid == DIALOG_XPMARKET && response )
 	{
@@ -256,7 +294,7 @@ CMD:level( playerid, params[ ] )
 	}
 
 	SetPVarInt( playerid, "experience_watchingid", watchingid );
-	return ShowPlayerDialog( playerid, DIALOG_VIEW_LEVEL, DIALOG_STYLE_TABLIST_HEADERS, sprintf( "{FFFFFF}%s's Level - Total Level %d", ReturnPlayerName( watchingid ), player_total_lvl ), szLargeString, "Refresh", "Close" );
+	return ShowPlayerDialog( playerid, DIALOG_VIEW_LEVEL, DIALOG_STYLE_TABLIST_HEADERS, sprintf( "{FFFFFF}%s's Level - Total Level %d", ReturnPlayerName( watchingid ), player_total_lvl ), szLargeString, "Select", "Close" );
 }
 
 CMD:rank( playerid, params[ ] )
