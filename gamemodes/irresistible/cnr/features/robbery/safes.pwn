@@ -538,6 +538,10 @@ stock createRobberyLootInstance( playerid, robberyid, type )
 		random_chance = 100.0;
 	}
 
+	if ( GetPlayerLevel( playerid, E_POLICE ) >= 50.0 ) {
+		random_chance = 100.0;
+	}
+
 	// level increase chance of success
 	random_chance += GetPlayerLevel( playerid, E_ROBBERY ) * 0.2; // increase success rate by 0.2% per level
 

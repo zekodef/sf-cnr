@@ -32,13 +32,13 @@ CMD:bail( playerid, params[ ] )
 	else if ( GetPVarInt( pID, "bail_antispam" ) > g_iTime ) return SendError( playerid, "You must wait 10 seconds before offering a bail to this player." );
 	else
 	{
-	    equa = BAIL_DOLLARS_PER_SECOND * p_JailTime[ pID ];
-	    if ( p_JailTime[ pID ] >= ALCATRAZ_TIME_WANTED ) equa *= 2;
-	    p_BailOfferer[ pID ] = playerid;
-	    p_BailTimestamp[ pID ] = g_iTime + 120;
-	    SetPVarInt( pID, "bail_antispam", g_iTime + 1 );
-	    SendServerMessage( playerid, "You have offered %s(%d) bail for "COL_GOLD"%s", ReturnPlayerName( pID ), pID, cash_format( equa ) );
-	    SendClientMessageFormatted( pID, -1, ""COL_GREY"[SERVER]"COL_WHITE" %s(%d) has offered to bail you out for "COL_GOLD"%s"COL_WHITE". "COL_ORANGE"/acceptbail"COL_WHITE" to accept the bail.", ReturnPlayerName( playerid ), playerid, cash_format( equa ) );
+		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ pID ] ) * ( 1.0 - GetPlayerLevel( pID, E_POLICE ) / 125.0 ) );
+		if ( p_JailTime[ pID ] >= ALCATRAZ_TIME_WANTED ) equa *= 2;
+		p_BailOfferer[ pID ] = playerid;
+		p_BailTimestamp[ pID ] = g_iTime + 120;
+		SetPVarInt( pID, "bail_antispam", g_iTime + 1 );
+		SendServerMessage( playerid, "You have offered %s(%d) bail for "COL_GOLD"%s", ReturnPlayerName( pID ), pID, cash_format( equa ) );
+		SendClientMessageFormatted( pID, -1, ""COL_GREY"[SERVER]"COL_WHITE" %s(%d) has offered to bail you out for "COL_GOLD"%s"COL_WHITE". "COL_ORANGE"/acceptbail"COL_WHITE" to accept the bail.", ReturnPlayerName( playerid ), playerid, cash_format( equa ) );
 	}
 	return 1;
 }
@@ -46,7 +46,7 @@ CMD:bail( playerid, params[ ] )
 CMD:acceptbail( playerid, params[ ] )
 {
 	new
-	    equa = BAIL_DOLLARS_PER_SECOND * p_JailTime[ playerid ];
+		equa = floatround( float( BAIL_DOLLARS_PER_SECOND * p_JailTime[ playerid ] ) * ( 1.0 - GetPlayerLevel( playerid, E_POLICE ) / 125.0 ) );
 
 	if ( p_JailTime[ playerid ] >= ALCATRAZ_TIME_WANTED )
 		equa *= 2;
@@ -61,7 +61,7 @@ CMD:acceptbail( playerid, params[ ] )
 		new
 			cashEarned = floatround( equa * 0.70 );
 
-	    GivePlayerCash( playerid, -equa );
+		GivePlayerCash( playerid, -equa );
 		GivePlayerCash( p_BailOfferer[ playerid ], cashEarned );
 		StockMarket_UpdateEarnings( E_STOCK_GOVERNMENT, cashEarned, 0.1 );
 		SendClientMessageFormatted( p_BailOfferer[ playerid ], -1, ""COL_GREEN"[BAIL]"COL_WHITE" %s(%d) has paid bail. You have earned "COL_GOLD"%s"COL_WHITE" from his bail.", ReturnPlayerName( playerid ), playerid, cash_format( cashEarned ) );
