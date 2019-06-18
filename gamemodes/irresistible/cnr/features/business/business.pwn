@@ -1761,6 +1761,9 @@ stock GetProductPrice( businessid, bool: hardened = false )
 	if ( strmatch( szCity, "San Fierro" ) ) {
 		price *= 1.10;
 	}
+	else {
+		price *= 0.50;
+	}
 
 	// hardened with vehicle, 25% more profit
 	if ( hardened ) {
