@@ -1013,7 +1013,7 @@ function RespawnaVehicle( vehicleid ) {
 #if defined AC_INCLUDED
 public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, bodypart )
 {
-	if ( !IsPlayerStreamedIn( issuerid, playerid ) || IsPlayerAFK( issuerid ) )
+	if ( !IsPlayerStreamedIn( issuerid, playerid ) || IsPlayerAFK( issuerid ) || GetPlayerState( issuerid ) == PLAYER_STATE_WASTED )
 		return 0;
 
 	// Boxing immunity
