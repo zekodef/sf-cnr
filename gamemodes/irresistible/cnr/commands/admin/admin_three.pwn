@@ -539,8 +539,8 @@ thread OnPlayerBanLog( playerid, const Name[ ] )
 
 	for ( new row = 0; row < rows; row ++ )
 	{
-		cache_get_field_content_int( row, "DATE", ban_date );
-		cache_get_field_content_int( row, "EXPIRE", ban_expire );
+		ban_date = cache_get_field_content_int( row, "DATE" );
+		ban_expire = cache_get_field_content_int( row, "EXPIRE" );
 		cache_get_field_content( row, "IP", ban_ip );
 		cache_get_field_content( row, "REASON", ban_reason );
 		cache_get_field_content( row, "BANBY", ban_by );
