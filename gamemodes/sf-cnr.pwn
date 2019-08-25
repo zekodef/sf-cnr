@@ -1107,7 +1107,7 @@ public OnPlayerTakePlayerDamage( playerid, issuerid, &Float: amount, weaponid, b
 		return 0;
 
 	// Anti RDM and gang member damage
-	if ( ! IsPlayerInPaintBall( playerid ) && ! IsPlayerBoxing( playerid ) && ! IsPlayerDueling( playerid ) && ! IsPlayerInBattleRoyale( playerid ) )
+	if ( ! IsPlayerInPaintBall( playerid ) && ! IsPlayerBoxing( playerid ) && ! IsPlayerDueling( playerid ) && ! IsPlayerInBattleRoyale( playerid ) && ! IsPlayerInEvent( playerid ) )
 	{
 		#if defined __cloudy_event_system
 		if ( IsPlayerInPlayerGang( issuerid, playerid ) && ! ( IsPlayerInEvent( playerid ) && IsPlayerInEvent( issuerid ) && g_eventData[ EV_FIGHT_TYPE] <= 2 ) )
