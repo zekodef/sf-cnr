@@ -51,6 +51,8 @@ native WP_Hash						( buffer[ ], len, const str[ ] );
 native IsValidVehicle				( vehicleid );
 native gpci 						( playerid, serial[ ], len );
 
+#define MAX_EXPLOSIVE_ROUNDS 		( 1024 )
+
 /* ** SF-CNR ** */
 #include 							"irresistible\_main.pwn"
 
@@ -5537,7 +5539,11 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 						SetPVarInt( playerid, "purchased_weapon", GetPVarInt( playerid, "purchased_weapon" ) + 1 );
 						SendClientMessageFormatted( playerid, -1, ""COL_ORANGE"[WEAPON DEAL]{FFFFFF} You have purchased %s for "COL_GOLD"%s"COL_WHITE".", g_AmmunationWeapons[ i ] [ E_NAME ], cash_format( price ) );
 						if ( g_AmmunationWeapons[ i ] [ E_WEPID ] == 101 ) SetPlayerArmour( playerid, 100.0 );
-						else if ( g_AmmunationWeapons[ i ] [ E_WEPID ] == 102 ) {
+						else if ( g_AmmunationWeapons[ i ] [ E_WEPID ] == 102 )
+						{
+							if ( p_ExplosiveBullets[ playerid ] >= MAX_EXPLOSIVE_ROUNDS )
+								return SendError( playerid, "You can only purchase a max of %d rounds.", MAX_EXPLOSIVE_ROUNDS );
+
 							p_ExplosiveBullets[ playerid ] += g_AmmunationWeapons[ i ] [ E_AMMO ];
 							ShowPlayerHelpDialog( playerid, 3000, "Press ~r~~k~~CONVERSATION_NO~~w~ to activate explosive bullets." );
 						}
@@ -5594,7 +5600,11 @@ public OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 						RedirectAmmunation( playerid, p_AmmunationMenu{ playerid } );
 
 						if ( g_AmmunationWeapons[ i ] [ E_WEPID ] == 101 ) SetPlayerArmour( playerid, float( g_AmmunationWeapons[ i ] [ E_AMMO ] ) );
-						else if ( g_AmmunationWeapons[ i ] [ E_WEPID ] == 102 ) {
+						else if ( g_AmmunationWeapons[ i ] [ E_WEPID ] == 102 )
+						{
+							if ( p_ExplosiveBullets[ playerid ] >= MAX_EXPLOSIVE_ROUNDS )
+								return SendError( playerid, "You can only purchase a max of %d rounds.", MAX_EXPLOSIVE_ROUNDS );
+
 							p_ExplosiveBullets[ playerid ] += g_AmmunationWeapons[ i ] [ E_AMMO ];
 							ShowPlayerHelpDialog( playerid, 3000, "Press ~r~~k~~CONVERSATION_NO~~w~ to activate explosive bullets." );
 						}
