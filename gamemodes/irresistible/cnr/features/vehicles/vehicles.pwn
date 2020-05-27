@@ -256,6 +256,8 @@ hook OnVehiclePaintjob( playerid, vehicleid, paintjobid )
 	return 1;
 }
 
+// We can skip this behaviour because a buyable vehicle don't change colors when it's resprayed.
+/*
 hook OnVehicleRespray( playerid, vehicleid, color1, color2 )
 {
     if ( g_buyableVehicle{ vehicleid } == true )
@@ -273,6 +275,7 @@ hook OnVehicleRespray( playerid, vehicleid, color1, color2 )
     }
 	return 1;
 }
+*/
 
 /* ** Commands ** */
 CMD:vehicle( playerid, params[ ] ) return cmd_v( playerid, params );
