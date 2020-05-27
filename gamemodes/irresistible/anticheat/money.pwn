@@ -260,7 +260,7 @@ stock ResetPlayerCash( playerid )
 {
     p_Cash[ playerid ] = 0;
     ResetPlayerMoney( playerid );
-    GivePlayerMoney( playerid, p_Cash[ playerid ] );
+    //GivePlayerMoney( playerid, p_Cash[ playerid ] );
 }
 
 stock GetPlayerCash( playerid )
