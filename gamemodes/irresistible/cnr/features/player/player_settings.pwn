@@ -60,8 +60,16 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 			return SendError( playerid, "You are not a V.I.P, to become one visit "COL_GREY"donate.sfcnr.com" );
 		}
 
-		// setting is being toggled ... then
+		// save setting
+        	TogglePlayerSetting( playerid, settingid, ! p_PlayerSettings[ playerid ] { settingid } );
+		// setting is not being toggled
 		if ( ! p_PlayerSettings[ playerid ] { settingid } == true )
+		{
+			if ( settingid == SETTING_COINS_BAR || settingid == SETTING_TOP_DONOR ) {
+ 				ShowPlayerTogglableTextdraws( playerid, .force = false );
+			}
+		}
+		else // setting is being toggled ... then
 		{
 			if ( settingid == SETTING_VIPSKIN ) {
 				SyncObject( playerid );
@@ -69,20 +77,10 @@ hook OnDialogResponse( playerid, dialogid, response, listitem, inputtext[ ] )
 				SetPlayerSkin( playerid, p_LastSkin[ playerid ] );
 			}
 
-			else if ( settingid == SETTING_COINS_BAR || settingid == SETTING_TOP_DONOR ) {
-			 	HidePlayerTogglableTextdraws( playerid, .force = false );
- 				ShowPlayerTogglableTextdraws( playerid, .force = false );
-			}
-		}
-		else // setting is not being toggled
-		{
 			if ( settingid == SETTING_COINS_BAR || settingid == SETTING_TOP_DONOR ) {
 			 	HidePlayerTogglableTextdraws( playerid, .force = false );
- 				ShowPlayerTogglableTextdraws( playerid, .force = false );
 			}
 		}
-
-		TogglePlayerSetting( playerid, settingid, ! p_PlayerSettings[ playerid ] { settingid } );
 		SendServerMessage( playerid, ""COL_ORANGE"%s"COL_WHITE" is now %s. Changes may take effect after spawning/relogging.", g_PlayerSettings[ settingid ], p_PlayerSettings[ playerid ] { settingid } ? ( "enabled" ) : ( "disabled" ) );
 
 	    if ( ! strmatch( inputtext, "ignore" )) {
