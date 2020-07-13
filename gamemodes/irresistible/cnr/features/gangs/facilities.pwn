@@ -967,6 +967,8 @@ static stock initializeFacilityObjects( )
 	CreateDynamicObject( 1885, 256.321441, 1858.931884, 1857.696533, 0.000000, 0.000000, 0.000000, -1, -1, -1 );
 	SetDynamicObjectMaterialText( CreateDynamicObject( 2662, 238.587280, 1849.567504, 1860.304809, 0.000000, 0.000000, 90.000000, -1, -1, -1 ), 0, "Gang Vehicles", 120, "Impact", 84, 0, -13421773, 0, 1 );
 	SetDynamicObjectMaterialText( CreateDynamicObject( 2662, 263.417633, 1869.281738, 1860.304809, 0.000000, 0.000000, -90.000000, -1, -1, -1 ), 0, "Fast Travel", 120, "Impact", 84, 0, -13421773, 0, 1 );
+	//wall prevent players drop from gang facility
+	SetObjectInvisible( CreateDynamicObject( 19869, 238.416, 1872.37, 1862.39, 0.000000, 0.000000, 91, -1, -1, -1 ) );
 }
 
 /* ** SCHEMA ** */
