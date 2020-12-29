@@ -1126,9 +1126,9 @@ stock ShowOwnedFurnitureList( playerid, houseid )
 			new furniture_item = getFurnitureID( modelid );
 			if ( furniture_item != -1 ) {
 				format( szLargeString, sizeof( szLargeString ), "%s%s\n", szLargeString, g_houseFurniture[ furniture_item ] [ E_NAME ] );
-			} else {
+			} /*else {
 				strcat( szLargeString, "Unknown\n" );
-			}
+			} */
 		}
 		ShowPlayerDialog( playerid, DIALOG_FURNITURE_MAN_SEL, DIALOG_STYLE_TABLIST_HEADERS, "Furniture", szLargeString, "Select", "Back" );
 	}
