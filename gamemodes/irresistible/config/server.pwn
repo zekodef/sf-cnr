@@ -20,6 +20,7 @@
 /* ** Server Operator ** */
 #define SERVER_OPERATOR 			"Lorenc"
 #define SERVER_OPERATOR_ACC_ID 		1
+#define SERVER_OPERATOR_ACC_ID_2	2
 
 /* ** Comment line to disable feature ** */
 //#define SERVER_RULES_URL            "files.sfcnr.com/en_rules.txt"							// used for /rules (cnr\features\server_rules.pwn)
@@ -59,7 +60,10 @@ hook OnScriptInit( )
 /* ** Functions ** */
 stock IsPlayerLeadMaintainer( playerid ) // Limits money, coin, xp spawning to this user id
 {
-	return GetPlayerAccountID( playerid ) == SERVER_OPERATOR_ACC_ID;
+	if ( GetPlayerAccountID( playerid ) == SERVER_OPERATOR_ACC_ID || GetPlayerAccountID( playerid ) == SERVER_OPERATOR_ACC_ID_2 )
+		return 1;
+
+	return 0;
 }
 
 stock IsPlayerServerMaintainer( playerid ) // Same as lead maintainer, just cant spawn money/xp/coins
